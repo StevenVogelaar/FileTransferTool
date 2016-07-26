@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransferToolWindows", "FileTransferTool\FileTransferToolWindows.csproj", "{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLibrary", "CoreLibrary\CoreLibrary.csproj", "{89B0BF40-4E43-44EF-9B46-8180E321B01C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B0BF40-4E43-44EF-9B46-8180E321B01C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B0BF40-4E43-44EF-9B46-8180E321B01C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B0BF40-4E43-44EF-9B46-8180E321B01C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B0BF40-4E43-44EF-9B46-8180E321B01C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
