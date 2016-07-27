@@ -10,7 +10,7 @@ namespace CoreLibrary
     public class FileHandler
     {
 
-        public String Path { get; set; }
+        public String Path { get;}
         public String Name { get;}
    
 
@@ -21,12 +21,18 @@ namespace CoreLibrary
         }
 
 
-        public String size()
+        public String Size()
         {
             if (File.Exists(Path))
             {
                 FileInfo info = new FileInfo(Path);
-                return info.Length.ToString();
+                long sizeInBytes = info.Length;
+
+                if (sizeInBytes < 1048576)
+                {
+                    return (sizeInBytes / 1024f).ToString("0.00") + " kb";
+                }
+                else return (info.Length / 1048576f).ToString("0.00") + " mb";
             }
             else return "Null";
         }
@@ -39,5 +45,6 @@ namespace CoreLibrary
             else return false;
         }
 
+        
     }
 }

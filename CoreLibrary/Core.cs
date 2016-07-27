@@ -10,50 +10,60 @@ namespace CoreLibrary
     public class Core
     {
 
-        public delegate void SharedFilesChangedHandler(object obj, SharedListChangedEventArgs e);
-        public event SharedFilesChangedHandler sharedFilesChanged;
+        public delegate void SharedFilesChangedHandler(object obj, EventArgs e);
+        public event SharedFilesChangedHandler SharedFilesChanged;
 
-        List<FileHandler> files;
+        public delegate void AvailableFilesChangedHandler(object obj, EventArgs e);
+        public event AvailableFilesChangedHandler AvailableFilesChanged;
+
+        public List<FileHandler> SharedFiles { get; }
+        public List<FileHandler> AvailableFiles { get; }
+
 
         public Core()
         {
-            files = new List<FileHandler>();
+            SharedFiles = new List<FileHandler>();
+            AvailableFiles = new List<FileHandler>();
         }
 
-        public void addSharedFile(String path)
+        public void AddSharedFile(String path)
         {
             // Check if a file with the same path already exists in the list.
-            foreach (FileHandler f in files)
+            foreach (FileHandler f in SharedFiles)
             {
                 if (f.Path.Equals(path)) return;
             }
+
+            SharedFiles.Add(new FileHandler(path));
+            SharedFilesChanged.Invoke(this, EventArgs.Empty);
         }
 
-        public void removeSharedFile(String path)
+        public void RemoveSharedFile(String path)
         {
             // Check to see if file with the given path name exists in the list.
-            foreach (FileHandler f in files)
+            foreach (FileHandler f in SharedFiles)
             {
                 if (f.Path == path)
                 {
-                    files.Remove(f);
-                    sharedFilesChanged.Invoke(this, new SharedListChangedEventArgs(SharedListChangedEventArgs.ChangeType.removed, f));
+                    SharedFiles.Remove(f);
+                    SharedFilesChanged.Invoke(this, EventArgs.Empty);
                     return;
                 }
             }         
         }
 
-        public void addSharedFolder()
+        private void addAvailableFile(String path)
         {
-
+            
         }
 
-        public void removeSharedFolder()
+        private void removeAvailableFile(String path)
         {
-
+            
         }
 
 
+        /**
         public class SharedListChangedEventArgs : EventArgs
         {
             public enum ChangeType { added, removed };
@@ -65,10 +75,10 @@ namespace CoreLibrary
             {
                 this.File = file;
                 Change = changeType;
-            }
-
-            
+            }  
         }
-    }
+        */
 
+
+    }
 }

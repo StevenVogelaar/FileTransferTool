@@ -33,18 +33,23 @@
             this.addFilesButton = new System.Windows.Forms.Button();
             this.refreshButton = new System.Windows.Forms.Button();
             this.downloadButton = new System.Windows.Forms.Button();
-            this.availableFilesList = new System.Windows.Forms.CheckedListBox();
             this.removeButton = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.addFolderButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.connectionStatusLable = new System.Windows.Forms.Label();
             this.sharedFilesList = new System.Windows.Forms.DataGridView();
+            this.availableFilesList = new System.Windows.Forms.DataGridView();
+            this.AvailCheckColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.AvailNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AvailLocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AvailSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SharedCheckColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IndexColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.sharedFilesList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.availableFilesList)).BeginInit();
             this.SuspendLayout();
             // 
             // availableLable
@@ -93,20 +98,6 @@
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
             // 
-            // availableFilesList
-            // 
-            this.availableFilesList.FormattingEnabled = true;
-            this.availableFilesList.Items.AddRange(new object[] {
-            "123",
-            "124",
-            "43653456",
-            "345345"});
-            this.availableFilesList.Location = new System.Drawing.Point(16, 336);
-            this.availableFilesList.Name = "availableFilesList";
-            this.availableFilesList.Size = new System.Drawing.Size(778, 244);
-            this.availableFilesList.TabIndex = 9;
-            this.availableFilesList.SelectedIndexChanged += new System.EventHandler(this.availableFilesList_SelectedIndexChanged);
-            // 
             // removeButton
             // 
             this.removeButton.Location = new System.Drawing.Point(638, 84);
@@ -115,11 +106,6 @@
             this.removeButton.TabIndex = 10;
             this.removeButton.Text = "Remove";
             this.removeButton.UseVisualStyleBackColor = true;
-            // 
-            // folderBrowserDialog1
-            // 
-
-
             // 
             // addFolderButton
             // 
@@ -146,48 +132,119 @@
             // 
             // sharedFilesList
             // 
+            this.sharedFilesList.AllowUserToAddRows = false;
+            this.sharedFilesList.AllowUserToDeleteRows = false;
+            this.sharedFilesList.AllowUserToResizeRows = false;
             this.sharedFilesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.sharedFilesList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.SharedCheckColumn,
             this.NameColumn,
             this.LocationColumn,
-            this.SizeColumn,
-            this.IndexColumn});
+            this.SizeColumn});
             this.sharedFilesList.Location = new System.Drawing.Point(16, 136);
             this.sharedFilesList.Name = "sharedFilesList";
+            this.sharedFilesList.ReadOnly = false;
+            this.sharedFilesList.Enabled = true;
+            this.sharedFilesList.RowHeadersVisible = false;
+            this.sharedFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.sharedFilesList.Size = new System.Drawing.Size(778, 169);
             this.sharedFilesList.TabIndex = 13;
-            this.sharedFilesList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.sharedFilesList_CellContentClick);
+            this.sharedFilesList.SelectionChanged += new System.EventHandler(this.sharedFilesList_SelectionChanged);
+            this.sharedFilesList.RowsDefaultCellStyle.SelectionBackColor = System.Drawing.Color.White;
+            this.sharedFilesList.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            // 
+            // availableFilesList
+            // 
+            this.availableFilesList.AllowUserToAddRows = false;
+            this.availableFilesList.AllowUserToDeleteRows = false;
+            this.availableFilesList.AllowUserToResizeRows = false;
+            this.availableFilesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.availableFilesList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.AvailCheckColumn,
+            this.AvailNameColumn,
+            this.AvailLocationColumn,
+            this.AvailSizeColumn});
+            this.availableFilesList.Location = new System.Drawing.Point(16, 336);
+            this.availableFilesList.Name = "availableFilesList";
+            this.availableFilesList.ReadOnly = false;
+            this.availableFilesList.RowHeadersVisible = false;
+            this.availableFilesList.RowHeadersWidth = 40;
+            this.availableFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.availableFilesList.Size = new System.Drawing.Size(778, 251);
+            this.availableFilesList.TabIndex = 14;
+            this.availableFilesList.SelectionChanged += availableFilesList_SelectionChanged;
+            this.availableFilesList.RowsDefaultCellStyle.SelectionBackColor = System.Drawing.Color.White;
+            this.availableFilesList.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            // 
+            // AvailCheckColumn
+            // 
+            this.AvailCheckColumn.HeaderText = "Select";
+            this.AvailCheckColumn.Name = "AvailCheckColumn";
+            this.AvailCheckColumn.ReadOnly = false;
+            this.AvailCheckColumn.Width = 50;
+            // 
+            // AvailNameColumn
+            // 
+            this.AvailNameColumn.HeaderText = "Name";
+            this.AvailNameColumn.Name = "AvailNameColumn";
+            this.AvailNameColumn.ReadOnly = true;
+            this.AvailNameColumn.Width = 250;
+            // 
+            // AvailLocationColumn
+            // 
+            this.AvailLocationColumn.HeaderText = "Location";
+            this.AvailLocationColumn.Name = "AvailLocationColumn";
+            this.AvailLocationColumn.ReadOnly = true;
+            this.AvailLocationColumn.Width = 250;
+            // 
+            // AvailSizeColumn
+            // 
+            this.AvailSizeColumn.HeaderText = "Size";
+            this.AvailSizeColumn.Name = "AvailSizeColumn";
+            this.AvailSizeColumn.ReadOnly = true;
+            this.AvailSizeColumn.Width = 250;
+            // 
+            // SharedCheckColumn
+            // 
+            this.SharedCheckColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.SharedCheckColumn.FalseValue = "false";
+            this.SharedCheckColumn.HeaderText = "Select";
+            this.SharedCheckColumn.Name = "SharedCheckColumn";
+            this.SharedCheckColumn.ReadOnly = false;
+            this.SharedCheckColumn.TrueValue = "true";
+            this.SharedCheckColumn.Width = 46;
             // 
             // NameColumn
             // 
             this.NameColumn.HeaderText = "Name";
             this.NameColumn.Name = "NameColumn";
+            this.NameColumn.ReadOnly = true;
+            this.NameColumn.Width = 250;
             // 
             // LocationColumn
             // 
             this.LocationColumn.HeaderText = "Location";
             this.LocationColumn.Name = "LocationColumn";
+            this.LocationColumn.ReadOnly = true;
+            this.LocationColumn.Width = 250;
             // 
             // SizeColumn
             // 
             this.SizeColumn.HeaderText = "Size";
             this.SizeColumn.Name = "SizeColumn";
-            // 
-            // IndexColumn
-            // 
-            this.IndexColumn.HeaderText = "Index";
-            this.IndexColumn.Name = "IndexColumn";
+            this.SizeColumn.ReadOnly = true;
+            this.SizeColumn.Width = 250;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(806, 599);
+            this.Controls.Add(this.availableFilesList);
             this.Controls.Add(this.sharedFilesList);
             this.Controls.Add(this.connectionStatusLable);
             this.Controls.Add(this.addFolderButton);
             this.Controls.Add(this.removeButton);
-            this.Controls.Add(this.availableFilesList);
             this.Controls.Add(this.downloadButton);
             this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.addFilesButton);
@@ -196,6 +253,7 @@
             this.Name = "MainWindow";
             this.Text = "File Transfer Tool";
             ((System.ComponentModel.ISupportInitialize)(this.sharedFilesList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.availableFilesList)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -207,17 +265,21 @@
         private System.Windows.Forms.Button addFilesButton;
         private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.Button downloadButton;
-        private System.Windows.Forms.CheckedListBox availableFilesList;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button addFolderButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label connectionStatusLable;
         private System.Windows.Forms.DataGridView sharedFilesList;
+        private System.Windows.Forms.DataGridView availableFilesList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AvailNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AvailLocationColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AvailSizeColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn AvailCheckColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn SharedCheckColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn LocationColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn SizeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn IndexColumn;
     }
 }
 

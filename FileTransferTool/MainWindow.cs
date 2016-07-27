@@ -7,13 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CoreLibrary;
 
 namespace FileTransferTool
 {
     public partial class MainWindow : Form
     {
 
-       
+        public delegate void FilesSelectedHandler(object obj, FilesSelectedEventArgs e);
+        public event FilesSelectedHandler FilesSelected;
+
+        public delegate void FilesUnSelectedHandler(object obj, FilesUnSelectedEventArgs e);
+        public event FilesUnSelectedHandler FilesRemoved;
+
+        private DataGridViewFileHandlerManager _sharedGridManager;
+        private DataGridViewFileHandlerManager _availableGridManager;
 
         public MainWindow()
         {
@@ -22,22 +30,23 @@ namespace FileTransferTool
             this.SizeChanged += onWindowSizeChange;
             onWindowSizeChange(this, EventArgs.Empty);
             this.MinimumSize = new Size(this.Width, this.Height);
-
-            // Set up shared files list
-            sharedFilesList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-          
-
-
-
+                       
             downloadButton.Hide();
             removeButton.Hide();
 
-            availableFilesList.CheckOnClick = true;
             openFileDialog1.Multiselect = true;
         }
 
+        public void InitGrids(Core core)
+        {
+            _sharedGridManager = new DataGridViewFileHandlerManager(sharedFilesList, core.SharedFiles);
+            core.SharedFilesChanged += _sharedGridManager.Core_FilesChanged;
+            _availableGridManager = new DataGridViewFileHandlerManager(availableFilesList, core.AvailableFiles);
+            core.AvailableFilesChanged += _availableGridManager.Core_FilesChanged;
+        }
 
-        void onWindowSizeChange(object obj, EventArgs e)
+
+        private void onWindowSizeChange(object obj, EventArgs e)
         {
             int width = this.Width;
             int height = this.Height;
@@ -51,13 +60,6 @@ namespace FileTransferTool
             sharedLable.Location = new Point(sharedLable.Location.X, sharedFilesList.Location.Y - 20);
             availableLable.Location = new Point(availableLable.Location.X, availableFilesList.Location.Y - 20);
         }
-
-        private void availableFilesList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (availableFilesList.CheckedIndices.Count > 0) downloadButton.Show();
-            else downloadButton.Hide();
-        }
-
        
 
         private void addFilesButton_Click(object sender, EventArgs e)
@@ -67,9 +69,7 @@ namespace FileTransferTool
 
             if (result == DialogResult.OK)
             {
-                sharedFilesChanged.Invoke(this, new SharedListChangedEventArgs(
-                    SharedListChangedEventArgs.ChangeType.added, openFileDialog1.FileNames));
-                addToSharedList(openFileDialog1.FileNames);       
+                FilesSelected.Invoke(this, new FilesSelectedEventArgs(openFileDialog1.FileNames));      
             }
         }
 
@@ -79,34 +79,59 @@ namespace FileTransferTool
 
             if (result == DialogResult.OK)
             {
-                sharedFilesChanged.Invoke(this, new SharedListChangedEventArgs(
-                    SharedListChangedEventArgs.ChangeType.removed, new String[] { folderBrowserDialog1.SelectedPath }));
-                addToSharedList(new String[] { folderBrowserDialog1.SelectedPath });
+                FilesSelected.Invoke(this, new FilesSelectedEventArgs(new String[] { folderBrowserDialog1.SelectedPath }));
             }
         }
 
-        private void sharedFilesList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void sharedFilesList_SelectionChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("Clicked!");
-        }
-
-        /// <summary>
-        /// Handles adding elements to shared dictionary and shared checkedbox.
-        /// </summary>
-        /// <param name="files"></param>
-        private void addToSharedList(String[] files)
-        {
+            // Check for any selected rows
+            foreach (DataGridViewRow row in sharedFilesList.Rows)
+            {
+                if (row.Selected)
+                {
+                    removeButton.Show();
+                    return;
+                }
+            }
+            removeButton.Hide();
             
         }
 
-        /// <summary>
-        /// Handles adding elements to available dictionary and available checkedbox.
-        /// </summary>
-        /// <param name="files"></param>
-        private void addToAvailableList(String[] files)
+        private void availableFilesList_SelectionChanged(object sender, EventArgs e)
         {
+            // Check for any selected rows
+            foreach (DataGridViewRow row in availableFilesList.Rows)
+            {
+                if (row.Selected)
+                {
+                    downloadButton.Show();
+                    return;
+                }
+            }
 
+            downloadButton.Hide();
         }
 
+
+        public class FilesSelectedEventArgs : EventArgs
+        {
+            public String[] Files { get; }
+            public FilesSelectedEventArgs(String[] files)
+            {
+                this.Files = files;
+            }
+        }
+
+        public class FilesUnSelectedEventArgs : EventArgs
+        {
+            public String[] Files { get; }
+            public FilesUnSelectedEventArgs(String[] files)
+            {
+                this.Files = files;
+            }
+        }
+
+        
     }
 }
