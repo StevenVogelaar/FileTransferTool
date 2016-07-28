@@ -23,7 +23,7 @@ namespace FileTransferTool
 
             _core.SharedFilesChanged += new Core.SharedFilesChangedHandler(SharedFilesChanged_handler);
             window.FilesSelected += MainWindow_FileSelected;
-            window.FilesRemoved += MainWindow_FilesUnSelected;
+            window.FilesRemoved += MainWindow_FilesRemoved;
 
             window.InitGrids(_core);
         }
@@ -48,7 +48,7 @@ namespace FileTransferTool
             }
         }
 
-        public void MainWindow_FilesUnSelected(object obj, MainWindow.FilesUnSelectedEventArgs e)
+        public void MainWindow_FilesRemoved(object obj, MainWindow.FilesRemovedEventArgs e)
         {
             foreach (String f in e.Files)
             {

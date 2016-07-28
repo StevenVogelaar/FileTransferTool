@@ -38,9 +38,9 @@ namespace FileTransferTool
             foreach (FileHandler f in _files)
             {
                 DataGridViewRow row = (DataGridViewRow)_dataGrid.Rows[0].Clone();
-                row.Cells[1].Value = f.Name;
-                row.Cells[2].Value = f.Path;
-                row.Cells[3].Value = f.Size();
+                row.Cells[MainWindow.nameIndex].Value = f.Name;
+                row.Cells[MainWindow.locationIndex].Value = f.Path;
+                row.Cells[MainWindow.sizeIndex].Value = f.Size();
                 _dataGrid.Rows.Add(row);
             }
         }
@@ -70,7 +70,7 @@ namespace FileTransferTool
 
                 foreach (DataGridViewRow row in _dataGrid.Rows)
                 {
-                    object value = row.Cells[2].Value;
+                    object value = row.Cells[MainWindow.locationIndex].Value;
                     if (value != null && ((String)value).Equals(f.Path))
                     {
                         found = true;
@@ -91,7 +91,7 @@ namespace FileTransferTool
             {
                 if (row.IsNewRow) break;
 
-                object value = row.Cells[2].Value;
+                object value = row.Cells[MainWindow.locationIndex].Value;
                 bool found = false;
 
                 foreach (FileHandler f in _files)

@@ -14,11 +14,16 @@ namespace FileTransferTool
     public partial class MainWindow : Form
     {
 
+        public static int selectIndex= 0;
+        public static int nameIndex = 1;
+        public static int locationIndex = 2;
+        public static int sizeIndex = 3;
+
         public delegate void FilesSelectedHandler(object obj, FilesSelectedEventArgs e);
         public event FilesSelectedHandler FilesSelected;
 
-        public delegate void FilesUnSelectedHandler(object obj, FilesUnSelectedEventArgs e);
-        public event FilesUnSelectedHandler FilesRemoved;
+        public delegate void FilesRemovedHandler(object obj, FilesRemovedEventArgs e);
+        public event FilesRemovedHandler FilesRemoved;
 
         private DataGridViewFileHandlerManager _sharedGridManager;
         private DataGridViewFileHandlerManager _availableGridManager;
@@ -28,15 +33,27 @@ namespace FileTransferTool
             InitializeComponent();
 
             this.SizeChanged += onWindowSizeChange;
-            onWindowSizeChange(this, EventArgs.Empty);
             this.MinimumSize = new Size(this.Width, this.Height);
                        
             downloadButton.Hide();
             removeButton.Hide();
 
             openFileDialog1.Multiselect = true;
+
+            // Init datagrid settings
+            this.availableFilesList.CellValueChanged += availableFileList_OnCellValueChanged;
+            this.availableFilesList.CellMouseUp += availablesharedfileList_OnCellMouseUp;
+            this.sharedFilesList.CellValueChanged += sharedFileList_OnCellValueChanged;
+            this.sharedFilesList.CellMouseUp += sharedfileList_OnCellMouseUp;
+
+            onWindowSizeChange(this, EventArgs.Empty);
         }
 
+
+        /// <summary>
+        /// Initializes grids with their grid managers and files.
+        /// </summary>
+        /// <param name="core"></param>
         public void InitGrids(Core core)
         {
             _sharedGridManager = new DataGridViewFileHandlerManager(sharedFilesList, core.SharedFiles);
@@ -45,23 +62,46 @@ namespace FileTransferTool
             core.AvailableFilesChanged += _availableGridManager.Core_FilesChanged;
         }
 
-
+        /// <summary>
+        /// Handles resizing views when the window size changes.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="e"></param>
         private void onWindowSizeChange(object obj, EventArgs e)
         {
             int width = this.Width;
             int height = this.Height;
 
+            // Adjust available files list size and location
+            availableFilesList.Height = (height - 120) / 2;
             availableFilesList.Location = new Point(12, height - availableFilesList.Height - 50);
             availableFilesList.Width = width - 40;
 
-            sharedFilesList.Location = new Point(12, availableFilesList.Location.Y - sharedFilesList.Height - 30);
+            // Adjust shared files list size and location
+            sharedFilesList.Location = new Point(12, sharedFilesList.Location.Y);
             sharedFilesList.Width = width - 40;
+            sharedFilesList.Height = (availableFilesList.Location.Y - sharedFilesList.Location.Y) - 30;
 
+            // Move labes to match new list locations
             sharedLable.Location = new Point(sharedLable.Location.X, sharedFilesList.Location.Y - 20);
             availableLable.Location = new Point(availableLable.Location.X, availableFilesList.Location.Y - 20);
+
+            // Auto size the size column to fit new list width
+            SharedSizeColumn.Width = sharedFilesList.Width - (SharedCheckColumn.Width + SharedNameColumn.Width + SharedLocationColumn.Width) - 3;
+            AvailSizeColumn.Width = availableFilesList.Width - (AvailCheckColumn.Width + AvailNameColumn.Width + AvailLocationColumn.Width) - 3;
+
+            //Change devider width to match window
+            this.panel1.Width = width;
+            this.panel2.Width = width;
+ 
+
         }
        
-
+        /// <summary>
+        /// Checks if user has selected files. Fires a FilesSelected event if true.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void addFilesButton_Click(object sender, EventArgs e)
         {
 
@@ -73,6 +113,11 @@ namespace FileTransferTool
             }
         }
 
+        /// <summary>
+        /// Checks if user selected a folder. Fires a FilesSelected event if true.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void addFolderButton_Click(object sender, EventArgs e)
         {
             DialogResult result = folderBrowserDialog1.ShowDialog();
@@ -83,27 +128,72 @@ namespace FileTransferTool
             }
         }
 
-        private void sharedFilesList_SelectionChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Checks if changed cell is from the shared checked column.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void sharedFileList_OnCellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            // Check for any selected rows
+            if (e.ColumnIndex == SharedCheckColumn.Index && e.RowIndex != -1)
+            {
+                checkSharedChecks();
+            }
+        }
+
+
+        /// <summary>
+        /// Prevents double clicks on checkboxes from not registering.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void sharedfileList_OnCellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == SharedCheckColumn.Index && e.RowIndex != -1)
+            {
+                sharedFilesList.EndEdit();
+            }
+        }
+
+        /// <summary>
+        /// Checks if changed cell is from the available checked column.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void availableFileList_OnCellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == AvailCheckColumn.Index && e.RowIndex != -1)
+            {
+                checkAvailableChecks();
+            }
+        }
+
+        /// <summary>
+        /// Checks for checked cells in shared checked column.
+        /// </summary>
+        private void checkSharedChecks()
+        {
             foreach (DataGridViewRow row in sharedFilesList.Rows)
             {
-                if (row.Selected)
+                if (Convert.ToBoolean(row.Cells[selectIndex].Value) == true)
                 {
                     removeButton.Show();
                     return;
                 }
             }
             removeButton.Hide();
-            
         }
 
-        private void availableFilesList_SelectionChanged(object sender, EventArgs e)
+
+        /// <summary>
+        /// Checks for checked cells in the available checked column.
+        /// </summary>
+        private void checkAvailableChecks()
         {
-            // Check for any selected rows
             foreach (DataGridViewRow row in availableFilesList.Rows)
             {
-                if (row.Selected)
+                if (Convert.ToBoolean(row.Cells[selectIndex].Value) == true)
                 {
                     downloadButton.Show();
                     return;
@@ -111,6 +201,49 @@ namespace FileTransferTool
             }
 
             downloadButton.Hide();
+        }
+
+        /// <summary>
+        /// Prevents double clicks on check boxes from not registering.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void availablesharedfileList_OnCellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == AvailCheckColumn.Index && e.RowIndex != -1)
+            {
+                availableFilesList.EndEdit();
+            }
+        }
+
+
+        /// <summary>
+        /// Invokes a FilesRemoved event with the list of checked shared files.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void removeButton_Click(object sender, EventArgs e)
+        {
+            String[] files = new String[sharedFilesList.Rows.Count];
+            int count = 0;
+
+            foreach (DataGridViewRow row in sharedFilesList.Rows)
+            {
+                if (Convert.ToBoolean(row.Cells[selectIndex].Value) == true)
+                {
+                    files[count] = row.Cells[locationIndex].Value.ToString();
+                    count++;
+                }
+            }
+
+            if (count > 0)
+            {
+                FilesRemoved.Invoke(this, new FilesRemovedEventArgs(files));
+            }
+
+            //sharedFilesList.EndEdit();
+            checkSharedChecks();
         }
 
 
@@ -123,15 +256,13 @@ namespace FileTransferTool
             }
         }
 
-        public class FilesUnSelectedEventArgs : EventArgs
+        public class FilesRemovedEventArgs : EventArgs
         {
             public String[] Files { get; }
-            public FilesUnSelectedEventArgs(String[] files)
+            public FilesRemovedEventArgs(String[] files)
             {
                 this.Files = files;
             }
         }
-
-        
     }
 }
