@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace CoreLibrary
 {
@@ -28,6 +29,9 @@ namespace CoreLibrary
 
         public void AddSharedFile(String path)
         {
+
+            if (!checkExists(path)) return;
+
             // Check if a file with the same path already exists in the list.
             foreach (FileHandler f in SharedFiles)
             {
@@ -47,9 +51,22 @@ namespace CoreLibrary
                 {
                     SharedFiles.Remove(f);
                     SharedFilesChanged.Invoke(this, EventArgs.Empty);
+                    f.Dispose();
                     return;
                 }
             }         
+        }
+
+        /// <summary>
+        /// Checks if a file or directory exists at the given path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private bool checkExists(String path)
+        {
+            if (File.Exists(path) || Directory.Exists(path)) return true;
+
+            return false;
         }
 
         private void addAvailableFile(String path)

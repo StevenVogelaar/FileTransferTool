@@ -25,8 +25,8 @@ namespace FileTransferTool
         public delegate void FilesRemovedHandler(object obj, FilesRemovedEventArgs e);
         public event FilesRemovedHandler FilesRemoved;
 
-        private DataGridViewFileHandlerManager _sharedGridManager;
-        private DataGridViewFileHandlerManager _availableGridManager;
+        private DataGridViewFileHandlerAdapter _sharedGridManager;
+        private DataGridViewFileHandlerAdapter _availableGridManager;
 
         public MainWindow()
         {
@@ -46,19 +46,20 @@ namespace FileTransferTool
             this.sharedFilesList.CellValueChanged += sharedFileList_OnCellValueChanged;
             this.sharedFilesList.CellMouseUp += sharedfileList_OnCellMouseUp;
 
+
             onWindowSizeChange(this, EventArgs.Empty);
         }
 
-
+     
         /// <summary>
         /// Initializes grids with their grid managers and files.
         /// </summary>
         /// <param name="core"></param>
         public void InitGrids(Core core)
         {
-            _sharedGridManager = new DataGridViewFileHandlerManager(sharedFilesList, core.SharedFiles);
+            _sharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList, core.SharedFiles);
             core.SharedFilesChanged += _sharedGridManager.Core_FilesChanged;
-            _availableGridManager = new DataGridViewFileHandlerManager(availableFilesList, core.AvailableFiles);
+            _availableGridManager = new DataGridViewFileHandlerAdapter(availableFilesList, core.AvailableFiles);
             core.AvailableFilesChanged += _availableGridManager.Core_FilesChanged;
         }
 
@@ -96,6 +97,8 @@ namespace FileTransferTool
  
 
         }
+
+
        
         /// <summary>
         /// Checks if user has selected files. Fires a FilesSelected event if true.
@@ -245,6 +248,9 @@ namespace FileTransferTool
             //sharedFilesList.EndEdit();
             checkSharedChecks();
         }
+
+
+        
 
 
         public class FilesSelectedEventArgs : EventArgs
