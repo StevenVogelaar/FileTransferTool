@@ -24,6 +24,7 @@ namespace FileTransferTool
             _core.SharedFilesChanged += new Core.SharedFilesChangedHandler(SharedFilesChanged_handler);
             window.FilesSelected += MainWindow_FileSelected;
             window.FilesRemoved += MainWindow_FilesRemoved;
+            window.RefreshClients += MainWindow_RefreshClients;
 
             window.InitGrids(_core);
         }
@@ -38,6 +39,11 @@ namespace FileTransferTool
         public void SharedFilesChanged_handler(object obj, EventArgs args)
         {
             
+        }
+
+        public void MainWindow_RefreshClients(object obj, EventArgs args)
+        {
+            _core.RefreshClients();
         }
 
 

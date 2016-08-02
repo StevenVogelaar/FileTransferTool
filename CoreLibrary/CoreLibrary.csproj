@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connection.cs" />
+    <Compile Include="ConnectionListener.cs" />
+    <Compile Include="ConnectionManager.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="FileHandler.cs" />
     <Compile Include="FileHandlerTools.cs" />

@@ -19,11 +19,14 @@ namespace FileTransferTool
         public static int locationIndex = 2;
         public static int sizeIndex = 3;
 
-        public delegate void FilesSelectedHandler(object obj, FilesSelectedEventArgs e);
+        public delegate void FilesSelectedHandler(object sender, FilesSelectedEventArgs e);
         public event FilesSelectedHandler FilesSelected;
 
-        public delegate void FilesRemovedHandler(object obj, FilesRemovedEventArgs e);
+        public delegate void FilesRemovedHandler(object sender, FilesRemovedEventArgs e);
         public event FilesRemovedHandler FilesRemoved;
+
+        public delegate void RefreshClientsHandler(object sender, EventArgs e);
+        public event RefreshClientsHandler RefreshClients;
 
         private DataGridViewFileHandlerAdapter _sharedGridManager;
         private DataGridViewFileHandlerAdapter _availableGridManager;
@@ -269,6 +272,11 @@ namespace FileTransferTool
             {
                 this.Files = files;
             }
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshClients.Invoke(this, EventArgs.Empty);
         }
     }
 }

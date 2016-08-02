@@ -21,10 +21,14 @@ namespace CoreLibrary
         public List<FileHandler> AvailableFiles { get; }
 
 
+        private ConnectionManager _connectionManager;
+
+
         public Core()
         {
             SharedFiles = new List<FileHandler>();
             AvailableFiles = new List<FileHandler>();
+            _connectionManager = new ConnectionManager();
         }
 
         public void AddSharedFile(String path)
@@ -55,6 +59,12 @@ namespace CoreLibrary
                     return;
                 }
             }         
+        }
+
+        public void RefreshClients()
+        {
+            _connectionManager.RefreshConnections();
+            //_connectionManager.Connect();
         }
 
         /// <summary>

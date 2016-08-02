@@ -92,6 +92,7 @@
             this.refreshButton.TabIndex = 6;
             this.refreshButton.Text = "Refresh List";
             this.refreshButton.UseVisualStyleBackColor = true;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
             // downloadButton
             // 
