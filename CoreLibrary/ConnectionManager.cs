@@ -10,17 +10,25 @@ using System.Net.NetworkInformation;
 
 namespace CoreLibrary
 {
-    class ConnectionManager
+    class ConnectionManager : IDisposable
     {
 
+        public const String MULTICAST_IP = "227.42.123.96";
+        public const Int32 MULTICAST_PORT = 3896;
+
+
         private ConnectionListener _connectionListener;
+        private Sender _sender;
         private List<Connection> _connectionList;
         private String ipBase;
+
 
         public ConnectionManager()
         {
             _connectionListener = new ConnectionListener();
+            _sender = new Sender();
             _connectionList = new List<Connection>();
+            _connectionListener.Start();
         }
 
 
@@ -31,17 +39,13 @@ namespace CoreLibrary
         public void RefreshConnections()
         {
 
-            ipBase = getIPBase();
+            _sender.SendMessage(new Message("HEREZ A MESSAGE"));
+            
+        }
 
-            // Discover new hosts
-            for (int i = 1; i < 255; i++)
-            {
-                String ip = ipBase + i.ToString();
-
-                Ping p = new Ping();
-                p.PingCompleted += new PingCompletedEventHandler(ping_PingCompleted);
-                p.SendAsync(ip, 100, ip);
-            }
+        private void start()
+        {
+            
         }
 
 
@@ -73,7 +77,7 @@ namespace CoreLibrary
         }
 
 
-        private IPAddress LocalIPAddress()
+        public static IPAddress LocalIPAddress()
         {
             if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
             {
@@ -87,6 +91,9 @@ namespace CoreLibrary
                 .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
         }
 
-
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
