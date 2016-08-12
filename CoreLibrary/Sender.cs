@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows.Forms;
+using System.Runtime.Serialization.Json;
 
 
 namespace CoreLibrary
@@ -13,15 +15,18 @@ namespace CoreLibrary
     class Sender : IDisposable
     {
 
-        Thread _thread;
-        UdpClient _udpClient;
-        IPEndPoint _ipEndPoint;
+        private Thread _thread;
+        private UdpClient _broadcaster;
+        private IPEndPoint _ipEndPoint;
+        private DataContractJsonSerializer _serializer;
+        private List<UdpClient> _additionalClients;
 
         public Sender()
         {
-            _udpClient = new UdpClient();
-            _udpClient.JoinMulticastGroup(IPAddress.Parse(ConnectionManager.MULTICAST_IP));
+            _broadcaster = new UdpClient();
+            _broadcaster.JoinMulticastGroup(IPAddress.Parse(ConnectionManager.MULTICAST_IP));
             _ipEndPoint = new IPEndPoint(IPAddress.Parse(ConnectionManager.MULTICAST_IP), ConnectionManager.MULTICAST_PORT);
+            _additionalClients = new List<UdpClient>();
         }
 
         private static Byte[] getByteArray(Char[] message)
@@ -35,35 +40,36 @@ namespace CoreLibrary
 
         public void SendMessage(Message message)
         {
-            _thread = new Thread(attemptSend);
-            _thread.IsBackground = true;
-            _thread.Start(message);
-        }
-
-        private void attemptSend(object messageObj)
-        {
-            Message message = (Message)messageObj;
-            Console.WriteLine("dawfdawfaw");
 
             try
             {
-                byte[] data = getByteArray(message.DataAsJSON().ToCharArray());
-                _udpClient.Send(data,data.Length, _ipEndPoint);
+                byte[] data = getByteArray("Hallo world".ToCharArray());
 
-                Console.WriteLine("Sent message: " + message.DataAsJSON());
+                // Send data using the broadcaster using UDP multicasting.
+                _broadcaster.SendAsync(data, data.Length, _ipEndPoint);
+
+                // Send data to specific targets added to the additionalClient list.
+                foreach (UdpClient c in _additionalClients)
+                {
+                    c.SendAsync(data, data.Length, _ipEndPoint);
+                }
+
+                Console.WriteLine("Sent message: " + "meh");
+                MessageBox.Show("Sent message: " + "meh");
             }
             catch (Exception e)
             {
                 Console.WriteLine("\n" + e.Message + "\n" + e.StackTrace + "\n");
             }
-        
         }
+
+     
 
         public void Dispose()
         {
-            lock (_udpClient)
+            lock (_broadcaster)
             {
-                _udpClient.Close();
+                _broadcaster.Close();
             }
         }
     }

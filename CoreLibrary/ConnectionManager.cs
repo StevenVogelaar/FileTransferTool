@@ -39,7 +39,7 @@ namespace CoreLibrary
         public void RefreshConnections()
         {
 
-            _sender.SendMessage(new Message("HEREZ A MESSAGE"));
+            _sender.SendMessage(new Message() {Success = false, IPAddress = LocalIPAddress().ToString(), Msg = "Hello this is a test message" });
             
         }
 

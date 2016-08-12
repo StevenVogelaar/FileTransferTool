@@ -13,16 +13,16 @@ namespace CoreLibrary
         private TcpClient _client;
         private Thread _thread;
         private NetworkStream _stream;
-        private String _server;
+        private String _ip;
         private Int32 _port;
 
 
-        public Connection(String server)
+        public Connection(String ip)
         {
             _thread = new Thread(initiateConnect);
             _thread.IsBackground = true;
             _port = 2943;
-            _server = server;
+            _ip = ip;
         }
 
         private void initiateConnect()
@@ -31,7 +31,7 @@ namespace CoreLibrary
             try
             {
 
-                _client = new TcpClient(_server, _port);
+                _client = new TcpClient(_ip, _port);
                 _stream = _client.GetStream();
 
 
