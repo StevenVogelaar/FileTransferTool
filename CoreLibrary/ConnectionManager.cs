@@ -20,7 +20,6 @@ namespace CoreLibrary
         private ConnectionListener _connectionListener;
         private Sender _sender;
         private List<Connection> _connectionList;
-        private String ipBase;
 
 
         public ConnectionManager()
@@ -49,12 +48,6 @@ namespace CoreLibrary
         }
 
 
-        private void ping_PingCompleted(object sender, PingCompletedEventArgs e)
-        {
-            Console.WriteLine("IP: " + e.Reply.Address + " Status: " + e.Reply.Status);
-        }
-
-
         public void Connect()
         {
             Connection connection = new Connection("192.168.0.12");
@@ -77,6 +70,10 @@ namespace CoreLibrary
         }
 
 
+        /// <summary>
+        /// Returns the local IPV4 address of the computer.
+        /// </summary>
+        /// <returns></returns>
         public static IPAddress LocalIPAddress()
         {
             if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())

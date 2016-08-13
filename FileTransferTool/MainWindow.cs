@@ -30,6 +30,7 @@ namespace FileTransferTool
 
         private DataGridViewFileHandlerAdapter _sharedGridManager;
         private DataGridViewFileHandlerAdapter _availableGridManager;
+        private ListViewConsoleAdapter _listViewConsoleAdapter;
 
         public MainWindow()
         {
@@ -48,17 +49,29 @@ namespace FileTransferTool
             this.availableFilesList.CellMouseUp += availablesharedfileList_OnCellMouseUp;
             this.sharedFilesList.CellValueChanged += sharedFileList_OnCellValueChanged;
             this.sharedFilesList.CellMouseUp += sharedfileList_OnCellMouseUp;
+            this.Load += onLoad;
+            _listViewConsoleAdapter = new ListViewConsoleAdapter(MessageConsole);
 
+
+            
+            this.BackColor = Color.LightGray;
 
             onWindowSizeChange(this, EventArgs.Empty);
         }
 
+
+
+        private void onLoad(object sender, EventArgs e)
+        {
+            FTTConsole.ConsoleMessage += _listViewConsoleAdapter.ConsoleMessaged;
+        }
+
      
         /// <summary>
-        /// Initializes grids with their grid managers and files.
+        /// Initializes grids with their grid managers.
         /// </summary>
         /// <param name="core"></param>
-        public void InitGrids(Core core)
+        public void Init(Core core)
         {
             _sharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList, core.SharedFiles);
             core.SharedFilesChanged += _sharedGridManager.Core_FilesChanged;
@@ -76,29 +89,32 @@ namespace FileTransferTool
             int width = this.Width;
             int height = this.Height;
 
-            // Adjust available files list size and location
-            availableFilesList.Height = (height - 120) / 2;
-            availableFilesList.Location = new Point(12, height - availableFilesList.Height - 50);
+            // Adjust available files list size and location.
+            availableFilesList.Height = (height - 206) / 2;
+            availableFilesList.Location = new Point(12, height - availableFilesList.Height - 150);
             availableFilesList.Width = width - 40;
 
-            // Adjust shared files list size and location
+            // Adjust shared files list size and location.
             sharedFilesList.Location = new Point(12, sharedFilesList.Location.Y);
             sharedFilesList.Width = width - 40;
             sharedFilesList.Height = (availableFilesList.Location.Y - sharedFilesList.Location.Y) - 30;
 
-            // Move labes to match new list locations
+            // Move labes to match new list locations.
             sharedLable.Location = new Point(sharedLable.Location.X, sharedFilesList.Location.Y - 20);
             availableLable.Location = new Point(availableLable.Location.X, availableFilesList.Location.Y - 20);
 
-            // Auto size the size column to fit new list width
+            // Auto size the size column to fit new list width.
             SharedSizeColumn.Width = sharedFilesList.Width - (SharedCheckColumn.Width + SharedNameColumn.Width + SharedLocationColumn.Width) - 3;
             AvailSizeColumn.Width = availableFilesList.Width - (AvailCheckColumn.Width + AvailNameColumn.Width + AvailLocationColumn.Width) - 3;
 
-            //Change devider width to match window
+            // Change devider width to match window.
             this.panel1.Width = width;
             this.panel2.Width = width;
- 
 
+            // Adjust console width.
+            MessageConsole.Width = width - 40;
+            MessageConsole.Location = new Point(12, height - 125);
+            MessageColumn.Width = MessageConsole.Width - 25;
         }
 
 
@@ -254,8 +270,6 @@ namespace FileTransferTool
 
 
         
-
-
         public class FilesSelectedEventArgs : EventArgs
         {
             public String[] Files { get; }
@@ -263,6 +277,8 @@ namespace FileTransferTool
             {
                 this.Files = files;
             }
+
+            
         }
 
         public class FilesRemovedEventArgs : EventArgs
@@ -278,5 +294,6 @@ namespace FileTransferTool
         {
             RefreshClients.Invoke(this, EventArgs.Empty);
         }
+
     }
 }

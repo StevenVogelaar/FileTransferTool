@@ -25,6 +25,7 @@ namespace CoreLibrary
         {
             _broadcaster = new UdpClient();
             _broadcaster.JoinMulticastGroup(IPAddress.Parse(ConnectionManager.MULTICAST_IP));
+            _broadcaster.MulticastLoopback = false;
             _ipEndPoint = new IPEndPoint(IPAddress.Parse(ConnectionManager.MULTICAST_IP), ConnectionManager.MULTICAST_PORT);
             _additionalClients = new List<UdpClient>();
         }
@@ -54,12 +55,12 @@ namespace CoreLibrary
                     c.SendAsync(data, data.Length, _ipEndPoint);
                 }
 
-                Console.WriteLine("Sent message: " + "meh");
-                MessageBox.Show("Sent message: " + "meh");
+                FTTConsole.AddDebug("Sent Message: ");
             }
             catch (Exception e)
             {
                 Console.WriteLine("\n" + e.Message + "\n" + e.StackTrace + "\n");
+                FTTConsole.AddError("\n" + e.Message + "\n" + e.StackTrace + "\n");
             }
         }
 

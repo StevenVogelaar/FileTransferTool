@@ -26,7 +26,7 @@ namespace FileTransferTool
             window.FilesRemoved += MainWindow_FilesRemoved;
             window.RefreshClients += MainWindow_RefreshClients;
 
-            window.InitGrids(_core);
+            window.Init(_core);
         }
 
 

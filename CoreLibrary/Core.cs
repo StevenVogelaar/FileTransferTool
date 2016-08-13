@@ -20,17 +20,23 @@ namespace CoreLibrary
         public List<FileHandler> SharedFiles { get; }
         public List<FileHandler> AvailableFiles { get; }
 
-
         private ConnectionManager _connectionManager;
 
 
         public Core()
         {
+            FTTConsole.Init();
             SharedFiles = new List<FileHandler>();
             AvailableFiles = new List<FileHandler>();
             _connectionManager = new ConnectionManager();
+            FTTConsole.Init();
         }
 
+
+        /// <summary>
+        /// Add a local shared file to the list, which will be made avaialable to other clients.
+        /// </summary>
+        /// <param name="path"></param>
         public void AddSharedFile(String path)
         {
 
@@ -46,6 +52,10 @@ namespace CoreLibrary
             SharedFilesChanged.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Removes a local shared file from the list available to othe clients.
+        /// </summary>
+        /// <param name="path"></param>
         public void RemoveSharedFile(String path)
         {
             // Check to see if file with the given path name exists in the list.
@@ -61,6 +71,10 @@ namespace CoreLibrary
             }         
         }
 
+
+        /// <summary>
+        /// Broadcasts info request to all other clients to update client list.
+        /// </summary>
         public void RefreshClients()
         {
             _connectionManager.RefreshConnections();

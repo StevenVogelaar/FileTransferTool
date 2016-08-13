@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.availableLable = new System.Windows.Forms.Label();
             this.sharedLable = new System.Windows.Forms.Label();
             this.addFilesButton = new System.Windows.Forms.Button();
@@ -52,6 +52,8 @@
             this.AvailSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.MessageConsole = new System.Windows.Forms.ListView();
+            this.MessageColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.sharedFilesList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.availableFilesList)).BeginInit();
             this.SuspendLayout();
@@ -143,6 +145,7 @@
             this.sharedFilesList.AllowUserToDeleteRows = false;
             this.sharedFilesList.AllowUserToResizeRows = false;
             this.sharedFilesList.BackgroundColor = System.Drawing.Color.White;
+            this.sharedFilesList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.sharedFilesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.sharedFilesList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.SharedCheckColumn,
@@ -152,9 +155,9 @@
             this.sharedFilesList.Location = new System.Drawing.Point(16, 145);
             this.sharedFilesList.Name = "sharedFilesList";
             this.sharedFilesList.RowHeadersVisible = false;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.sharedFilesList.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.Black;
+            this.sharedFilesList.RowsDefaultCellStyle = dataGridViewCellStyle11;
             this.sharedFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.sharedFilesList.Size = new System.Drawing.Size(778, 169);
             this.sharedFilesList.TabIndex = 13;
@@ -195,6 +198,7 @@
             this.availableFilesList.AllowUserToDeleteRows = false;
             this.availableFilesList.AllowUserToResizeRows = false;
             this.availableFilesList.BackgroundColor = System.Drawing.Color.White;
+            this.availableFilesList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.availableFilesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.availableFilesList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.AvailCheckColumn,
@@ -205,9 +209,9 @@
             this.availableFilesList.Name = "availableFilesList";
             this.availableFilesList.RowHeadersVisible = false;
             this.availableFilesList.RowHeadersWidth = 40;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            this.availableFilesList.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Black;
+            this.availableFilesList.RowsDefaultCellStyle = dataGridViewCellStyle12;
             this.availableFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.availableFilesList.Size = new System.Drawing.Size(778, 251);
             this.availableFilesList.TabIndex = 14;
@@ -256,11 +260,29 @@
             this.panel2.Size = new System.Drawing.Size(800, 118);
             this.panel2.TabIndex = 16;
             // 
+            // MessageConsole
+            // 
+            this.MessageConsole.AccessibleDescription = "";
+            this.MessageConsole.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.MessageColumn});
+            this.MessageConsole.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.MessageConsole.Location = new System.Drawing.Point(16, 602);
+            this.MessageConsole.Name = "MessageConsole";
+            this.MessageConsole.Size = new System.Drawing.Size(778, 76);
+            this.MessageConsole.TabIndex = 17;
+            this.MessageConsole.UseCompatibleStateImageBehavior = false;
+            this.MessageConsole.View = System.Windows.Forms.View.Details;
+            // 
+            // MessageColumn
+            // 
+            this.MessageColumn.Text = "";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(804, 621);
+            this.ClientSize = new System.Drawing.Size(810, 690);
+            this.Controls.Add(this.MessageConsole);
             this.Controls.Add(this.sharedFilesList);
             this.Controls.Add(this.availableFilesList);
             this.Controls.Add(this.connectionStatusLable);
@@ -305,6 +327,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn AvailSizeColumn;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.ListView MessageConsole;
+        private System.Windows.Forms.ColumnHeader MessageColumn;
     }
 }
 

@@ -20,9 +20,22 @@ namespace FileTransferTool
 
             MainWindow mainWindow = new MainWindow();
             Manager manager = new Manager(mainWindow);
-            
-            
-            Application.Run(mainWindow);
+
+            while (true)
+            {
+                if (mainWindow != null)
+                {
+                    try
+                    {
+                        Application.Run(mainWindow);
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("AKWTKAWTAWKTGKAWTG\n" + e.StackTrace);
+                    }
+                }
+            }
         }
     }
 }

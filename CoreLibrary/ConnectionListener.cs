@@ -22,13 +22,15 @@ namespace CoreLibrary
         public ConnectionListener()
         {
             _udpClients = new List<UdpClient>();
-            _ipEndPoint = new IPEndPoint(IPAddress.Any, ConnectionManager.MULTICAST_PORT);
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(ConnectionManager.MULTICAST_IP), ConnectionManager.MULTICAST_PORT);
         }
 
         public void Start()
         {
-            
+
             IPAddress[] iplist = Dns.GetHostAddresses(Dns.GetHostName());
+            //IPAddress[] iplist = new IPAddress[] { IPAddress.Parse("192.168.0.2") };
+
 
             // Initialize UDP Clients on each IPV4 address this PC has.
             foreach (IPAddress s in iplist)
@@ -42,8 +44,7 @@ namespace CoreLibrary
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
-                        MessageBox.Show(e.Message);
+                        FTTConsole.AddError(e.Message);
                     }
                 }
             }
@@ -69,32 +70,25 @@ namespace CoreLibrary
                 String msg = "";
                 ASCIIEncoding ascii = new ASCIIEncoding();
 
-                IPAddress[] iplist = Dns.GetHostAddresses(Dns.GetHostName());
-
-                foreach (IPAddress s in iplist)
-                {
-                    
-                    Console.WriteLine(s.ToString());
-                }
-
+                
                 while (true)
                 {
 
-                    Console.WriteLine("Waiting for message");
+                    FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
                     Byte[] data = udpClient.Receive(ref _ipEndPoint);
                     msg = ascii.GetString(data);
-
-                    Console.WriteLine("Recived: " + msg);
-                    MessageBox.Show("Recived: " + msg);
+                    FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
 
                     if (msg.Equals("quit")) break;
                 }
 
+                FTTConsole.AddDebug("Stopped listening on: " + udpClient.Client.LocalEndPoint);
+
             }
             catch (Exception e)
             {
-                MessageBox.Show("Error Occured when trying to listen to stuff: " + e.Message);
-                Console.WriteLine(e.StackTrace);
+                FTTConsole.AddError("Error Occured when trying to listen to stuff: " + e.Message);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
             }
             finally

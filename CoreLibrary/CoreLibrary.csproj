@@ -48,6 +48,8 @@
     <Compile Include="Core.cs" />
     <Compile Include="FileHandler.cs" />
     <Compile Include="FileHandlerTools.cs" />
+    <Compile Include="FTTConsole.cs" />
+    <Compile Include="FTTConsoleMessage.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sender.cs" />
