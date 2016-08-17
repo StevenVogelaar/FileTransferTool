@@ -17,17 +17,21 @@ namespace CoreLibrary
         public const Int32 MULTICAST_PORT = 3896;
 
 
-        private ConnectionListener _connectionListener;
-        private Sender _sender;
+        private BroadcastListener _broadcastListener;
+        private BroadcastSender _broadcastSender;
         private List<Connection> _connectionList;
+        private Queue<Message> _messageQueue;
 
 
         public ConnectionManager()
         {
-            _connectionListener = new ConnectionListener();
-            _sender = new Sender();
+            _broadcastListener = new BroadcastListener();
+            _broadcastSender = new BroadcastSender();
             _connectionList = new List<Connection>();
-            _connectionListener.Start();
+            _broadcastListener.Start();
+
+            _broadcastListener.BroadcastRequest += BroadcastListener_BroadcastRequest;
+            _broadcastListener.MessageReceived += BroadcastListener_MessageReceived;
         }
 
 
@@ -38,8 +42,21 @@ namespace CoreLibrary
         public void RefreshConnections()
         {
 
-            _sender.SendMessage(new Message() {Success = false, IPAddress = LocalIPAddress().ToString(), Msg = "Hello this is a test message" });
+            _broadcastSender.SendMessage(new Message() {RequestBroadcast = true, IPAddress = LocalIPAddress().ToString(), Msg = "Hello this is a test message" });
             
+        }
+
+
+        public void BroadcastListener_BroadcastRequest(object sender, EventArgs e)
+        {
+
+        }
+
+        public void BroadcastListener_MessageReceived(object sender, BroadcastListener.MessageReceivedEventArgs e)
+        {
+            Message message = e.Msg;
+
+            Console.WriteLine("Received message yay: " + message.Msg);
         }
 
         private void start()
@@ -90,7 +107,8 @@ namespace CoreLibrary
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _broadcastSender.Dispose();
+            _broadcastListener.Dispose();
         }
     }
 }

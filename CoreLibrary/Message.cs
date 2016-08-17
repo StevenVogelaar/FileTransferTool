@@ -10,15 +10,24 @@ namespace CoreLibrary
     [DataContract]
     class Message
     {
-        [DataMember]
-        public bool Success { get; set; }
-        [DataMember]
+        [DataMember (Name = "RequestBroadcast")]
+        public bool RequestBroadcast { get; set; }
+        [DataMember (Name = "Msg")]
         public String Msg { get; set; }
-        [DataMember]
+        [DataMember (Name = "IPAddress")]
         public String IPAddress { get; set; }
+        [DataMember(Name = "SharedFiles")]
+        public FTTFileInfo[] SharedFiles { get; set; }
 
-        public Message()
+       
+        [DataContract]
+        [KnownType(typeof(FTTFileInfo))]
+        public class FTTFileInfo
         {
+            [DataMember (Name = "FileName")]
+            public String FileName { get; set; }
+            [DataMember (Name = "Size")]
+            public String Size { get; set; }
         }
 
     }
