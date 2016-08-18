@@ -14,28 +14,25 @@ namespace FileTransferTool
     /// 
     /// Add the Core_FilesChange to an event trigger for updating the grid view.
     /// </summary>
-    public class DataGridViewFileHandlerAdapter
+    public class DataGridViewFileHandlerAdapter : DataGridViewManager
     {
 
         private DataGridView _dataGrid;
-        private List<FileHandler> _files;
-
         
         public DataGridViewFileHandlerAdapter(DataGridView dataGrid, List<FileHandler> files)
         {
             _dataGrid = dataGrid;
-            _files = files;
             dataGrid.SortCompare += new DataGridViewSortCompareEventHandler(dataViewGrid_SortCompare);
-            initDataGrid();
+            initDataGrid(files);
         }
 
 
         /// <summary>
         /// Initializes the data grid if there are already files
         /// </summary>
-        private void initDataGrid()
+        private void initDataGrid(List<FileHandler> files)
         {
-            foreach (FileHandler f in _files)
+            foreach (FileHandler f in files)
             {
                 f.FileInfoChanged += fileHandler_FileInfoChanged;
 
@@ -53,20 +50,20 @@ namespace FileTransferTool
         /// </summary>
         /// <param name="e"></param>
         /// <param name="e"></param>
-        public void Core_FilesChanged(object obj, EventArgs e)
+        public void Core_FilesChanged(object obj, Core.SharedFilesChangedEventArgs e)
         {
-            syncGrid();
+            syncGrid(e.Files);
         }
 
 
         /// <summary>
         /// Called when a change occurs. Will remove and add files to the grid view as needed.
         /// </summary>
-        private void syncGrid()
+        private void syncGrid(List<FileHandler> files)
         {
 
             // Check if files exist in the files list and not in grid view (adding files to grid).
-            foreach (FileHandler f in _files)
+            foreach (FileHandler f in files)
             {
                 bool found = false;
 
@@ -96,7 +93,7 @@ namespace FileTransferTool
                 object value = row.Cells[MainWindow.locationIndex].Value;
                 bool found = false;
 
-                foreach (FileHandler f in _files)
+                foreach (FileHandler f in files)
                 {
                     
                     if (value == null || f.Path.Equals((String)value))
@@ -135,84 +132,6 @@ namespace FileTransferTool
       
             
             //_dataGrid.Refresh();
-        }
-
-
-        /// <summary>
-        /// Custom sorting code for the size column.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="e"></param>
-        private void dataViewGrid_SortCompare(object obj, DataGridViewSortCompareEventArgs e)
-        {
-            if (e.Column.Name == "SharedSizeColumn" || e.Column.Name == "AvailSizeColumn")
-            {
-
-                int rank1 = parseSizeCategory((String)e.CellValue1);
-                int rank2 = parseSizeCategory((String)e.CellValue2);
-
-                // Try to sort by size category (Bytes, KiB, MiB, GiB).
-                if (rank1 < rank2)
-                {
-                    e.SortResult = -1;
-                    e.Handled = true;
-                    return;
-                }
-                else if (rank2 < rank1)
-                {
-                    e.SortResult = 1;
-                    e.Handled = true;
-                    return;
-                }
-
-                // Size categories are the same, so sort based on number size
-                try
-                {
-                    float length1 = float.Parse(((String)e.CellValue1).Split(' ')[0]);
-                    float length2 = float.Parse(((String)e.CellValue2).Split(' ')[0]);
-
-                    if (length1 < length2)
-                    {
-                        e.SortResult = -1;
-                        e.Handled = true;
-                        return;
-                    }
-                    else if (length2 < length1)
-                    {
-                        e.SortResult = 1;
-                        e.Handled = true;
-                        return;
-                    }
-                    else
-                    {
-                        e.SortResult = 0;
-                        e.Handled = true;
-                        return;
-                    }
-                }
-                catch (Exception exception)
-                {
-                    e.Handled = false;
-                }
-            }
-            else e.Handled = false;
-        }
-
-        /// <summary>
-        /// Returns an integer based on the size category (Byte, KiB, MiB, GiB).
-        /// </summary>
-        /// <param name="size"></param>
-        /// <returns>0 = Byte, 1 = KiB, 2 = MiB, 3 = GiB</returns>
-        private int parseSizeCategory(String size)
-        {
-            int rank;
-            if (size.Contains("Bytes")) rank = 0;
-            else if (size.Contains("KiB")) rank = 1;
-            else if (size.Contains("MiB")) rank = 2;
-            else if (size.Contains("GiB")) rank = 3;
-            else rank = 4;
-
-            return rank;
         }
 
 

@@ -29,7 +29,7 @@ namespace FileTransferTool
         public event RefreshClientsHandler RefreshClients;
 
         private DataGridViewFileHandlerAdapter _sharedGridManager;
-        private DataGridViewFileHandlerAdapter _availableGridManager;
+        private DataGridViewFTTFileInfoAdapter _availableGridManager;
         private ListViewConsoleAdapter _listViewConsoleAdapter;
 
         public MainWindow()
@@ -73,9 +73,9 @@ namespace FileTransferTool
         /// <param name="core"></param>
         public void Init(Core core)
         {
-            _sharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList, core.SharedFiles);
+            _sharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList, Core.SharedFiles.CopyOfList());
             core.SharedFilesChanged += _sharedGridManager.Core_FilesChanged;
-            _availableGridManager = new DataGridViewFileHandlerAdapter(availableFilesList, core.AvailableFiles);
+            _availableGridManager = new DataGridViewFTTFileInfoAdapter(availableFilesList, Core.AvailableFiles.CopyOfList());
             core.AvailableFilesChanged += _availableGridManager.Core_FilesChanged;
         }
 
@@ -295,5 +295,9 @@ namespace FileTransferTool
             RefreshClients.Invoke(this, EventArgs.Empty);
         }
 
+        private void availableFilesList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

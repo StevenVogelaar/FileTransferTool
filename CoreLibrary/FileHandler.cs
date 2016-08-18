@@ -136,13 +136,7 @@ namespace CoreLibrary
         }
 
 
-        public class FileInfoChangedEventArgs
-        {
-            public String Name { get; set; }
-            public String Size { get; set; }
-            public String Path { get; set; }
-        }
-
+       
 
         /// <summary>
         /// Called after the size of the file or folder has been calculated.
@@ -174,5 +168,19 @@ namespace CoreLibrary
         {
             sizeCheckWorker.CancelAsync();
         }
+
+
+        public FTTFileInfo GetFileInfo()
+        {
+            return new FTTFileInfo { Name = Name, Size = Size };
+        }
+
+        public class FileInfoChangedEventArgs
+        {
+            public String Name { get; set; }
+            public String Size { get; set; }
+            public String Path { get; set; }
+        }
+
     }
 }

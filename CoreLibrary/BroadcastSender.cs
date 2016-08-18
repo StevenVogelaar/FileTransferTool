@@ -19,7 +19,6 @@ namespace CoreLibrary
         private Thread _thread;
         private UdpClient _broadcaster;
         private IPEndPoint _ipEndPoint;
-        private DataContractJsonSerializer _serializer;
         private List<UdpClient> _additionalClients;
         private Queue<Message> _messageQueue;
 

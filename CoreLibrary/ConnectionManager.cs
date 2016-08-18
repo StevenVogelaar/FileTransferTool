@@ -16,11 +16,16 @@ namespace CoreLibrary
         public const String MULTICAST_IP = "227.42.123.96";
         public const Int32 MULTICAST_PORT = 3896;
 
+        public delegate void AvailableFilesReceivedHandler(object sender, AvailableFilesReceivedEventArgs e);
+        public event AvailableFilesReceivedHandler AvailableFilesReceived;
+
 
         private BroadcastListener _broadcastListener;
         private BroadcastSender _broadcastSender;
         private List<Connection> _connectionList;
-        private Queue<Message> _messageQueue;
+        //private Queue<Message> _messageQueue;
+
+        SynchronizationContext context;
 
 
         public ConnectionManager()
@@ -30,10 +35,9 @@ namespace CoreLibrary
             _connectionList = new List<Connection>();
             _broadcastListener.Start();
 
-            _broadcastListener.BroadcastRequest += BroadcastListener_BroadcastRequest;
-            _broadcastListener.MessageReceived += BroadcastListener_MessageReceived;
+            _broadcastListener.MessageReceived += broadcastListener_MessageReceived;
+            context = SynchronizationContext.Current;
         }
-
 
 
         /// <summary>
@@ -41,22 +45,34 @@ namespace CoreLibrary
         /// </summary>
         public void RefreshConnections()
         {
-
-            _broadcastSender.SendMessage(new Message() {RequestBroadcast = true, IPAddress = LocalIPAddress().ToString(), Msg = "Hello this is a test message" });
-            
+            _broadcastSender.SendMessage(new Message() {RequestBroadcast = true, IPAddress = LocalIPAddress().ToString(), Msg = "Broadcast Request",
+                SharedFiles =  FTTFileInfo.ConvertFileHandler(Core.SharedFiles.CopyOfList(), LocalIPAddress().ToString())});
         }
 
 
-        public void BroadcastListener_BroadcastRequest(object sender, EventArgs e)
-        {
-
-        }
-
-        public void BroadcastListener_MessageReceived(object sender, BroadcastListener.MessageReceivedEventArgs e)
+        private void broadcastListener_MessageReceived(object sender, BroadcastListener.MessageReceivedEventArgs e)
         {
             Message message = e.Msg;
 
-            Console.WriteLine("Received message yay: " + message.Msg);
+            // Check of response broadcast was requested.
+            if (message.RequestBroadcast)
+            {
+                broadcastInfo();
+            }
+
+            if (AvailableFilesReceived != null)
+            {
+                AvailableFilesReceived.Invoke(this, new AvailableFilesReceivedEventArgs() { SourceIP = message.IPAddress, Files = message.SharedFiles });
+            }
+        }
+
+        /// <summary>
+        /// Sends a broadcast to all other clients which includes this clients shared files.
+        /// </summary>
+        private void broadcastInfo()
+        {
+            _broadcastSender.SendMessage(new Message() {IPAddress = LocalIPAddress().ToString(), RequestBroadcast = false, Msg = "BroadcastInfo",
+                SharedFiles = FTTFileInfo.ConvertFileHandler(Core.SharedFiles.CopyOfList(), LocalIPAddress().ToString())});
         }
 
         private void start()
@@ -93,7 +109,7 @@ namespace CoreLibrary
         /// <returns></returns>
         public static IPAddress LocalIPAddress()
         {
-            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            if (!NetworkInterface.GetIsNetworkAvailable())
             {
                 return null;
             }
@@ -109,6 +125,13 @@ namespace CoreLibrary
         {
             _broadcastSender.Dispose();
             _broadcastListener.Dispose();
+        }
+
+
+        public class AvailableFilesReceivedEventArgs : EventArgs
+        {
+            public FTTFileInfo[] Files { get; set; }
+            public String SourceIP { get; set; }
         }
     }
 }

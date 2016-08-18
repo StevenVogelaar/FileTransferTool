@@ -18,9 +18,6 @@ namespace CoreLibrary
         public delegate void MessageReceivedHandler(object sender, MessageReceivedEventArgs e);
         public event MessageReceivedHandler MessageReceived;
 
-        public delegate void BroadcastRequestHandler(object sender, EventArgs e);
-        public event BroadcastRequestHandler BroadcastRequest;
-
         private List<UdpClient> _udpClients;
         private IPEndPoint _ipEndPoint;
         private List<Thread> _threads;
@@ -86,6 +83,7 @@ namespace CoreLibrary
                 {
                     
                     udpClient.JoinMulticastGroup(IPAddress.Parse(ConnectionManager.MULTICAST_IP));
+                    udpClient.MulticastLoopback = false;
 
                     String msg = "";
                     ASCIIEncoding ascii = new ASCIIEncoding();
@@ -97,6 +95,7 @@ namespace CoreLibrary
                         Byte[] data = udpClient.Receive(ref _ipEndPoint);
                         msg = ascii.GetString(data);
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
+                        //Console.WriteLine(msg);
 
                         try
                         {
@@ -106,6 +105,12 @@ namespace CoreLibrary
                             stream.Position = 0;
                             Message message = (Message)serializer.ReadObject(stream);
 
+                            // Set ip for each FTTFileInfo in the message
+                            foreach (FTTFileInfo f in message.SharedFiles)
+                            {
+                                f.IP = message.IPAddress;
+                            }
+
                             if (MessageReceived != null)
                             {
                                 MessageReceived.Invoke(this, new MessageReceivedEventArgs() { Msg = message });
@@ -113,12 +118,10 @@ namespace CoreLibrary
                         }
                         catch (Exception e)
                         {
+                            Console.WriteLine(e.StackTrace);
                             FTTConsole.AddDebug("Error trying to prarse json message: " + e.Message);
                         }
                     }
-
-                    FTTConsole.AddDebug("Stopped listening on: " + udpClient.Client.LocalEndPoint);
-
                 }
                 catch (Exception e)
                 {
@@ -127,9 +130,11 @@ namespace CoreLibrary
                      
                 }
                 finally{
+
                     // If an exception is thrown, close the client and stop listening.
                     udpClient.Close();
                     loop = false;
+                    FTTConsole.AddDebug("Stopped listening on: " + udpClient.Client.LocalEndPoint);
                 }
             }
         }

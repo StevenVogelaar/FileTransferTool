@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.availableLable = new System.Windows.Forms.Label();
             this.sharedLable = new System.Windows.Forms.Label();
             this.addFilesButton = new System.Windows.Forms.Button();
@@ -155,9 +155,9 @@
             this.sharedFilesList.Location = new System.Drawing.Point(16, 145);
             this.sharedFilesList.Name = "sharedFilesList";
             this.sharedFilesList.RowHeadersVisible = false;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.Black;
-            this.sharedFilesList.RowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
+            this.sharedFilesList.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.sharedFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.sharedFilesList.Size = new System.Drawing.Size(778, 169);
             this.sharedFilesList.TabIndex = 13;
@@ -209,12 +209,13 @@
             this.availableFilesList.Name = "availableFilesList";
             this.availableFilesList.RowHeadersVisible = false;
             this.availableFilesList.RowHeadersWidth = 40;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Black;
-            this.availableFilesList.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            this.availableFilesList.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.availableFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.availableFilesList.Size = new System.Drawing.Size(778, 251);
             this.availableFilesList.TabIndex = 14;
+            this.availableFilesList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.availableFilesList_CellContentClick);
             // 
             // AvailCheckColumn
             // 

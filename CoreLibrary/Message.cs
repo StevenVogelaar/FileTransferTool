@@ -18,17 +18,5 @@ namespace CoreLibrary
         public String IPAddress { get; set; }
         [DataMember(Name = "SharedFiles")]
         public FTTFileInfo[] SharedFiles { get; set; }
-
-       
-        [DataContract]
-        [KnownType(typeof(FTTFileInfo))]
-        public class FTTFileInfo
-        {
-            [DataMember (Name = "FileName")]
-            public String FileName { get; set; }
-            [DataMember (Name = "Size")]
-            public String Size { get; set; }
-        }
-
     }
 }
