@@ -25,11 +25,16 @@ namespace FileTransferTool
             window.FilesSelected += MainWindow_FileSelected;
             window.FilesRemoved += MainWindow_FilesRemoved;
             window.RefreshClients += MainWindow_RefreshClients;
+            window.FormClosing += window_closing;
 
             window.Init(_core);
         }
 
 
+        private void window_closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _core.Dispose();
+        }
 
         /// <summary>
         /// Makes changes to the shared files list in the UI
@@ -49,17 +54,12 @@ namespace FileTransferTool
 
         public void MainWindow_FileSelected(object obj, MainWindow.FilesSelectedEventArgs e)
         {
-            foreach (String f in e.Files){
-                _core.AddSharedFile(f);
-            }
+            _core.AddSharedFile(e.Files);
         }
 
         public void MainWindow_FilesRemoved(object obj, MainWindow.FilesRemovedEventArgs e)
         {
-            foreach (String f in e.Files)
-            {
-                _core.RemoveSharedFile(f);
-            }
+            _core.RemoveSharedFile(e.Files);
         }
 
 

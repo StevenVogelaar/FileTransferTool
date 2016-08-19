@@ -37,6 +37,14 @@ namespace CoreLibrary
             }
         }
 
+        public void Clear()
+        {
+            lock (_files)
+            {
+                _files.Clear();
+            }
+        }
+
         public T GetFile(int index)
         {
             lock (_files)
@@ -51,6 +59,21 @@ namespace CoreLibrary
             {
                 return _files.Count;
             }
+        }
+
+        public override string ToString()
+        {
+            String temp = "";
+
+            lock (_files)
+            {
+                foreach (T f in _files)
+                {
+                    temp = temp + f.ToString() + "\n";
+                }
+            }
+
+            return temp;
         }
 
 

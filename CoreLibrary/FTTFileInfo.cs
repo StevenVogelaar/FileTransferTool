@@ -40,6 +40,11 @@ namespace CoreLibrary
             return result;
         }
 
+        public override string ToString()
+        {
+            return "Name: " + Name + " IP: " + IP;
+        }
+
 
     }
 }

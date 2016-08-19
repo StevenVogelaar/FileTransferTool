@@ -64,6 +64,7 @@ namespace FileTransferTool
         private void onLoad(object sender, EventArgs e)
         {
             FTTConsole.ConsoleMessage += _listViewConsoleAdapter.ConsoleMessaged;
+            RefreshClients.Invoke(this, EventArgs.Empty);
         }
 
      
@@ -277,8 +278,6 @@ namespace FileTransferTool
             {
                 this.Files = files;
             }
-
-            
         }
 
         public class FilesRemovedEventArgs : EventArgs

@@ -92,9 +92,16 @@ namespace FileTransferTool
 
                 foreach (FTTFileInfo f in files)
                 {
-
-                    if (nameValue == null || (f.Name.Equals((String)nameValue) && f.IP.Equals((String)locationValue)))
+                    //Console.WriteLine("location1: " + locationValue + " location2: " + f.IP);
+                    if (!f.IP.Equals(locationValue))
                     {
+                        // IPs dont match so skip.
+                        continue;
+                    }
+
+                    if (nameValue == null || f.Name.Equals((String)nameValue))
+                    {
+                        
                         found = true;
                         break;
                     }

@@ -51,6 +51,7 @@
     <Compile Include="FTTConsole.cs" />
     <Compile Include="FTTConsoleMessage.cs" />
     <Compile Include="FTTFileInfo.cs" />
+    <Compile Include="Pinger.cs" />
     <Compile Include="SyncList.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

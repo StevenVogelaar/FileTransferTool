@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.Serialization.Json;
 using System.IO;
+using System.Net.NetworkInformation;
 
 
 namespace CoreLibrary
@@ -130,9 +131,16 @@ namespace CoreLibrary
 
         public void Dispose()
         {
+            _thread.Abort();
+
             lock (_broadcaster)
             {
                 _broadcaster.Close();
+            }
+
+            foreach (UdpClient c in _additionalClients)
+            {
+                if (c != null) c.Close();
             }
         }
     }

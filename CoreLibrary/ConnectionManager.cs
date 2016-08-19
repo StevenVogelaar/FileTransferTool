@@ -19,39 +19,55 @@ namespace CoreLibrary
         public delegate void AvailableFilesReceivedHandler(object sender, AvailableFilesReceivedEventArgs e);
         public event AvailableFilesReceivedHandler AvailableFilesReceived;
 
+        public static HashSet<IPAddress> ConnectedClients { get; private set; }
 
         private BroadcastListener _broadcastListener;
         private BroadcastSender _broadcastSender;
+        private HashSet<IPAddress> _connectedClientSet;
         private List<Connection> _connectionList;
         //private Queue<Message> _messageQueue;
-
-        SynchronizationContext context;
 
 
         public ConnectionManager()
         {
+            ConnectedClients = new HashSet<IPAddress>();
             _broadcastListener = new BroadcastListener();
             _broadcastSender = new BroadcastSender();
-            _connectionList = new List<Connection>();
+            _connectedClientSet = new HashSet<IPAddress>();
             _broadcastListener.Start();
+            _connectionList = new List<Connection>();
 
             _broadcastListener.MessageReceived += broadcastListener_MessageReceived;
-            context = SynchronizationContext.Current;
         }
 
-
         /// <summary>
-        /// Checks for valid localhosts on the network and attempts to connect to them. Will only attempt to connect to hosts that are not currently connected.
+        /// Sends broadcast request and pings previously connected clients. If there is no response from pings, will remove their files.
         /// </summary>
         public void RefreshConnections()
         {
-            _broadcastSender.SendMessage(new Message() {RequestBroadcast = true, IPAddress = LocalIPAddress().ToString(), Msg = "Broadcast Request",
-                SharedFiles =  FTTFileInfo.ConvertFileHandler(Core.SharedFiles.CopyOfList(), LocalIPAddress().ToString())});
+            Thread thread = new Thread(refreshConnections);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private void refreshConnections()
+        {
+
+            _broadcastSender.SendMessage(new Message()
+            {
+                RequestBroadcast = true,
+                IPAddress = LocalIPAddress().ToString(),
+                Msg = "Broadcast Request",
+                SharedFiles = FTTFileInfo.ConvertFileHandler(Core.SharedFiles.CopyOfList(), LocalIPAddress().ToString())
+            });
         }
 
 
         private void broadcastListener_MessageReceived(object sender, BroadcastListener.MessageReceivedEventArgs e)
         {
+            // Allways add ip to set of connected IP addresses to be used for pinging.
+            _connectedClientSet.Add(IPAddress.Parse(e.Msg.IPAddress));
+
             Message message = e.Msg;
 
             // Check of response broadcast was requested.

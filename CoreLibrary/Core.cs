@@ -8,7 +8,7 @@ using System.IO;
 
 namespace CoreLibrary
 {
-    public class Core
+    public class Core : IDisposable
     {
 
         public delegate void SharedFilesChangedHandler(object obj, SharedFilesChangedEventArgs e);
@@ -54,10 +54,35 @@ namespace CoreLibrary
             {
                 SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
             }
+
+            RefreshClients();
+        }
+
+        public void AddSharedFile(String[] paths)
+        {
+            foreach (String path in paths)
+            {
+
+                if (!checkExists(path)) return;
+
+                // Check if a file with the same path already exists in the list.
+                foreach (FileHandler f in SharedFiles.CopyOfList())
+                {
+                    if (f.Path.Equals(path)) return;
+                }
+
+                SharedFiles.Add(new FileHandler(path));
+                if (SharedFilesChanged != null)
+                {
+                    SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
+                }
+            }
+
+            RefreshClients();
         }
 
         /// <summary>
-        /// Removes a local shared file from the list available to othe clients.
+        /// Removes a local shared file from the list available to other clients.
         /// </summary>
         /// <param name="path"></param>
         public void RemoveSharedFile(String path)
@@ -70,9 +95,30 @@ namespace CoreLibrary
                     SharedFiles.Remove(f);
                     SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
                     f.Dispose();
-                    return;
+                    break;
                 }
-            }         
+            }    
+        }
+
+
+        public void RemoveSharedFile(String[] paths)
+        {
+            foreach (String path in paths){
+
+                // Check to see if file with the given path name exists in the list.
+                foreach (FileHandler f in SharedFiles.CopyOfList())
+                {
+                    if (f.Path == path)
+                    {
+                        SharedFiles.Remove(f);
+                        SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
+                        f.Dispose();
+                        break;
+                    }
+                }
+            }
+
+            RefreshClients();
         }
 
 
@@ -81,8 +127,10 @@ namespace CoreLibrary
         /// </summary>
         public void RefreshClients()
         {
+            System.Threading.Thread.Sleep(100);
             _connectionManager.RefreshConnections();
-            //_connectionManager.Connect();
+            AvailableFiles.Clear();
+            syncAvailableFiles(new FTTFileInfo[0], ConnectionManager.LocalIPAddress().ToString());
         }
 
         /// <summary>
@@ -125,6 +173,30 @@ namespace CoreLibrary
         private void connectionManager_AvailableFilesReceived(object sender, ConnectionManager.AvailableFilesReceivedEventArgs e)
         {
             syncAvailableFiles(e.Files, e.SourceIP);
+        }
+
+
+        private void syncAvailableFiles(FTTFileInfo[] files, String sourceIP)
+        {
+            // First remove every file from source IP in the list.
+            List<FTTFileInfo> coreFiles = AvailableFiles.CopyOfList();
+            List<FTTFileInfo> deleteQueue = new List<FTTFileInfo>();
+
+            foreach (FTTFileInfo cf in coreFiles)
+            {
+                if (cf.IP.Equals(sourceIP))
+                {
+                    deleteQueue.Add(cf);
+                }
+            }
+
+            removeAvailableFiles(deleteQueue);
+
+            // Add files received from IP
+            foreach (FTTFileInfo f in files)
+            {
+                addAvailableFile(f);
+            }
 
             if (AvailableFilesChanged != null)
             {
@@ -132,61 +204,22 @@ namespace CoreLibrary
             }
         }
 
-
-        private void syncAvailableFiles(FTTFileInfo[] files, String sourceIP)
+        /// <summary>
+        /// Removes files from the available files list without fireing any events.
+        /// </summary>
+        /// <param name="files"></param>
+        private void removeAvailableFiles(List<FTTFileInfo> files)
         {
-
             foreach (FTTFileInfo f in files)
-            {
-                addAvailableFile(f);
-            }
-
-            List<FTTFileInfo> coreFiles = AvailableFiles.CopyOfList();
-            List<FTTFileInfo> deleteQueue = new List<FTTFileInfo>();
-
-            foreach (FTTFileInfo cf in coreFiles)
-            {
-                bool found = false;
-
-                foreach (FTTFileInfo f in files)
-                {
-                    if (cf.Name.Equals(f.Name) && cf.IP == f.IP)
-                    {
-                        found = true;
-                        break;
-                    } 
-                }
-
-                if (!found)
-                {
-                    deleteQueue.Add(cf);
-                }
-            }
-
-            // Delete files in queue.
-            foreach (FTTFileInfo f in deleteQueue)
             {
                 AvailableFiles.Remove(f);
             }
         }
 
-
-        /**
-        public class SharedListChangedEventArgs : EventArgs
+        public void Dispose()
         {
-            public enum ChangeType { added, removed };
-
-            public ChangeType Change { get; }
-            public FileHandler File { get; }
-
-            public SharedListChangedEventArgs(ChangeType changeType, FileHandler file)
-            {
-                this.File = file;
-                Change = changeType;
-            }  
+            _connectionManager.Dispose();
         }
-        */
-
 
         public class SharedFilesChangedEventArgs : EventArgs
         {
