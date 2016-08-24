@@ -28,6 +28,9 @@ namespace FileTransferTool
         public delegate void RefreshClientsHandler(object sender, EventArgs e);
         public event RefreshClientsHandler RefreshClients;
 
+        public delegate void DownloadFilesHandler(object sender, DownloadFilesEventArgs e);
+        public event DownloadFilesHandler DownloadFiles;
+
         private DataGridViewFileHandlerAdapter _sharedGridManager;
         private DataGridViewFTTFileInfoAdapter _availableGridManager;
         private ListViewConsoleAdapter _listViewConsoleAdapter;
@@ -64,7 +67,10 @@ namespace FileTransferTool
         private void onLoad(object sender, EventArgs e)
         {
             FTTConsole.ConsoleMessage += _listViewConsoleAdapter.ConsoleMessaged;
-            RefreshClients.Invoke(this, EventArgs.Empty);
+            if (RefreshClients != null)
+            {
+                RefreshClients.Invoke(this, EventArgs.Empty);
+            }
         }
 
      
@@ -130,7 +136,7 @@ namespace FileTransferTool
 
             DialogResult result = openFileDialog1.ShowDialog();
 
-            if (result == DialogResult.OK)
+            if (result == DialogResult.OK && FilesSelected != null)
             {
                 FilesSelected.Invoke(this, new FilesSelectedEventArgs(openFileDialog1.FileNames));      
             }
@@ -145,7 +151,7 @@ namespace FileTransferTool
         {
             DialogResult result = folderBrowserDialog1.ShowDialog();
 
-            if (result == DialogResult.OK)
+            if (result == DialogResult.OK && FilesSelected != null)
             {
                 FilesSelected.Invoke(this, new FilesSelectedEventArgs(new String[] { folderBrowserDialog1.SelectedPath }));
             }
@@ -260,7 +266,7 @@ namespace FileTransferTool
                 }
             }
 
-            if (count > 0)
+            if (count > 0 && FilesRemoved != null)
             {
                 FilesRemoved.Invoke(this, new FilesRemovedEventArgs(files));
             }
@@ -269,8 +275,39 @@ namespace FileTransferTool
             checkSharedChecks();
         }
 
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            if (RefreshClients != null)
+            {
+                RefreshClients.Invoke(this, EventArgs.Empty);
+            }
+        }
 
-        
+        private void availableFilesList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void downloadButton_Click(object sender, EventArgs e)
+        {
+            // Get names of selected available files.
+            Dictionary<String, String> files = new Dictionary<string, string>();
+            foreach (DataGridViewRow row in availableFilesList.Rows)
+            {
+                files.Add((String)row.Cells[nameIndex].Value, (String)row.Cells[locationIndex].Value);
+            }
+
+            if (DownloadFiles != null)
+            {
+                if (DownloadFiles != null)
+                {
+                    DownloadFiles.Invoke(this, new DownloadFilesEventArgs() { Files = files });
+                }
+            }
+        }
+
+
+
         public class FilesSelectedEventArgs : EventArgs
         {
             public String[] Files { get; }
@@ -289,14 +326,11 @@ namespace FileTransferTool
             }
         }
 
-        private void refreshButton_Click(object sender, EventArgs e)
+        public class DownloadFilesEventArgs : EventArgs
         {
-            RefreshClients.Invoke(this, EventArgs.Empty);
+            public Dictionary<String, String> Files { get; set; }
         }
 
-        private void availableFilesList_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
+       
     }
 }

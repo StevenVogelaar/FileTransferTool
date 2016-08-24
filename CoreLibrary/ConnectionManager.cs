@@ -15,6 +15,7 @@ namespace CoreLibrary
 
         public const String MULTICAST_IP = "227.42.123.96";
         public const Int32 MULTICAST_PORT = 3896;
+        public const Int32 FILETRANSFER_PORT = 3897;
 
         public delegate void AvailableFilesReceivedHandler(object sender, AvailableFilesReceivedEventArgs e);
         public event AvailableFilesReceivedHandler AvailableFilesReceived;

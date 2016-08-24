@@ -26,6 +26,7 @@ namespace FileTransferTool
             window.FilesRemoved += MainWindow_FilesRemoved;
             window.RefreshClients += MainWindow_RefreshClients;
             window.FormClosing += window_closing;
+            window.DownloadFiles += MainWindow_DownloadFiles;
 
             window.Init(_core);
         }
@@ -60,6 +61,11 @@ namespace FileTransferTool
         public void MainWindow_FilesRemoved(object obj, MainWindow.FilesRemovedEventArgs e)
         {
             _core.RemoveSharedFile(e.Files);
+        }
+
+        public void MainWindow_DownloadFiles(object obj, MainWindow.DownloadFilesEventArgs e)
+        {
+
         }
 
 

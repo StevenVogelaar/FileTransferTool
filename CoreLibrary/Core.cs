@@ -133,6 +133,16 @@ namespace CoreLibrary
             syncAvailableFiles(new FTTFileInfo[0], ConnectionManager.LocalIPAddress().ToString());
         }
 
+
+        /// <summary>
+        /// Will start a file download operation.
+        /// </summary>
+        /// <param name="Files">Key: FileName, Value: Location(ip address)</param>
+        public void DownloadFiles(Dictionary<String, String> Files) {
+
+        }
+
+
         /// <summary>
         /// Checks if a file or directory exists at the given path.
         /// </summary>
@@ -203,6 +213,7 @@ namespace CoreLibrary
                 AvailableFilesChanged.Invoke(this, new AvailableFilesChangedEventArgs() { Files = AvailableFiles.CopyOfList() });
             }
         }
+
 
         /// <summary>
         /// Removes files from the available files list without fireing any events.

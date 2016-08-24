@@ -44,10 +44,13 @@
   <ItemGroup>
     <Compile Include="Connection.cs" />
     <Compile Include="BroadcastListener.cs" />
+    <Compile Include="FTFileRequester.cs" />
+    <Compile Include="FTFileSender.cs" />
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DataGridViewManager.cs" />
     <Compile Include="FileHandler.cs" />
+    <Compile Include="FTConnectionManager.cs" />
     <Compile Include="FTTConsole.cs" />
     <Compile Include="FTTConsoleMessage.cs" />
     <Compile Include="FTTFileInfo.cs" />
