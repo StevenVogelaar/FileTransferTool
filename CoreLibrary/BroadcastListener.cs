@@ -26,7 +26,7 @@ namespace CoreLibrary
         {
             _udpClients = new List<UdpClient>();
             _threads = new List<Thread>();
-            _ipEndPoint = new IPEndPoint(IPAddress.Parse(ConnectionManager.MULTICAST_IP), ConnectionManager.MULTICAST_PORT);
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(BroadcastManager.MULTICAST_IP), BroadcastManager.MULTICAST_PORT);
         }
 
         public void Start()
@@ -43,7 +43,7 @@ namespace CoreLibrary
                 {
                     try
                     {
-                        UdpClient udpClient = new UdpClient(new IPEndPoint(s, ConnectionManager.MULTICAST_PORT));
+                        UdpClient udpClient = new UdpClient(new IPEndPoint(s, BroadcastManager.MULTICAST_PORT));
                         _udpClients.Add(udpClient);
                     }
                     catch (Exception e)
@@ -82,7 +82,7 @@ namespace CoreLibrary
                 try
                 {
                     
-                    udpClient.JoinMulticastGroup(IPAddress.Parse(ConnectionManager.MULTICAST_IP));
+                    udpClient.JoinMulticastGroup(IPAddress.Parse(BroadcastManager.MULTICAST_IP));
                     udpClient.MulticastLoopback = false;
 
                     String msg = "";

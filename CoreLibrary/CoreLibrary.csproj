@@ -46,7 +46,7 @@
     <Compile Include="BroadcastListener.cs" />
     <Compile Include="FTFileRequester.cs" />
     <Compile Include="FTFileSender.cs" />
-    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="BroadcastManager.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DataGridViewManager.cs" />
     <Compile Include="FileHandler.cs" />

@@ -12,16 +12,21 @@ namespace CoreLibrary
     class FTConnectionManager
     {
 
+        public const Int32 FILETRANSFER_PORT = 3897;
+
         private Socket _connectionReceiver;
         //private List<ConnectionListener> _listeners;
         private IPEndPoint _endPoint;
         private Thread _listenThread;
+        private FTFileSender.GetFilePath _getFilePath;
 
 
-        public FTConnectionManager()
+        public FTConnectionManager(FTFileSender.GetFilePath getFilePath)
         {
-            _endPoint = new IPEndPoint(ConnectionManager.LocalIPAddress(), ConnectionManager.FILETRANSFER_PORT);
+            _endPoint = new IPEndPoint(BroadcastManager.LocalIPAddress(), FILETRANSFER_PORT);
             //_listeners = new List<ConnectionListener>();
+
+            _getFilePath = getFilePath;
 
             _listenThread = new Thread(listenForRequests);
             _listenThread.IsBackground = true;
@@ -29,7 +34,33 @@ namespace CoreLibrary
         }
 
 
+        /// <summary>
+        /// Creates a FTFileRequester for a file.
+        /// </summary>
+        /// <param name="files"></param>
+        public void DownloadFile(FTTFileInfo file)
+        {
+            // Switch this to run on a seperate thread!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Attempt to open connection with remote host.
+            try
+            {
+                Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+                socket.Connect(new IPEndPoint(IPAddress.Parse(file.IP), FILETRANSFER_PORT));
 
+                // Create new fileRequester. It will run the request automaticaly.
+                new FTFileRequester(file.Name, socket, "./");
+            }
+            catch (Exception e)
+            {
+                FTTConsole.AddError("Error trying to connect to remmote host: " + file.IP);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+            }
+        }
+
+
+        /// <summary>
+        /// Accepts incomming requests. These requests will be other clients trying to download files.
+        /// </summary>
         private void listenForRequests()
         {
             // Initialize listener socket.
@@ -64,13 +95,13 @@ namespace CoreLibrary
 
         private void connectionAccepted(Socket socket)
         {
-            // Create connection listen which then runs on a background thread.
-            new FTFileSender(socket,listener_dataReceivedCallback);
+            // Create FTFileSender which then runs on a background thread.
+            new FTFileSender(socket,listener_fileReceivedCallback, _getFilePath);
         }
 
-        private void listener_dataReceivedCallback()
+        private void listener_fileReceivedCallback()
         {
-
+            Console.WriteLine("File received herez");
         }
 
 

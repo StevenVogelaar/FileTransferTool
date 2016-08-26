@@ -24,9 +24,15 @@ namespace FileTransferTool
 
         public void ConsoleMessaged (CoreLibrary.FTTConsole.ConsoleMessageEventArgs e)
         {
-             
-             AddMessageCallback d = new AddMessageCallback(AddMessage);
-            _listView.Invoke(d, new object[] { e.Message.Type.ToString() +  ": " + e.Message.Msg });
+            try
+            {
+                AddMessageCallback d = new AddMessageCallback(AddMessage);
+                _listView.Invoke(d, new object[] { e.Message.Type.ToString() + ": " + e.Message.Msg });
+            }
+            catch (ObjectDisposedException f)
+            {
+
+            }
         }
 
 

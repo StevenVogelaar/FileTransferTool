@@ -20,7 +20,8 @@ namespace CoreLibrary
         public static SyncList<FileHandler> SharedFiles { get; private set; }
         public static SyncList<FTTFileInfo> AvailableFiles { get; private set; }
 
-        private ConnectionManager _connectionManager;
+        private BroadcastManager _connectionManager;
+        private FTConnectionManager _ftConnectionManager;
 
 
         public Core()
@@ -28,9 +29,10 @@ namespace CoreLibrary
             FTTConsole.Init();
             SharedFiles = new SyncList<FileHandler>();
             AvailableFiles = new SyncList<FTTFileInfo>();
-            _connectionManager = new ConnectionManager();
+            _connectionManager = new BroadcastManager();
             _connectionManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
-            FTTConsole.Init();
+
+            _ftConnectionManager = new FTConnectionManager(GetFilePath);
         }
 
 
@@ -130,16 +132,65 @@ namespace CoreLibrary
             System.Threading.Thread.Sleep(100);
             _connectionManager.RefreshConnections();
             AvailableFiles.Clear();
-            syncAvailableFiles(new FTTFileInfo[0], ConnectionManager.LocalIPAddress().ToString());
+            syncAvailableFiles(new FTTFileInfo[0], BroadcastManager.LocalIPAddress().ToString());
         }
 
 
         /// <summary>
         /// Will start a file download operation.
         /// </summary>
-        /// <param name="Files">Key: FileName, Value: Location(ip address)</param>
-        public void DownloadFiles(Dictionary<String, String> Files) {
+        /// <param name="files">Key: FileName, Value: Location(ip address)</param>
+        public void DownloadFiles(Dictionary<String, String> files) {
 
+            Console.WriteLine("Download button pressed");
+
+            FTTFileInfo[] sharedfiles = AvailableFiles.CopyOfList().ToArray();
+            List<FTTFileInfo> foundFiles = new List<FTTFileInfo>();
+
+            // Collect the requested files if they exist.
+            foreach (String f in files.Keys)
+            {
+                for (int i = 0; i < sharedfiles.Length; i++)
+                {
+                    if (sharedfiles[i].Name.Equals(f))
+                    {
+                        foundFiles.Add(sharedfiles[i]);
+                    }
+                }
+            }
+
+
+            // Create download requests for each file.
+            foreach (FTTFileInfo f in foundFiles)
+            {
+                _ftConnectionManager.DownloadFile(f);
+            }
+
+        }
+
+
+        /// <summary>
+        /// Returns the path of the given file name.
+        /// </summary>
+        /// <param name="name">Name of the file.</param>
+        /// <returns>Path of the file (includes the filename at the end).</returns>
+        public String GetFilePath(String name)
+        {
+            List<FileHandler> files = SharedFiles.CopyOfList();
+
+            foreach (FileHandler f in files)
+            {
+                FTTConsole.AddDebug("Found Filename: " + f.Name);
+                Console.WriteLine("Found Filename:" + f.Name);
+                if (f.Name.Equals(name))
+                {
+                    return f.Path;
+                }
+            }
+
+            FTTConsole.AddDebug("File not found.");
+
+            return null;
         }
 
 
@@ -180,7 +231,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void connectionManager_AvailableFilesReceived(object sender, ConnectionManager.AvailableFilesReceivedEventArgs e)
+        private void connectionManager_AvailableFilesReceived(object sender, BroadcastManager.AvailableFilesReceivedEventArgs e)
         {
             syncAvailableFiles(e.Files, e.SourceIP);
         }
