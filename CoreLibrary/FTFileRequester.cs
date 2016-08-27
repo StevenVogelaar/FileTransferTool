@@ -96,14 +96,13 @@ namespace CoreLibrary
                 received = _socket.Receive(buffer);
                 String fName = Encoding.UTF8.GetString(buffer);
                 fName = fName.Replace("\0", String.Empty);
-                Console.WriteLine("Filename received: " + fName);
+                FTTConsole.AddDebug("Filename received: " + fName);
 
                 fileOut = new FileStream(_dest + "\\" + fName, FileMode.Create);
 
-                while (received > 0)
+                while ((received = _socket.Receive(buffer)) > 0)
                 {
-                    received = _socket.Receive(buffer);
-                    fileOut.Write(buffer, 0, buffer.Length);
+                    fileOut.Write(buffer, 0, received);
                 }   
             }
             catch (SocketException e)

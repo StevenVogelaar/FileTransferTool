@@ -216,7 +216,6 @@
             this.availableFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.availableFilesList.Size = new System.Drawing.Size(778, 251);
             this.availableFilesList.TabIndex = 14;
-            this.availableFilesList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.availableFilesList_CellContentClick);
             // 
             // AvailCheckColumn
             // 

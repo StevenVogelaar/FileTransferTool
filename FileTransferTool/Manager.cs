@@ -65,7 +65,7 @@ namespace FileTransferTool
 
         public void MainWindow_DownloadFiles(object obj, MainWindow.DownloadFilesEventArgs e)
         {
-            _core.DownloadFiles(e.Files);
+            _core.DownloadFiles(e.Files, e.Dest);
         }
 
 

@@ -13,6 +13,7 @@ namespace CoreLibrary
     {
 
         public const Int32 FILETRANSFER_PORT = 3897;
+        private int _receivingPort = 3898;
 
         private Socket _connectionReceiver;
         //private List<ConnectionListener> _listeners;
@@ -38,17 +39,26 @@ namespace CoreLibrary
         /// Creates a FTFileRequester for a file.
         /// </summary>
         /// <param name="files"></param>
-        public void DownloadFile(FTTFileInfo file)
+        public void DownloadFile(FTTFileInfo file, String dest)
         {
             // Switch this to run on a seperate thread!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // Attempt to open connection with remote host.
             try
             {
                 Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+                socket.Bind(new IPEndPoint(BroadcastManager.LocalIPAddress(), _receivingPort));
                 socket.Connect(new IPEndPoint(IPAddress.Parse(file.IP), FILETRANSFER_PORT));
 
+                // Increment port so there arnt conflicts
+                _receivingPort++;
+                if (_receivingPort > 7000)
+                {
+                    _receivingPort = 3898;
+                }
+
                 // Create new fileRequester. It will run the request automaticaly.
-                new FTFileRequester(file.Name, socket, "./");
+                FTTConsole.AddDebug("Sending request for file: " + file.Name);
+                new FTFileRequester(file.Name, socket, dest);
             }
             catch (Exception e)
             {

@@ -140,21 +140,19 @@ namespace CoreLibrary
         /// Will start a file download operation.
         /// </summary>
         /// <param name="files">Key: FileName, Value: Location(ip address)</param>
-        public void DownloadFiles(Dictionary<String, String> files) {
+        public void DownloadFiles(Dictionary<String, String> files, String dest) {
 
-            Console.WriteLine("Download button pressed");
-
-            FTTFileInfo[] sharedfiles = AvailableFiles.CopyOfList().ToArray();
+            FTTFileInfo[] availablefiles = AvailableFiles.CopyOfList().ToArray();
             List<FTTFileInfo> foundFiles = new List<FTTFileInfo>();
 
             // Collect the requested files if they exist.
             foreach (String f in files.Keys)
             {
-                for (int i = 0; i < sharedfiles.Length; i++)
+                for (int i = 0; i < availablefiles.Length; i++)
                 {
-                    if (sharedfiles[i].Name.Equals(f))
+                    if (availablefiles[i].Name.Equals(f))
                     {
-                        foundFiles.Add(sharedfiles[i]);
+                        foundFiles.Add(availablefiles[i]);
                     }
                 }
             }
@@ -163,7 +161,7 @@ namespace CoreLibrary
             // Create download requests for each file.
             foreach (FTTFileInfo f in foundFiles)
             {
-                _ftConnectionManager.DownloadFile(f);
+                _ftConnectionManager.DownloadFile(f, dest);
             }
 
         }
@@ -180,10 +178,10 @@ namespace CoreLibrary
 
             foreach (FileHandler f in files)
             {
-                FTTConsole.AddDebug("Found Filename: " + f.Name);
-                Console.WriteLine("Found Filename:" + f.Name);
+                
                 if (f.Name.Equals(name))
                 {
+                    FTTConsole.AddDebug("Found Filename: " + f.Name);
                     return f.Path;
                 }
             }

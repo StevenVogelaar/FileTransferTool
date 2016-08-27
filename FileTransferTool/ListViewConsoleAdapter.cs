@@ -29,7 +29,7 @@ namespace FileTransferTool
                 AddMessageCallback d = new AddMessageCallback(AddMessage);
                 _listView.Invoke(d, new object[] { e.Message.Type.ToString() + ": " + e.Message.Msg });
             }
-            catch (ObjectDisposedException f)
+            catch (Exception f)
             {
 
             }

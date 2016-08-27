@@ -84,7 +84,11 @@ namespace FileTransferTool
             core.SharedFilesChanged += _sharedGridManager.Core_FilesChanged;
             _availableGridManager = new DataGridViewFTTFileInfoAdapter(availableFilesList, Core.AvailableFiles.CopyOfList());
             core.AvailableFilesChanged += _availableGridManager.Core_FilesChanged;
+            core.AvailableFilesChanged += availFilesChanged;
         }
+
+
+        
 
         /// <summary>
         /// Handles resizing views when the window size changes.
@@ -125,7 +129,16 @@ namespace FileTransferTool
         }
 
 
-       
+        /// <summary>
+        /// Triggers a check for checked rows in the available files list.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void availFilesChanged(object sender, EventArgs e)
+        {
+            checkAvailableChecks();
+        }
+
         /// <summary>
         /// Checks if user has selected files. Fires a FilesSelected event if true.
         /// </summary>
@@ -283,25 +296,29 @@ namespace FileTransferTool
             }
         }
 
-        private void availableFilesList_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void downloadButton_Click(object sender, EventArgs e)
         {
+
+            // Get location to download the files.
+            DialogResult result =  folderBrowserDialog1.ShowDialog();
+            if (result != DialogResult.OK) return;
+
             // Get names of selected available files.
             Dictionary<String, String> files = new Dictionary<string, string>();
             foreach (DataGridViewRow row in availableFilesList.Rows)
             {
-                files.Add((String)row.Cells[nameIndex].Value, (String)row.Cells[locationIndex].Value);
+                if ((bool)row.Cells[0].Value == true)
+                {
+                    files.Add((String)row.Cells[nameIndex].Value, (String)row.Cells[locationIndex].Value);
+                }
             }
 
             if (DownloadFiles != null)
             {
                 if (DownloadFiles != null)
                 {
-                    DownloadFiles.Invoke(this, new DownloadFilesEventArgs() { Files = files });
+                    DownloadFiles.Invoke(this, new DownloadFilesEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath });
                 }
             }
         }
@@ -329,6 +346,7 @@ namespace FileTransferTool
         public class DownloadFilesEventArgs : EventArgs
         {
             public Dictionary<String, String> Files { get; set; }
+            public String Dest { get; set; }
         }
 
        

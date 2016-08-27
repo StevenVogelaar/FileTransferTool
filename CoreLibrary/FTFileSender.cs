@@ -87,7 +87,7 @@ namespace CoreLibrary
 
                 // Try to open file.
                 fileStream = File.OpenRead(_getFilePath(fileName));
-                FileStream writeStream = new FileStream("./outfile.txt", FileMode.Create);
+                //FileStream writeStream = new FileStream("./outfile.txt", FileMode.Create);
 
 
                 byte[] fName = Encoding.UTF8.GetBytes(fileName);
@@ -105,12 +105,13 @@ namespace CoreLibrary
                 buffer = new byte[2048];
                 SocketError sError;
                 while ((readBytes = fileStream.Read(buffer, 0, buffer.Length)) > 0){
-                    writeStream.Write(buffer, 0, readBytes);
+                   // writeStream.Write(buffer, 0, readBytes);
                     _socket.Send(buffer, 0, readBytes, SocketFlags.None, out sError);
                     
                 }
 
                 FTTConsole.AddInfo("File sent: " + fileName);
+                //writeStream.Close();
             }
             catch (ArgumentException e)
             {
