@@ -52,6 +52,7 @@
     <Compile Include="DataGridViewFileHandlerAdapter.cs" />
     <Compile Include="DataGridViewFTTFileInfoAdapter.cs" />
     <Compile Include="DataGridViewManager.cs" />
+    <Compile Include="FileDownloadProgress.cs" />
     <Compile Include="DownloadProgressWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,9 +66,9 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Manager.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowsLauncher.cs" />
+    <Compile Include="WindowsUI.cs" />
     <EmbeddedResource Include="DownloadProgressWindow.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>

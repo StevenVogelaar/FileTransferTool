@@ -46,5 +46,18 @@ namespace CoreLibrary
         }
 
 
+        public override bool Equals(object obj)
+        {
+
+            if (obj is FTTFileInfo)
+            {
+                FTTFileInfo file = (FTTFileInfo)obj;
+
+                if (file.Name.Equals(Name) && file.IP.Equals(IP)) return true;
+                else return false;
+            }
+            else return false;
+        }
+
     }
 }

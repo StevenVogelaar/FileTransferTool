@@ -111,7 +111,7 @@ namespace CoreLibrary
 
         private void listener_fileReceivedCallback()
         {
-            Console.WriteLine("File received herez");
+            
         }
 
 

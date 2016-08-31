@@ -11,29 +11,38 @@ namespace CoreLibrary
     public class Core : IDisposable
     {
 
-        public delegate void SharedFilesChangedHandler(object obj, SharedFilesChangedEventArgs e);
-        public event SharedFilesChangedHandler SharedFilesChanged;
-
-        public delegate void AvailableFilesChangedHandler(object obj, AvailableFilesChangedEventArgs e);
-        public event AvailableFilesChangedHandler AvailableFilesChanged;
-
         public static SyncList<FileHandler> SharedFiles { get; private set; }
         public static SyncList<FTTFileInfo> AvailableFiles { get; private set; }
 
+        private FTUI _ui;
         private BroadcastManager _connectionManager;
         private FTConnectionManager _ftConnectionManager;
+        private bool _downloadInProgress;
 
 
-        public Core()
+        public Core(FTUI ui)
         {
+            _ui = ui;
+            _ui.WindowClosing += _ui_WindowClosing;
+            _ui.FilesRemoved += _ui_FilesRemoved;
+            Console.WriteLine("subscribed to event");
+            _ui.FilesSelected += _ui_FilesSelected;
+            _ui.RefreshClients += _ui_RefreshClients;
+            _ui.DownloadRequest += _ui_DownloadRequest;
+
+
             FTTConsole.Init();
             SharedFiles = new SyncList<FileHandler>();
             AvailableFiles = new SyncList<FTTFileInfo>();
             _connectionManager = new BroadcastManager();
-            _connectionManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
-
             _ftConnectionManager = new FTConnectionManager(GetFilePath);
+
+            _connectionManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
+            _downloadInProgress = false;
+            
         }
+
+        
 
 
         /// <summary>
@@ -52,10 +61,8 @@ namespace CoreLibrary
             }
 
             SharedFiles.Add(new FileHandler(path));
-            if (SharedFilesChanged != null)
-            {
-                SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
-            }
+            _ui.SharedFilesChanged(SharedFiles.CopyOfList());
+            
 
             RefreshClients();
         }
@@ -74,10 +81,8 @@ namespace CoreLibrary
                 }
 
                 SharedFiles.Add(new FileHandler(path));
-                if (SharedFilesChanged != null)
-                {
-                    SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
-                }
+                _ui.SharedFilesChanged(SharedFiles.CopyOfList());
+                
             }
 
             RefreshClients();
@@ -95,7 +100,7 @@ namespace CoreLibrary
                 if (f.Path == path)
                 {
                     SharedFiles.Remove(f);
-                    SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
+                    _ui.SharedFilesChanged(SharedFiles.CopyOfList());
                     f.Dispose();
                     break;
                 }
@@ -113,7 +118,7 @@ namespace CoreLibrary
                     if (f.Path == path)
                     {
                         SharedFiles.Remove(f);
-                        SharedFilesChanged.Invoke(this, new SharedFilesChangedEventArgs() { Files = SharedFiles.CopyOfList() });
+                        _ui.SharedFilesChanged(SharedFiles.CopyOfList());
                         f.Dispose();
                         break;
                     }
@@ -162,6 +167,7 @@ namespace CoreLibrary
             foreach (FTTFileInfo f in foundFiles)
             {
                 _ftConnectionManager.DownloadFile(f, dest);
+                _ui.DownloadStarted(f);
             }
 
         }
@@ -257,10 +263,7 @@ namespace CoreLibrary
                 addAvailableFile(f);
             }
 
-            if (AvailableFilesChanged != null)
-            {
-                AvailableFilesChanged.Invoke(this, new AvailableFilesChangedEventArgs() { Files = AvailableFiles.CopyOfList() });
-            }
+            _ui.AvailableFilesChanged(AvailableFiles.CopyOfList());
         }
 
 
@@ -281,14 +284,63 @@ namespace CoreLibrary
             _connectionManager.Dispose();
         }
 
-        public class SharedFilesChangedEventArgs : EventArgs
+
+        /// <summary>
+        /// Handles download requests from the UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _ui_DownloadRequest(object sender, FTUI.DownloadRequestEventArgs e)
         {
-            public List<FileHandler> Files { get; set; }
+            if (e.Dest != null && e.Files != null) DownloadFiles(e.Files, e.Dest);
         }
 
-        public class AvailableFilesChangedEventArgs : EventArgs
+        /// <summary>
+        /// Handles client refresh requests from the UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _ui_RefreshClients(object sender, EventArgs e)
         {
-            public List<FTTFileInfo> Files { get; set; }
+            RefreshClients();
+        }
+
+        /// <summary>
+        /// Handles file selection event from the UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _ui_FilesSelected(object sender, FTUI.FilesSelectedEventArgs e)
+        {
+
+            Console.WriteLine("ova ere");
+            if (e.Files != null)
+            {
+                AddSharedFile(e.Files);
+            }
+        }
+
+        /// <summary>
+        /// Handles file removed event from the UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _ui_FilesRemoved(object sender, FTUI.FilesRemovedEventArgs e)
+        {
+            if (e.Files != null)
+            {
+                RemoveSharedFile(e.Files);
+            }
+        }
+
+        /// <summary>
+        /// Handles the window being closed by the user.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _ui_WindowClosing(object sender, EventArgs e)
+        {
+            Dispose();
         }
 
     }

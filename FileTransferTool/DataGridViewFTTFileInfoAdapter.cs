@@ -8,18 +8,17 @@ using System.Windows.Forms;
 
 namespace FileTransferTool
 {
-    class DataGridViewFTTFileInfoAdapter : DataGridViewManager
+    public class DataGridViewFTTFileInfoAdapter : DataGridViewManager
     {
         private DataGridView _dataGrid;
 
         private delegate void addRowCallback(FTTFileInfo file);
         private delegate void removeRowCallback(DataGridViewRow row);
 
-        public DataGridViewFTTFileInfoAdapter(DataGridView dataGrid, List<FTTFileInfo> files)
+        public DataGridViewFTTFileInfoAdapter(DataGridView dataGrid)
         {
             _dataGrid = dataGrid;
             dataGrid.SortCompare += new DataGridViewSortCompareEventHandler(dataViewGrid_SortCompare);
-            initDataGrid(files);
         }
 
 
@@ -45,9 +44,9 @@ namespace FileTransferTool
         /// </summary>
         /// <param name="e"></param>
         /// <param name="e"></param>
-        public void Core_FilesChanged(object obj, Core.AvailableFilesChangedEventArgs e)
+        public void FilesChanged(List<FTTFileInfo> files)
         {
-            syncGrid(e.Files);
+            syncGrid(files);
         }
 
 

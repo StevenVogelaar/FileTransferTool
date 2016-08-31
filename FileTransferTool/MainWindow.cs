@@ -19,25 +19,18 @@ namespace FileTransferTool
         public static int locationIndex = 2;
         public static int sizeIndex = 3;
 
-        public delegate void FilesSelectedHandler(object sender, FilesSelectedEventArgs e);
-        public event FilesSelectedHandler FilesSelected;
+        public DataGridViewFileHandlerAdapter SharedGridManager;
+        public DataGridViewFTTFileInfoAdapter AvailableGridManager;
 
-        public delegate void FilesRemovedHandler(object sender, FilesRemovedEventArgs e);
-        public event FilesRemovedHandler FilesRemoved;
-
-        public delegate void RefreshClientsHandler(object sender, EventArgs e);
-        public event RefreshClientsHandler RefreshClients;
-
-        public delegate void DownloadFilesHandler(object sender, DownloadFilesEventArgs e);
-        public event DownloadFilesHandler DownloadFiles;
-
-        private DataGridViewFileHandlerAdapter _sharedGridManager;
-        private DataGridViewFTTFileInfoAdapter _availableGridManager;
         private ListViewConsoleAdapter _listViewConsoleAdapter;
+        private DownloadProgressWindow _downloadProgressWindow;
+        private WindowsUI _windowsUI;
 
-        public MainWindow()
+        public MainWindow(WindowsUI windowsUI)
         {
             InitializeComponent();
+
+            _windowsUI = windowsUI;
 
             this.SizeChanged += onWindowSizeChange;
             this.MinimumSize = new Size(this.Width, this.Height);
@@ -47,14 +40,21 @@ namespace FileTransferTool
 
             openFileDialog1.Multiselect = true;
 
-            // Init datagrid settings
+            // Init datagrid settings.
             this.availableFilesList.CellValueChanged += availableFileList_OnCellValueChanged;
             this.availableFilesList.CellMouseUp += availablesharedfileList_OnCellMouseUp;
             this.sharedFilesList.CellValueChanged += sharedFileList_OnCellValueChanged;
             this.sharedFilesList.CellMouseUp += sharedfileList_OnCellMouseUp;
             this.Load += onLoad;
-            _listViewConsoleAdapter = new ListViewConsoleAdapter(MessageConsole);
 
+            // Init managers.
+            SharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList);
+            AvailableGridManager = new DataGridViewFTTFileInfoAdapter(availableFilesList);
+
+
+            _listViewConsoleAdapter = new ListViewConsoleAdapter(MessageConsole);
+            _downloadProgressWindow = new DownloadProgressWindow();
+            
 
             
             this.BackColor = Color.LightGray;
@@ -63,14 +63,15 @@ namespace FileTransferTool
         }
 
 
-
+        /// <summary>
+        /// Initializes some stuff that has to be done after the form has loaded.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void onLoad(object sender, EventArgs e)
         {
             FTTConsole.ConsoleMessage += _listViewConsoleAdapter.ConsoleMessaged;
-            if (RefreshClients != null)
-            {
-                RefreshClients.Invoke(this, EventArgs.Empty);
-            }
+            _downloadProgressWindow.Show();
         }
 
      
@@ -78,13 +79,10 @@ namespace FileTransferTool
         /// Initializes grids with their grid managers.
         /// </summary>
         /// <param name="core"></param>
-        public void Init(Core core)
+        public void Init()
         {
-            _sharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList, Core.SharedFiles.CopyOfList());
-            core.SharedFilesChanged += _sharedGridManager.Core_FilesChanged;
-            _availableGridManager = new DataGridViewFTTFileInfoAdapter(availableFilesList, Core.AvailableFiles.CopyOfList());
-            core.AvailableFilesChanged += _availableGridManager.Core_FilesChanged;
-            core.AvailableFilesChanged += availFilesChanged;
+            SharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList);
+            AvailableGridManager = new DataGridViewFTTFileInfoAdapter(availableFilesList);
         }
 
 
@@ -132,9 +130,7 @@ namespace FileTransferTool
         /// <summary>
         /// Triggers a check for checked rows in the available files list.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void availFilesChanged(object sender, EventArgs e)
+        public void AvailFilesChanged()
         {
             checkAvailableChecks();
         }
@@ -149,9 +145,9 @@ namespace FileTransferTool
 
             DialogResult result = openFileDialog1.ShowDialog();
 
-            if (result == DialogResult.OK && FilesSelected != null)
+            if (result == DialogResult.OK)
             {
-                FilesSelected.Invoke(this, new FilesSelectedEventArgs(openFileDialog1.FileNames));      
+               _windowsUI.MainWindowFilesSelected(this, new FTUI.FilesSelectedEventArgs(openFileDialog1.FileNames));      
             }
         }
 
@@ -164,9 +160,9 @@ namespace FileTransferTool
         {
             DialogResult result = folderBrowserDialog1.ShowDialog();
 
-            if (result == DialogResult.OK && FilesSelected != null)
+            if (result == DialogResult.OK )
             {
-                FilesSelected.Invoke(this, new FilesSelectedEventArgs(new String[] { folderBrowserDialog1.SelectedPath }));
+                _windowsUI.MainWindowFilesSelected(this, new FTUI.FilesSelectedEventArgs(new String[] { folderBrowserDialog1.SelectedPath }));
             }
         }
 
@@ -214,7 +210,7 @@ namespace FileTransferTool
         /// <summary>
         /// Checks for checked cells in shared checked column.
         /// </summary>
-        private void checkSharedChecks()
+        public void checkSharedChecks()
         {
             foreach (DataGridViewRow row in sharedFilesList.Rows)
             {
@@ -279,9 +275,9 @@ namespace FileTransferTool
                 }
             }
 
-            if (count > 0 && FilesRemoved != null)
+            if (count > 0)
             {
-                FilesRemoved.Invoke(this, new FilesRemovedEventArgs(files));
+                _windowsUI.MainWindowFilesRemoved(this, new FTUI.FilesRemovedEventArgs(files));
             }
 
             //sharedFilesList.EndEdit();
@@ -290,13 +286,17 @@ namespace FileTransferTool
 
         private void refreshButton_Click(object sender, EventArgs e)
         {
-            if (RefreshClients != null)
-            {
-                RefreshClients.Invoke(this, EventArgs.Empty);
-            }
+
+             _windowsUI.MainWindowRefresh(this, EventArgs.Empty);
+
         }
 
 
+        /// <summary>
+        /// Attempts to start a download operation when the download button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void downloadButton_Click(object sender, EventArgs e)
         {
 
@@ -314,40 +314,14 @@ namespace FileTransferTool
                 }
             }
 
-            if (DownloadFiles != null)
-            {
-                if (DownloadFiles != null)
-                {
-                    DownloadFiles.Invoke(this, new DownloadFilesEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath });
-                }
-            }
+            _windowsUI.MainWindowDownloadfiles(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath });
+            _downloadProgressWindow.Show();
         }
 
 
+        
 
-        public class FilesSelectedEventArgs : EventArgs
-        {
-            public String[] Files { get; }
-            public FilesSelectedEventArgs(String[] files)
-            {
-                this.Files = files;
-            }
-        }
-
-        public class FilesRemovedEventArgs : EventArgs
-        {
-            public String[] Files { get; }
-            public FilesRemovedEventArgs(String[] files)
-            {
-                this.Files = files;
-            }
-        }
-
-        public class DownloadFilesEventArgs : EventArgs
-        {
-            public Dictionary<String, String> Files { get; set; }
-            public String Dest { get; set; }
-        }
+       
 
        
     }

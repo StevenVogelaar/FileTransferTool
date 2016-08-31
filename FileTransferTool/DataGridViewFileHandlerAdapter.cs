@@ -19,11 +19,10 @@ namespace FileTransferTool
 
         private DataGridView _dataGrid;
         
-        public DataGridViewFileHandlerAdapter(DataGridView dataGrid, List<FileHandler> files)
+        public DataGridViewFileHandlerAdapter(DataGridView dataGrid)
         {
             _dataGrid = dataGrid;
             dataGrid.SortCompare += new DataGridViewSortCompareEventHandler(dataViewGrid_SortCompare);
-            initDataGrid(files);
         }
 
 
@@ -50,9 +49,9 @@ namespace FileTransferTool
         /// </summary>
         /// <param name="e"></param>
         /// <param name="e"></param>
-        public void Core_FilesChanged(object obj, Core.SharedFilesChangedEventArgs e)
+        public void FilesChanged(List<FileHandler> files)
         {
-            syncGrid(e.Files);
+            syncGrid(files);
         }
 
 

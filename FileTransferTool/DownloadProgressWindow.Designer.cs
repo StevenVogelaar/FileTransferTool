@@ -28,23 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listBox1 = new System.Windows.Forms.ListBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.DownloadList = new System.Windows.Forms.DataGridView();
+            this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).BeginInit();
             this.SuspendLayout();
-            // 
-            // listBox1
-            // 
-            this.listBox1.ColumnWidth = 200;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Items.AddRange(new object[] {
-            "king.pdf",
-            "testfile13.txt",
-            "afile.pdf",
-            "document.doc"});
-            this.listBox1.Location = new System.Drawing.Point(13, 13);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(924, 277);
-            this.listBox1.TabIndex = 0;
             // 
             // progressBar1
             // 
@@ -54,22 +43,54 @@
             this.progressBar1.TabIndex = 1;
             this.progressBar1.Value = 50;
             // 
+            // DownloadList
+            // 
+            this.DownloadList.AllowUserToAddRows = false;
+            this.DownloadList.AllowUserToDeleteRows = false;
+            this.DownloadList.BackgroundColor = System.Drawing.Color.White;
+            this.DownloadList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DownloadList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.NameColumn,
+            this.LocationColumn});
+            this.DownloadList.Location = new System.Drawing.Point(13, 13);
+            this.DownloadList.Name = "DownloadList";
+            this.DownloadList.ReadOnly = true;
+            this.DownloadList.RowHeadersVisible = false;
+            this.DownloadList.Size = new System.Drawing.Size(924, 285);
+            this.DownloadList.TabIndex = 2;
+            // 
+            // NameColumn
+            // 
+            this.NameColumn.HeaderText = "Name";
+            this.NameColumn.Name = "NameColumn";
+            this.NameColumn.ReadOnly = true;
+            this.NameColumn.Width = 300;
+            // 
+            // LocationColumn
+            // 
+            this.LocationColumn.HeaderText = "Location";
+            this.LocationColumn.Name = "LocationColumn";
+            this.LocationColumn.ReadOnly = true;
+            this.LocationColumn.Width = 150;
+            // 
             // DownloadProgressWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(949, 310);
+            this.Controls.Add(this.DownloadList);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.listBox1);
             this.Name = "DownloadProgressWindow";
             this.Text = "DownloadProgressWindow";
+            ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.DataGridView DownloadList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn LocationColumn;
     }
 }
