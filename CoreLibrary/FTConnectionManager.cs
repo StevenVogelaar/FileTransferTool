@@ -16,7 +16,6 @@ namespace CoreLibrary
         private int _receivingPort = 3898;
 
         private Socket _connectionReceiver;
-        //private List<ConnectionListener> _listeners;
         private IPEndPoint _endPoint;
         private Thread _listenThread;
         private FTFileSender.GetFilePath _getFilePath;
@@ -106,7 +105,7 @@ namespace CoreLibrary
         private void connectionAccepted(Socket socket)
         {
             // Create FTFileSender which then runs on a background thread.
-            new FTFileSender(socket,listener_fileReceivedCallback, _getFilePath);
+            new FTFileSender(socket, _getFilePath);
         }
 
         private void listener_fileReceivedCallback()

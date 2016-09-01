@@ -12,12 +12,14 @@ namespace FileTransferTool
     {
 
 
-        public MainWindow MainWindow;
+        public MainWindow Window;
+
+        private delegate void availFilesChanged();
 
         public WindowsUI()
         {
-            MainWindow = new MainWindow(this);
-            MainWindow.Load += mainWindow_OnLoad;
+            Window = new MainWindow(this);
+            Window.Load += mainWindow_OnLoad;
         }
 
 
@@ -71,14 +73,15 @@ namespace FileTransferTool
 
         public override void AvailableFilesChanged(List<FTTFileInfo> files)
         {
-            MainWindow.AvailableGridManager.FilesChanged(files);
-            MainWindow.AvailFilesChanged();
+
+            Window.AvailableGridManager.FilesChanged(files);
+            Window.Invoke((availFilesChanged)delegate { Window.AvailFilesChanged(); });
         }
 
         public override void SharedFilesChanged(List<FileHandler> files)
         {
-            MainWindow.SharedGridManager.FilesChanged(files);
-            MainWindow.checkSharedChecks();
+            Window.SharedGridManager.FilesChanged(files);
+            Window.Invoke((availFilesChanged)delegate { Window.checkSharedChecks(); });
         }
 
         public override void DownloadStarted(FTTFileInfo file)

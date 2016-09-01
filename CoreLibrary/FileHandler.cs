@@ -14,6 +14,7 @@ namespace CoreLibrary
         public String Path { get; }
         public String Name { get; }
         public String Size { get; private set; }
+        public bool IsDirectory { get; private set; }
         //public long SizeInBytes { get; private set; }
 
 
@@ -29,6 +30,20 @@ namespace CoreLibrary
             this.Path = path;
             Name = Path.Split('\\').Last<String>();
             Size = "Calculating...";
+
+            if (File.Exists(Path))
+            {
+                IsDirectory = false;
+            }
+            else if (Directory.Exists(Path))
+            {
+                IsDirectory = true;
+            }
+            else
+            {
+                Size = "Does not Exist.";
+                return;
+            }
 
 
             sizeCheckWorker = new BackgroundWorker();
@@ -47,12 +62,12 @@ namespace CoreLibrary
         {
             String argPath = (String)e.Argument;
 
-            if (File.Exists(argPath))
+            if (!IsDirectory)
             {
                 FileInfo info = new FileInfo(argPath);
                 e.Result = parseBytes(info.Length);
             }
-            else if (Directory.Exists(Path))
+            else
             {
                 long _sizeInBytes = getDirectorySize(argPath);
 

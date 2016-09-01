@@ -39,17 +39,11 @@ namespace CoreLibrary
             _broadcastListener.MessageReceived += broadcastListener_MessageReceived;
         }
 
+
         /// <summary>
         /// Sends broadcast request and pings previously connected clients. If there is no response from pings, will remove their files.
         /// </summary>
         public void RefreshConnections()
-        {
-            Thread thread = new Thread(refreshConnections);
-            thread.IsBackground = true;
-            thread.Start();
-        }
-
-        private void refreshConnections()
         {
 
             _broadcastSender.SendMessage(new Message()

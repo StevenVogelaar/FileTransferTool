@@ -20,7 +20,7 @@ namespace FileTransferTool
             Core core = new Core(ui);
 
             // Run program.
-            Application.Run(ui.MainWindow);
+            Application.Run(ui.Window);
         }
     }
 }

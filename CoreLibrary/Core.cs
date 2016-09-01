@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 
 namespace CoreLibrary
@@ -15,7 +16,7 @@ namespace CoreLibrary
         public static SyncList<FTTFileInfo> AvailableFiles { get; private set; }
 
         private FTUI _ui;
-        private BroadcastManager _connectionManager;
+        private BroadcastManager _broadcastManager;
         private FTConnectionManager _ftConnectionManager;
         private bool _downloadInProgress;
 
@@ -34,10 +35,10 @@ namespace CoreLibrary
             FTTConsole.Init();
             SharedFiles = new SyncList<FileHandler>();
             AvailableFiles = new SyncList<FTTFileInfo>();
-            _connectionManager = new BroadcastManager();
+            _broadcastManager = new BroadcastManager();
             _ftConnectionManager = new FTConnectionManager(GetFilePath);
 
-            _connectionManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
+            _broadcastManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
             _downloadInProgress = false;
             
         }
@@ -64,7 +65,7 @@ namespace CoreLibrary
             _ui.SharedFilesChanged(SharedFiles.CopyOfList());
             
 
-            RefreshClients();
+            RefreshClientsAsync();
         }
 
         public void AddSharedFile(String[] paths)
@@ -85,7 +86,7 @@ namespace CoreLibrary
                 
             }
 
-            RefreshClients();
+            RefreshClientsAsync();
         }
 
         /// <summary>
@@ -125,17 +126,26 @@ namespace CoreLibrary
                 }
             }
 
-            RefreshClients();
+            RefreshClientsAsync();
         }
 
 
         /// <summary>
         /// Broadcasts info request to all other clients to update client list.
         /// </summary>
-        public void RefreshClients()
+        public void RefreshClientsAsync()
         {
-            System.Threading.Thread.Sleep(100);
-            _connectionManager.RefreshConnections();
+            Thread thread = new Thread(refreshClients);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        /// <summary>
+        /// Internal refreshClients method that is run on another thread.
+        /// </summary>
+        private void refreshClients()
+        {
+            _broadcastManager.RefreshConnections();
             AvailableFiles.Clear();
             syncAvailableFiles(new FTTFileInfo[0], BroadcastManager.LocalIPAddress().ToString());
         }
@@ -155,7 +165,10 @@ namespace CoreLibrary
             {
                 for (int i = 0; i < availablefiles.Length; i++)
                 {
-                    if (availablefiles[i].Name.Equals(f))
+                    String value;
+                    bool foundValue = files.TryGetValue(f, out value);
+
+                    if (foundValue && availablefiles[i].Name.Equals(f) && availablefiles[i].IP.Equals(value))
                     {
                         foundFiles.Add(availablefiles[i]);
                     }
@@ -281,7 +294,7 @@ namespace CoreLibrary
 
         public void Dispose()
         {
-            _connectionManager.Dispose();
+            _broadcastManager.Dispose();
         }
 
 
@@ -302,7 +315,7 @@ namespace CoreLibrary
         /// <param name="e"></param>
         private void _ui_RefreshClients(object sender, EventArgs e)
         {
-            RefreshClients();
+            RefreshClientsAsync();
         }
 
         /// <summary>

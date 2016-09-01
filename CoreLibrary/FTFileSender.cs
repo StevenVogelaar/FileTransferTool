@@ -20,14 +20,11 @@ namespace CoreLibrary
 
         private Socket _socket;
         private Thread _listenerThread;
-        private Thread _senderThread;
-        private FileReceivedCallback _callback;
         private GetFilePath _getFilePath;
 
-        public FTFileSender(Socket socket, FileReceivedCallback callback, GetFilePath getFilePath)
+        public FTFileSender(Socket socket, GetFilePath getFilePath)
         {
             _socket = socket;
-            _callback = callback;
             _getFilePath = getFilePath;
 
             _listenerThread = new Thread(listen);
@@ -70,48 +67,93 @@ namespace CoreLibrary
 
         private void beginSendFile(String file)
         {
-            _senderThread = new Thread(sendFile);
-            _senderThread.IsBackground = true;
-            _senderThread.Start(file);
+            String path = _getFilePath(file);
+
+            if (path != null)
+            {
+                if (File.Exists(path))
+                {
+                    sendFile(path, ".\\");
+                }
+                else if (Directory.Exists(path))
+                {
+                    sendFolder(path);
+                }
+                else
+                {
+                    FTTConsole.AddError("Could not find file: " + file);
+                    dispose();
+                    return;
+                }
+            }
+            else
+            {
+                FTTConsole.AddError("Null Path for file: " + file);
+                dispose();
+                return;
+            }
+
+            dispose();
         }
 
-        private void sendFile(object fileNameArg)
+        /// <summary>
+        /// Begins an operation to send the contents of a folder and all sub-folders over the socket.
+        /// </summary>
+        /// <param name="path"></param>
+        private void sendFolder(String path)
+        {
+
+
+        }
+
+        /// <summary>
+        /// Sends single file over the socket.
+        /// </summary>
+        /// <param name="path">Local Path of file.</param>
+        /// <param name="relativePath">Relative path from dest directory.</param>
+        private void sendFile(String path, string relativePath)
         {
 
             FileStream fileStream = null;
-            String fileName = null;
+            String fileName = path.Substring(path.LastIndexOf('\\'));
             try
             {
 
-                fileName = (String)fileNameArg;
-
                 // Try to open file.
-                fileStream = File.OpenRead(_getFilePath(fileName));
-                //FileStream writeStream = new FileStream("./outfile.txt", FileMode.Create);
+                fileStream = File.OpenRead(path);
+                // Get size of file.
+                FileInfo fileInfo = new FileInfo(path);
+                long size = fileInfo.Length;
+                byte[] sizeInBytes = BitConverter.GetBytes(size);
 
-
-                byte[] fName = Encoding.UTF8.GetBytes(fileName);
                 byte[] buffer = new byte[2048];
 
-                // Send the name of the file in the first 2048 byte message.
-                for (int i = 0; i < fName.Length; i++)
+                // Set first 8 bytes to the file size.
+                for (int i = 0; i < 8; i++)
                 {
-                    buffer[i] = fName[i];
+                    buffer[i] = sizeInBytes[i];
                 }
-                _socket.Send(Encoding.UTF8.GetBytes(fileName));
+
+                byte[] fName = Encoding.UTF8.GetBytes(relativePath + fileName);
+                
+                // Set rest of bytes in 2048 byte message to the file name with relative path.
+                for (int i = 8; i < fName.Length + 8; i++)
+                {
+                    buffer[i] = fName[i - 8];
+                }
+
+                // Send header info.
+                _socket.Send(buffer);
 
                 // Now send the file.
                 int readBytes = 0;
                 buffer = new byte[2048];
                 SocketError sError;
                 while ((readBytes = fileStream.Read(buffer, 0, buffer.Length)) > 0){
-                   // writeStream.Write(buffer, 0, readBytes);
                     _socket.Send(buffer, 0, readBytes, SocketFlags.None, out sError);
-                    
                 }
 
                 FTTConsole.AddInfo("File sent: " + fileName);
-                //writeStream.Close();
             }
             catch (ArgumentException e)
             {
@@ -127,12 +169,12 @@ namespace CoreLibrary
             {
                 fileStream.Close();
             }
-            dispose();
 
         }
 
         private void dispose()
         {
+            // Shutdown causes the other client to stop listening for files.
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
         }
