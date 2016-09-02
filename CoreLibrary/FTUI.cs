@@ -40,7 +40,7 @@ namespace CoreLibrary
         /// Notify the UI that a download has started.
         /// </summary>
         /// <param name="file"></param>
-        public abstract void DownloadStarted(FTTFileInfo file);
+        public abstract void DownloadStarted(List<FTTFileInfo> file);
 
 
         /// <summary>

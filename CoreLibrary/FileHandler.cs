@@ -13,6 +13,7 @@ namespace CoreLibrary
 
         public String Path { get; }
         public String Name { get; }
+        public String Alias { get; private set; }
         public String Size { get; private set; }
         public bool IsDirectory { get; private set; }
         //public long SizeInBytes { get; private set; }
@@ -24,11 +25,27 @@ namespace CoreLibrary
 
         private BackgroundWorker sizeCheckWorker;
 
+        public FileHandler(String path, String alias)
+        {
+            this.Alias = alias;
+            this.Path = path;
+            Name = Path.Split('\\').Last<String>();
+
+            init();
+        }
 
         public FileHandler(String path)
         {
             this.Path = path;
             Name = Path.Split('\\').Last<String>();
+            Alias = Name;
+
+            init();
+        }
+
+        private void init()
+        {
+
             Size = "Calculating...";
 
             if (File.Exists(Path))
@@ -80,7 +97,7 @@ namespace CoreLibrary
                 e.Result = parseBytes(_sizeInBytes);
             }
 
-            
+
         }
 
 
@@ -95,7 +112,7 @@ namespace CoreLibrary
 
             if (bytes < 1024)
             {
-                result = bytes.ToString("0.00") + " Bytes"; 
+                result = bytes.ToString("0.00") + " Bytes";
             }
             else if (bytes < 1048576)
             {
@@ -126,9 +143,10 @@ namespace CoreLibrary
             if (sizeCheckWorker.CancellationPending) return -1;
 
             long size = 0;
-            
+
             // Recurse into sub directories
-            foreach (String d in Directory.GetDirectories(path)){
+            foreach (String d in Directory.GetDirectories(path))
+            {
                 size += getDirectorySize(d);
             }
 
@@ -151,7 +169,7 @@ namespace CoreLibrary
         }
 
 
-       
+
 
         /// <summary>
         /// Called after the size of the file or folder has been calculated.

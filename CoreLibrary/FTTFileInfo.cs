@@ -17,6 +17,8 @@ namespace CoreLibrary
         public String Size { get; set; }
         [DataMember(Name = "IsDirectory")]
         public bool IsDirectory { get; set; }
+        [DataMember(Name = "Alias")]
+        public String Alias { get; set; }
 
         public String Path { get; set; }
         public String IP { get; set; }
@@ -35,7 +37,7 @@ namespace CoreLibrary
 
             foreach (FileHandler f in files)
             {
-                result[i] = new FTTFileInfo() { Name = f.Name, Size = f.Size, Path = f.Path , IP = ip, IsDirectory = f.IsDirectory};
+                result[i] = new FTTFileInfo() { Alias = f.Alias, Name = f.Name, Size = f.Size, Path = f.Path , IP = ip, IsDirectory = f.IsDirectory};
                 i++;
             }
 

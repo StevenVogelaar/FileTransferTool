@@ -42,48 +42,61 @@ namespace CoreLibrary
             _downloadInProgress = false;
             
         }
-
         
 
-
         /// <summary>
-        /// Add a local shared file to the list, which will be made avaialable to other clients.
+        /// Add a list of local shared files to internal list. These are the files that will be available to other clients.
         /// </summary>
-        /// <param name="path"></param>
-        public void AddSharedFile(String path)
-        {
-
-            if (!checkExists(path)) return;
-
-            // Check if a file with the same path already exists in the list.
-            foreach (FileHandler f in SharedFiles.CopyOfList())
-            {
-                if (f.Path.Equals(path)) return;
-            }
-
-            SharedFiles.Add(new FileHandler(path));
-            _ui.SharedFilesChanged(SharedFiles.CopyOfList());
-            
-
-            RefreshClientsAsync();
-        }
-
+        /// <param name="paths"></param>
         public void AddSharedFile(String[] paths)
         {
             foreach (String path in paths)
             {
-
                 if (!checkExists(path)) return;
 
+                List<FileHandler> sharedFiles = SharedFiles.CopyOfList();
+                bool duplicateName = false;
+                String fileName = path.Substring(path.LastIndexOf("\\") + 1);
+
                 // Check if a file with the same path already exists in the list.
-                foreach (FileHandler f in SharedFiles.CopyOfList())
+                foreach (FileHandler f in sharedFiles)
                 {
+                    duplicateName = false;
                     if (f.Path.Equals(path)) return;
+
+                    // Now check for duplicated names. If a duplicate name is found, set a alias for the file.
+                    String fName = f.Name;
+                    if (f.Name.Equals(fileName))
+                    {
+                        duplicateName = true;
+                        break;
+                    }
                 }
 
-                SharedFiles.Add(new FileHandler(path));
+                if (duplicateName)
+                {
+                    String alias = fileName;
+                    // Check if aliases are allready taken
+                    foreach (FileHandler f in sharedFiles)
+                    {
+                        for (int i = 1; i != -1; i++)
+                        {
+                            if (!f.Alias.Equals(fileName + " (" + i + ")"))
+                            {
+                                // Assign alias to file.
+                                alias = fileName + " (" + i + ")";
+                                SharedFiles.Add(new FileHandler(path, alias));
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    SharedFiles.Add(new FileHandler(path));
+                }
+
                 _ui.SharedFilesChanged(SharedFiles.CopyOfList());
-                
             }
 
             RefreshClientsAsync();
@@ -168,7 +181,7 @@ namespace CoreLibrary
                     String value;
                     bool foundValue = files.TryGetValue(f, out value);
 
-                    if (foundValue && availablefiles[i].Name.Equals(f) && availablefiles[i].IP.Equals(value))
+                    if (foundValue && availablefiles[i].Alias.Equals(f) && availablefiles[i].IP.Equals(value))
                     {
                         foundFiles.Add(availablefiles[i]);
                     }
@@ -176,12 +189,41 @@ namespace CoreLibrary
             }
 
 
-            // Create download requests for each file.
+            // Sort by IP into individual file lists.
+            HashSet<String> uniqueIPs = new HashSet<string>();
             foreach (FTTFileInfo f in foundFiles)
+            {
+                uniqueIPs.Add(f.IP);
+            }
+
+            // Generate index values for each ip address.
+            String[] ipIndexes = uniqueIPs.ToArray();
+
+            List<FTTFileInfo>[] sortedFiles = new List<FTTFileInfo>[uniqueIPs.Count];
+            for (int i = 0; i < sortedFiles.Length; i++)
+            {
+                sortedFiles[i] = new List<FTTFileInfo>();
+            }
+
+            foreach (FTTFileInfo f in foundFiles)
+            {
+                for (int i = 0; i < ipIndexes.Length; i++)
+                {
+                    if (ipIndexes[i].Equals(f.IP))
+                    {
+                        sortedFiles[i].Add(f);
+                    }
+                }
+            }
+
+
+            // Start download request for each file set.
+            foreach (List<FTTFileInfo> f in sortedFiles)
             {
                 _ftConnectionManager.DownloadFile(f, dest);
                 _ui.DownloadStarted(f);
             }
+            
 
         }
 
@@ -237,7 +279,7 @@ namespace CoreLibrary
             {
                 //Console.WriteLine("f.name: " + f.Name + " file.Name: " + file.Name + " f.IP: " + f.IP + " file.IP: " + file.IP);
 
-                if (f.Name.Equals(file.Name) && f.IP.Equals(file.IP)) return;
+                if (f.Alias.Equals(file.Alias) && f.IP.Equals(file.IP)) return;
             }
 
             AvailableFiles.Add(file);
@@ -325,8 +367,6 @@ namespace CoreLibrary
         /// <param name="e"></param>
         private void _ui_FilesSelected(object sender, FTUI.FilesSelectedEventArgs e)
         {
-
-            Console.WriteLine("ova ere");
             if (e.Files != null)
             {
                 AddSharedFile(e.Files);

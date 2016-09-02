@@ -84,7 +84,7 @@ namespace FileTransferTool
             Window.Invoke((availFilesChanged)delegate { Window.checkSharedChecks(); });
         }
 
-        public override void DownloadStarted(FTTFileInfo file)
+        public override void DownloadStarted(List<FTTFileInfo> file)
         {
             
         }

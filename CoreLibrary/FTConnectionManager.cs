@@ -13,7 +13,7 @@ namespace CoreLibrary
     {
 
         public const Int32 FILETRANSFER_PORT = 3897;
-        private int _receivingPort = 3898;
+        public const Int32 RECEIVING_PORT = 3898;
 
         private Socket _connectionReceiver;
         private IPEndPoint _endPoint;
@@ -35,33 +35,30 @@ namespace CoreLibrary
 
 
         /// <summary>
-        /// Creates a FTFileRequester for a file.
+        /// Creates a FTFileRequester for a list of files from the same remote host.
         /// </summary>
-        /// <param name="files"></param>
-        public void DownloadFile(FTTFileInfo file, String dest)
+        /// <param name="files">List of files that all have the same ip address.</param>
+        public void DownloadFile(List<FTTFileInfo> files, String dest)
         {
             // Switch this to run on a seperate thread!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // Attempt to open connection with remote host.
             try
             {
                 Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                socket.Bind(new IPEndPoint(BroadcastManager.LocalIPAddress(), _receivingPort));
-                socket.Connect(new IPEndPoint(IPAddress.Parse(file.IP), FILETRANSFER_PORT));
-
-                // Increment port so there arnt conflicts
-                _receivingPort++;
-                if (_receivingPort > 7000)
-                {
-                    _receivingPort = 3898;
-                }
+                socket.Bind(new IPEndPoint(BroadcastManager.LocalIPAddress(), RECEIVING_PORT));
+                socket.Connect(new IPEndPoint(IPAddress.Parse(files.ElementAt(0).IP), FILETRANSFER_PORT));
 
                 // Create new fileRequester. It will run the request automaticaly.
-                FTTConsole.AddDebug("Sending request for file: " + file.Name);
-                new FTFileRequester(file.Name, socket, dest);
+                foreach (FTTFileInfo f in files)
+                {
+                    FTTConsole.AddDebug("Sending request for files: " + f.Name);
+                }
+
+                new FTFileRequester(files, socket, dest);
             }
             catch (Exception e)
             {
-                FTTConsole.AddError("Error trying to connect to remmote host: " + file.IP);
+                FTTConsole.AddError("Error trying to connect to remmote host: " + files.ElementAt(0).IP);
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
             }
         }

@@ -31,7 +31,7 @@ namespace FileTransferTool
             {
 
                 DataGridViewRow row = (DataGridViewRow)_dataGrid.Rows[0].Clone();
-                row.Cells[MainWindow.nameIndex].Value = f.Name;
+                row.Cells[MainWindow.nameIndex].Value = f.Alias;
                 row.Cells[MainWindow.locationIndex].Value = f.Path;
                 row.Cells[MainWindow.sizeIndex].Value = f.Size;
                 _dataGrid.Rows.Add(row);
@@ -65,7 +65,7 @@ namespace FileTransferTool
                 {
                     object nameValue = row.Cells[MainWindow.nameIndex].Value;
                     object locationValue = row.Cells[MainWindow.locationIndex].Value;
-                    if (nameValue != null && ((String)nameValue).Equals(f.Name) && ((String)locationValue).Equals(f.IP))
+                    if (nameValue != null && ((String)nameValue).Equals(f.Alias) && ((String)locationValue).Equals(f.IP))
                     {
                         found = true;
                         break;
@@ -98,7 +98,7 @@ namespace FileTransferTool
                         continue;
                     }
 
-                    if (nameValue == null || f.Name.Equals((String)nameValue))
+                    if (nameValue == null || f.Alias.Equals((String)nameValue))
                     {
                         
                         found = true;
@@ -141,7 +141,7 @@ namespace FileTransferTool
         /// <param name="file"></param>
         private void dataGridAddRow(FTTFileInfo file)
         {
-            _dataGrid.Rows.Add(new object[] { false, file.Name, file.IP, file.Size });
+            _dataGrid.Rows.Add(new object[] { false, file.Alias, file.IP, file.Size });
         }
 
 

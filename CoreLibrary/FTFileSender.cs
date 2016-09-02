@@ -35,20 +35,20 @@ namespace CoreLibrary
 
         private void listen()
         {
-
-            String requestedfile = "";
+            List<String> files = null;
 
             try
             {
-                byte[] buffer = new byte[2048];
+                byte[] buffer = new byte[4096];
                 int received = _socket.Receive(buffer);
                 String message = Encoding.UTF8.GetString(buffer);
 
-                requestedfile = message.Replace("\0", String.Empty);
+                message = message.Replace("\0", String.Empty);
+
+                // Parse message into individual strings.
+                files = parseMessage(message);
 
                 FTTConsole.AddDebug("File requested: " + message);
-                //Console.WriteLine("File Requested = " + message);
-
             }
             catch (Exception e)
             {
@@ -60,37 +60,46 @@ namespace CoreLibrary
                 return;
             }
 
-            Console.WriteLine("Being send file.");
-            beginSendFile(requestedfile);
+            beginSendFile(files);
+        }
+
+        private List<String> parseMessage(String message)
+        {
+            String[] files = message.Split('/');
+            return new List<String>(files);
         }
 
 
-        private void beginSendFile(String file)
+        private void beginSendFile(List<String> files)
         {
-            String path = _getFilePath(file);
 
-            if (path != null)
+            foreach (String file in files)
             {
-                if (File.Exists(path))
+                String path = _getFilePath(file);
+
+                if (path != null)
                 {
-                    sendFile(path, ".\\");
-                }
-                else if (Directory.Exists(path))
-                {
-                    sendFolder(path);
+                    if (File.Exists(path))
+                    {
+                        sendFile(path, ".\\");
+                    }
+                    else if (Directory.Exists(path))
+                    {
+                        sendFolder(path, ".\\");
+                    }
+                    else
+                    {
+                        FTTConsole.AddError("Could not find file: " + file);
+                        dispose();
+                        return;
+                    }
                 }
                 else
                 {
-                    FTTConsole.AddError("Could not find file: " + file);
+                    FTTConsole.AddError("Null Path for file: " + file);
                     dispose();
                     return;
                 }
-            }
-            else
-            {
-                FTTConsole.AddError("Null Path for file: " + file);
-                dispose();
-                return;
             }
 
             dispose();
@@ -99,11 +108,25 @@ namespace CoreLibrary
         /// <summary>
         /// Begins an operation to send the contents of a folder and all sub-folders over the socket.
         /// </summary>
-        /// <param name="path"></param>
-        private void sendFolder(String path)
+        /// <param name="directoryPath"></param>
+        private void sendFolder(String directoryPath, String relativePath)
         {
 
+            String[] files = Directory.GetFiles(directoryPath);
+            String directoryName = directoryPath.Substring(directoryPath.LastIndexOf('\\'));
 
+            // Send each file in current directory.
+            foreach (String f in files)
+            {
+                sendFile(f, relativePath + directoryName);
+            }
+
+            // Recurse for each subdirectory.
+            String[] subDirectories = Directory.GetDirectories(directoryPath);
+            foreach (string d in subDirectories)
+            {
+                sendFolder(d, relativePath + directoryName);
+            }
         }
 
         /// <summary>
@@ -111,7 +134,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="path">Local Path of file.</param>
         /// <param name="relativePath">Relative path from dest directory.</param>
-        private void sendFile(String path, string relativePath)
+        private void sendFile(String path, String relativePath)
         {
 
             FileStream fileStream = null;
@@ -150,7 +173,7 @@ namespace CoreLibrary
                 buffer = new byte[2048];
                 SocketError sError;
                 while ((readBytes = fileStream.Read(buffer, 0, buffer.Length)) > 0){
-                    _socket.Send(buffer, 0, readBytes, SocketFlags.None, out sError);
+                    int value = _socket.Send(buffer, 0, readBytes, SocketFlags.None, out sError);
                 }
 
                 FTTConsole.AddInfo("File sent: " + fileName);
@@ -170,11 +193,13 @@ namespace CoreLibrary
                 fileStream.Close();
             }
 
+            //Thread.Sleep(200);
         }
 
         private void dispose()
         {
             // Shutdown causes the other client to stop listening for files.
+            FTTConsole.AddDebug("Connection shutting down.");
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
         }

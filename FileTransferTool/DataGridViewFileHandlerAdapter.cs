@@ -36,7 +36,7 @@ namespace FileTransferTool
                 f.FileInfoChanged += fileHandler_FileInfoChanged;
 
                 DataGridViewRow row = (DataGridViewRow)_dataGrid.Rows[0].Clone();
-                row.Cells[MainWindow.nameIndex].Value = f.Name;
+                row.Cells[MainWindow.nameIndex].Value = f.Alias;
                 row.Cells[MainWindow.locationIndex].Value = f.Path;
                 row.Cells[MainWindow.sizeIndex].Value = f.Size;
                 _dataGrid.Rows.Add(row);
@@ -60,7 +60,7 @@ namespace FileTransferTool
         /// </summary>
         private void syncGrid(List<FileHandler> files)
         {
-
+            Console.WriteLine("syncing gridd");
             // Check if files exist in the files list and not in grid view (adding files to grid).
             foreach (FileHandler f in files)
             {
@@ -127,7 +127,7 @@ namespace FileTransferTool
         private void addRowToGrid(FileHandler file)
         {
             file.FileInfoChanged += fileHandler_FileInfoChanged;
-            _dataGrid.Rows.Add(new object[] {false, file.Name, file.Path, file.Size });
+            _dataGrid.Rows.Add(new object[] {false, file.Alias, file.Path, file.Size });
       
             
             //_dataGrid.Refresh();
