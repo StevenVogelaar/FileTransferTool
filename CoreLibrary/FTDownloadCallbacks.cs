@@ -6,13 +6,21 @@ using System.Threading.Tasks;
 
 namespace CoreLibrary
 {
-    public interface FTDownloadCallbacks
+    public abstract class FTDownloadCallbacks
     {
 
+        public delegate void CancelRequestedHandler(object sender, EventArgs e);
+        public event CancelRequestedHandler CancelRequested;
 
-        void DownloadFailed(FTTFileInfo file);
-        void DownloadProgress(FTTFileInfo file);
-        void DownloadCompleted(FTTFileInfo file);
 
+        protected void InvokeCancelRequested(object sender)
+        {
+            if (CancelRequested != null) CancelRequested.Invoke(sender, EventArgs.Empty);
+        }
+
+        public abstract void DownloadProgress(String alias, int progress, String ip);
+        public abstract void FolderDownloadProgress(String alias, long progress, String ip);
+        public abstract void DownloadCompleted();
+        public abstract void DownloadStarted();
     }
 }

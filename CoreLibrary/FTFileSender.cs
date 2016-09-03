@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.ComponentModel;
 
 namespace CoreLibrary
 {
@@ -15,23 +16,45 @@ namespace CoreLibrary
     /// </summary>
     class FTFileSender
     {
-        public delegate void FileReceivedCallback();
+
+        public delegate void OperationFinishedHandler(object sender, EventArgs e);
+        public event OperationFinishedHandler OperationFinished;
+
         public delegate String GetFilePath(String fileName);
 
         private Socket _socket;
-        private Thread _listenerThread;
         private GetFilePath _getFilePath;
+        private BackgroundWorker _senderWorker;
 
         public FTFileSender(Socket socket, GetFilePath getFilePath)
         {
             _socket = socket;
             _getFilePath = getFilePath;
 
-            _listenerThread = new Thread(listen);
-            _listenerThread.IsBackground = true;
-            _listenerThread.Start();
+
+            _senderWorker = new BackgroundWorker();
+            _senderWorker.DoWork += _senderWorker_DoWork;
+            _senderWorker.WorkerReportsProgress = false;
+            _senderWorker.WorkerSupportsCancellation = true;
+
+            _senderWorker.RunWorkerAsync();
+
         }
 
+
+        private void _senderWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            listen();
+        }
+
+
+        /// <summary>
+        /// Will attempt to cancel current upload operations.
+        /// </summary>
+        public void Cancel()
+        {
+            _senderWorker.CancelAsync();
+        }
 
         private void listen()
         {
@@ -81,11 +104,11 @@ namespace CoreLibrary
                 {
                     if (File.Exists(path))
                     {
-                        sendFile(path, ".\\");
+                        sendFile(path, "");
                     }
                     else if (Directory.Exists(path))
                     {
-                        sendFolder(path, ".\\");
+                        sendFolder(path, "");
                     }
                     else
                     {
@@ -118,7 +141,7 @@ namespace CoreLibrary
             // Send each file in current directory.
             foreach (String f in files)
             {
-                sendFile(f, relativePath + directoryName);
+                sendFile(f, relativePath +  directoryName);
             }
 
             // Recurse for each subdirectory.
@@ -149,7 +172,7 @@ namespace CoreLibrary
                 long size = fileInfo.Length;
                 byte[] sizeInBytes = BitConverter.GetBytes(size);
 
-                byte[] buffer = new byte[2048];
+                byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
 
                 // Set first 8 bytes to the file size.
                 for (int i = 0; i < 8; i++)
@@ -159,7 +182,7 @@ namespace CoreLibrary
 
                 byte[] fName = Encoding.UTF8.GetBytes(relativePath + fileName);
                 
-                // Set rest of bytes in 2048 byte message to the file name with relative path.
+                // Set rest of bytes in FTConnectionManager.PACKET_SIZE byte message to the file name with relative path.
                 for (int i = 8; i < fName.Length + 8; i++)
                 {
                     buffer[i] = fName[i - 8];
@@ -170,10 +193,16 @@ namespace CoreLibrary
 
                 // Now send the file.
                 int readBytes = 0;
-                buffer = new byte[2048];
+                buffer = new byte[FTConnectionManager.PACKET_SIZE];
                 SocketError sError;
                 while ((readBytes = fileStream.Read(buffer, 0, buffer.Length)) > 0){
                     int value = _socket.Send(buffer, 0, readBytes, SocketFlags.None, out sError);
+                    
+                    // Check to see if operation was canceled.
+                    if (_senderWorker.CancellationPending)
+                    {
+                        throw new OperationCanceledException("Operation has been canceled");
+                    }
                 }
 
                 FTTConsole.AddInfo("File sent: " + fileName);
@@ -182,18 +211,24 @@ namespace CoreLibrary
             {
                 FTTConsole.AddError("Null Path for file: " + fileName);
             }
+            catch (OperationCanceledException e)
+            {
+                FTTConsole.AddInfo("Upload opertations have been canceled.");
+                return;
+            }
             catch (Exception e)
             {
                 FTTConsole.AddError("Error sending file: " + e.Message);
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
             }
-
-            if (fileStream != null)
+            finally
             {
-                fileStream.Close();
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                    fileStream.Dispose();
+                }
             }
-
-            //Thread.Sleep(200);
         }
 
         private void dispose()
@@ -202,6 +237,17 @@ namespace CoreLibrary
             FTTConsole.AddDebug("Connection shutting down.");
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
+            _socket.Dispose();
+            
+            if (OperationFinished != null)
+            {
+                OperationFinished.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public class CanceledOperation : Exception
+        {
+
         }
     }
 }

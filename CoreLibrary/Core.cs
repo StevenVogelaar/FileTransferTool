@@ -18,7 +18,6 @@ namespace CoreLibrary
         private FTUI _ui;
         private BroadcastManager _broadcastManager;
         private FTConnectionManager _ftConnectionManager;
-        private bool _downloadInProgress;
 
 
         public Core(FTUI ui)
@@ -26,10 +25,11 @@ namespace CoreLibrary
             _ui = ui;
             _ui.WindowClosing += _ui_WindowClosing;
             _ui.FilesRemoved += _ui_FilesRemoved;
-            Console.WriteLine("subscribed to event");
             _ui.FilesSelected += _ui_FilesSelected;
             _ui.RefreshClients += _ui_RefreshClients;
             _ui.DownloadRequest += _ui_DownloadRequest;
+            _ui.DownloadCancel += _ui_DownloadCancel;
+            _ui.Exit += _ui_Exit;
 
 
             FTTConsole.Init();
@@ -39,10 +39,9 @@ namespace CoreLibrary
             _ftConnectionManager = new FTConnectionManager(GetFilePath);
 
             _broadcastManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
-            _downloadInProgress = false;
             
         }
-        
+
 
         /// <summary>
         /// Add a list of local shared files to internal list. These are the files that will be available to other clients.
@@ -168,7 +167,7 @@ namespace CoreLibrary
         /// Will start a file download operation.
         /// </summary>
         /// <param name="files">Key: FileName, Value: Location(ip address)</param>
-        public void DownloadFiles(Dictionary<String, String> files, String dest) {
+        public void DownloadFiles(Dictionary<String, String> files, String dest, FTDownloadCallbacks callbacks) {
 
             FTTFileInfo[] availablefiles = AvailableFiles.CopyOfList().ToArray();
             List<FTTFileInfo> foundFiles = new List<FTTFileInfo>();
@@ -220,8 +219,7 @@ namespace CoreLibrary
             // Start download request for each file set.
             foreach (List<FTTFileInfo> f in sortedFiles)
             {
-                _ftConnectionManager.DownloadFile(f, dest);
-                _ui.DownloadStarted(f);
+                _ftConnectionManager.DownloadFile(f, dest, callbacks);
             }
             
 
@@ -231,16 +229,16 @@ namespace CoreLibrary
         /// <summary>
         /// Returns the path of the given file name.
         /// </summary>
-        /// <param name="name">Name of the file.</param>
+        /// <param name="alias">alias of the file.</param>
         /// <returns>Path of the file (includes the filename at the end).</returns>
-        public String GetFilePath(String name)
+        public String GetFilePath(String alias)
         {
             List<FileHandler> files = SharedFiles.CopyOfList();
 
             foreach (FileHandler f in files)
             {
                 
-                if (f.Name.Equals(name))
+                if (f.Alias.Equals(alias))
                 {
                     FTTConsole.AddDebug("Found Filename: " + f.Name);
                     return f.Path;
@@ -334,11 +332,7 @@ namespace CoreLibrary
             }
         }
 
-        public void Dispose()
-        {
-            _broadcastManager.Dispose();
-        }
-
+       
 
         /// <summary>
         /// Handles download requests from the UI.
@@ -347,7 +341,7 @@ namespace CoreLibrary
         /// <param name="e"></param>
         private void _ui_DownloadRequest(object sender, FTUI.DownloadRequestEventArgs e)
         {
-            if (e.Dest != null && e.Files != null) DownloadFiles(e.Files, e.Dest);
+            if (e.Dest != null && e.Files != null) DownloadFiles(e.Files, e.Dest, e.CallBacks);
         }
 
         /// <summary>
@@ -387,14 +381,34 @@ namespace CoreLibrary
         }
 
         /// <summary>
-        /// Handles the window being closed by the user.
+        /// Checks for current download/upload operations and sets the 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void _ui_WindowClosing(object sender, EventArgs e)
+        private void _ui_WindowClosing(object sender, FTUI.WindowClosingEventArgs e)
+        {
+            if (_ftConnectionManager.CurrentUploadOperations())
+            {
+                e.CancelClosing = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            _broadcastManager.Dispose();
+            _ftConnectionManager.Dispose();
+        }
+
+        private void _ui_Exit(object sender, EventArgs e)
         {
             Dispose();
         }
+
+        private void _ui_DownloadCancel(object sender, EventArgs e)
+        {
+            _ftConnectionManager.CancelDownloads();
+        }
+
 
     }
 }

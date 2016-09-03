@@ -19,11 +19,11 @@ namespace FileTransferTool
         public static int locationIndex = 2;
         public static int sizeIndex = 3;
 
+        public DownloadProgressWindow DownloadProgressWindow;
         public DataGridViewFileHandlerAdapter SharedGridManager;
         public DataGridViewFTTFileInfoAdapter AvailableGridManager;
 
         private ListViewConsoleAdapter _listViewConsoleAdapter;
-        private DownloadProgressWindow _downloadProgressWindow;
         private WindowsUI _windowsUI;
 
         public MainWindow(WindowsUI windowsUI)
@@ -46,6 +46,7 @@ namespace FileTransferTool
             this.sharedFilesList.CellValueChanged += sharedFileList_OnCellValueChanged;
             this.sharedFilesList.CellMouseUp += sharedfileList_OnCellMouseUp;
             this.Load += onLoad;
+            this.availableFilesList.CellValueChanged += AvailableFilesList_CellValueChanged;
 
             // Init managers.
             SharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList);
@@ -53,13 +54,30 @@ namespace FileTransferTool
 
 
             _listViewConsoleAdapter = new ListViewConsoleAdapter(MessageConsole);
-            _downloadProgressWindow = new DownloadProgressWindow();
+            DownloadProgressWindow = new DownloadProgressWindow(delegate () { _windowsUI.MainWindowDownloadCancel(this, EventArgs.Empty);});
             
 
             
             this.BackColor = Color.LightGray;
 
             onWindowSizeChange(this, EventArgs.Empty);
+        }
+
+
+        /// <summary>
+        /// Disallows checks on available files that have not had their size calculated yet.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AvailableFilesList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                if ((bool)availableFilesList.Rows[e.RowIndex].Cells[0].Value == true && FileHandler.ParseSize((String)availableFilesList.Rows[e.RowIndex].Cells[3].Value) == -1)
+                {
+                    availableFilesList.Rows[e.RowIndex].Cells[0].Value = false;
+                }
+            }
         }
 
 
@@ -71,7 +89,6 @@ namespace FileTransferTool
         private void onLoad(object sender, EventArgs e)
         {
             FTTConsole.ConsoleMessage += _listViewConsoleAdapter.ConsoleMessaged;
-            _downloadProgressWindow.Show();
         }
 
      
@@ -84,7 +101,6 @@ namespace FileTransferTool
             SharedGridManager = new DataGridViewFileHandlerAdapter(sharedFilesList);
             AvailableGridManager = new DataGridViewFTTFileInfoAdapter(availableFilesList);
         }
-
 
         
 
@@ -299,6 +315,8 @@ namespace FileTransferTool
         /// <param name="e"></param>
         private void downloadButton_Click(object sender, EventArgs e)
         {
+            bool thing = DownloadProgressWindow.DownloadInProggress;
+            if (DownloadProgressWindow.DownloadInProggress) return;
 
             // Get location to download the files.
             DialogResult result =  folderBrowserDialog1.ShowDialog();
@@ -306,22 +324,29 @@ namespace FileTransferTool
 
             // Get names of selected available files.
             Dictionary<String, String> files = new Dictionary<string, string>();
+            List<DownloadProgressWindow.ProgressData> progressFiles = new List<DownloadProgressWindow.ProgressData>();
             foreach (DataGridViewRow row in availableFilesList.Rows)
             {
                 if ((bool)row.Cells[0].Value == true)
                 {
                     files.Add((String)row.Cells[nameIndex].Value, (String)row.Cells[locationIndex].Value);
+                    progressFiles.Add(new DownloadProgressWindow.ProgressData()
+                    {
+                        Alias = (String)row.Cells[nameIndex].Value,
+                        IP = (String)row.Cells[locationIndex].Value,
+                        Size = FileHandler.ParseSize((String)row.Cells[sizeIndex].Value),
+                        Progress = 0
+                    });
                 }
             }
 
-            _windowsUI.MainWindowDownloadfiles(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath });
-            _downloadProgressWindow.Show();
+
+            FileDownloadProgress callbacks = new FileDownloadProgress();
+            DownloadProgressWindow.StartDownload(progressFiles, callbacks);
+
+            _windowsUI.MainWindowDownloadfiles(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath, CallBacks = callbacks });
+            DownloadProgressWindow.Show();
         }
-
-
-        
-
-       
 
        
     }

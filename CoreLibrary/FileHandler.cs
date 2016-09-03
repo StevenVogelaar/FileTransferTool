@@ -25,6 +25,40 @@ namespace CoreLibrary
 
         private BackgroundWorker sizeCheckWorker;
 
+
+        /// <summary>
+        /// Converts the Bytes/KiB/MiB/KiB/GiB format to the number of bytes.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns>Size in bytes. Returns -1 if it could not parse the argument.</returns>
+        public static long ParseSize(String size)
+        {
+
+
+            String[] components = size.Split(' ');
+
+            if (components.Length == 1) return -1;
+
+            int length = components.Length;
+            if (components[1].Equals("Bytes"))
+            {
+                return (long)(double.Parse(components[0]) * (long)1024);
+            }
+            else if (components[1].Equals("KiB"))
+            {
+                return (long)(double.Parse(components[0]) * (long)1048576);
+            }
+            else if (components[1].Equals("MiB"))
+            {
+                return (long)(double.Parse(components[0]) * (long)1048576);
+            }
+            else if (components[1].Equals("GiB"))
+            {
+                return (long)(double.Parse(components[0]) * (long)1073741824);
+            }
+            else return -1;
+        }
+
         public FileHandler(String path, String alias)
         {
             this.Alias = alias;

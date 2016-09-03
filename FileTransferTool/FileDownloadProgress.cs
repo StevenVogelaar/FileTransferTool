@@ -10,38 +10,87 @@ namespace FileTransferTool
     /// <summary>
     /// A class that can be used to receive call backs for file downloads. Sent as part of the DownloadFilesEventArgs
     /// </summary>
-    class FileDownloadProgress : FTDownloadCallbacks
+    public class FileDownloadProgress : FTDownloadCallbacks
     {
+        public delegate void DownloadCompletedHandler(object sender, EventArgs e);
+        public event DownloadCompletedHandler DownloadComplete;
 
-        private String _ip;
-        private String _name;
+        public delegate void DownloadProgressEventHandler(object sender, DownloadProgressEventArgs e);
+        public event DownloadProgressEventHandler DownloadProgressed;
 
+        public delegate void FolderDownloadProgressEventHandler(object sender, FolderDownloadProgressEventArgs e);
+        public event FolderDownloadProgressEventHandler FolderDownloadProgressed;
+
+        public delegate void DownloadedStartedHandler(object sender, EventArgs e);
+        public event DownloadedStartedHandler DownloadHasStarted;
+
+        public void RequestCancel()
+        {
+            InvokeCancelRequested(this);
+        }
 
         /// <summary>
+        /// Called when all downloads are completed for a single remote host.
         /// </summary>
-        /// <param name="fileName">Name of file.</param>
-        /// <param name="ip">The remote IP address of file.</param>
-        public FileDownloadProgress(String fileName, String ip)
+        public override void DownloadCompleted()
         {
-            _name = fileName;
-            _ip = ip;
+            if (DownloadComplete != null)
+            {
+                DownloadComplete.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Reports download progress for individual files.
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="progress"></param>
+        public override void DownloadProgress(string alias, int progress, string ip)
+        {
+            if (DownloadProgressed != null)
+            {
+                DownloadProgressed.Invoke(this, new DownloadProgressEventArgs { Alias = alias, Progress = progress, IP = ip });
+            }
+        }
+
+        /// <summary>
+        /// Report that the downloading has started.
+        /// </summary>
+        public override void DownloadStarted()
+        {
+            if (DownloadHasStarted != null)
+            {
+                DownloadHasStarted.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Progress report for files that are part of a folder that is being downloaded.
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="progress"></param>
+        public override void FolderDownloadProgress(string alias, long progress, string ip)
+        {
+            if (FolderDownloadProgressed != null)
+            {
+                FolderDownloadProgressed.Invoke(this, new FolderDownloadProgressEventArgs() {Alias = alias, IP = ip, Progress = progress });
+            }
         }
 
 
-
-        public void DownloadCompleted(FTTFileInfo file)
+        public class DownloadProgressEventArgs : EventArgs
         {
-            throw new NotImplementedException();
+            public String Alias { get; set; }
+            public int Progress { get; set; }
+            public String IP { get; set; }
         }
 
-        public void DownloadFailed(FTTFileInfo file)
+        public class FolderDownloadProgressEventArgs : EventArgs
         {
-            throw new NotImplementedException();
+            public String Alias { get; set; }
+            public long Progress { get; set; }
+            public String IP { get; set; }
         }
 
-        void FTDownloadCallbacks.DownloadProgress(FTTFileInfo file)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

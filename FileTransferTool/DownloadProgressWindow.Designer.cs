@@ -28,20 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.DownloadList = new System.Windows.Forms.DataGridView();
+            this.closeButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProgressColumn = new FileTransferTool.DataGridViewProgressColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).BeginInit();
             this.SuspendLayout();
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(307, 13);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(630, 13);
-            this.progressBar1.TabIndex = 1;
-            this.progressBar1.Value = 50;
             // 
             // DownloadList
             // 
@@ -51,7 +45,8 @@
             this.DownloadList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DownloadList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NameColumn,
-            this.LocationColumn});
+            this.LocationColumn,
+            this.ProgressColumn});
             this.DownloadList.Location = new System.Drawing.Point(13, 13);
             this.DownloadList.Name = "DownloadList";
             this.DownloadList.ReadOnly = true;
@@ -59,8 +54,29 @@
             this.DownloadList.Size = new System.Drawing.Size(924, 285);
             this.DownloadList.TabIndex = 2;
             // 
+            // closeButton
+            // 
+            this.closeButton.Location = new System.Drawing.Point(862, 315);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(75, 23);
+            this.closeButton.TabIndex = 3;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Location = new System.Drawing.Point(781, 315);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 4;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
             // NameColumn
             // 
+            this.NameColumn.DataPropertyName = "Alias";
             this.NameColumn.HeaderText = "Name";
             this.NameColumn.Name = "NameColumn";
             this.NameColumn.ReadOnly = true;
@@ -68,18 +84,28 @@
             // 
             // LocationColumn
             // 
+            this.LocationColumn.DataPropertyName = "IP";
             this.LocationColumn.HeaderText = "Location";
             this.LocationColumn.Name = "LocationColumn";
             this.LocationColumn.ReadOnly = true;
             this.LocationColumn.Width = 150;
             // 
+            // ProgressColumn
+            // 
+            this.ProgressColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ProgressColumn.DataPropertyName = "Progress";
+            this.ProgressColumn.HeaderText = "Progress";
+            this.ProgressColumn.Name = "ProgressColumn";
+            this.ProgressColumn.ReadOnly = true;
+            // 
             // DownloadProgressWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(949, 310);
+            this.ClientSize = new System.Drawing.Size(950, 350);
+            this.Controls.Add(this.cancelButton);
+            this.Controls.Add(this.closeButton);
             this.Controls.Add(this.DownloadList);
-            this.Controls.Add(this.progressBar1);
             this.Name = "DownloadProgressWindow";
             this.Text = "DownloadProgressWindow";
             ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).EndInit();
@@ -88,9 +114,11 @@
         }
 
         #endregion
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.DataGridView DownloadList;
+        private System.Windows.Forms.Button closeButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn LocationColumn;
+        private DataGridViewProgressColumn ProgressColumn;
     }
 }

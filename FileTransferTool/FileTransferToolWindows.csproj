@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreLibrary">
-      <HintPath>..\CoreLibrary\bin\Debug\CoreLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,6 +49,7 @@
     <Compile Include="DataGridViewFileHandlerAdapter.cs" />
     <Compile Include="DataGridViewFTTFileInfoAdapter.cs" />
     <Compile Include="DataGridViewManager.cs" />
+    <Compile Include="DataGridViewProgressColumn.cs" />
     <Compile Include="FileDownloadProgress.cs" />
     <Compile Include="DownloadProgressWindow.cs">
       <SubType>Form</SubType>
@@ -96,6 +94,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj">
+      <Project>{89b0bf40-4e43-44ef-9b46-8180e321b01c}</Project>
+      <Name>CoreLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

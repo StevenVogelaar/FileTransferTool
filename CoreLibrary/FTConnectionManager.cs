@@ -9,25 +9,29 @@ using System.Threading;
 
 namespace CoreLibrary
 {
-    class FTConnectionManager
+    class FTConnectionManager : IDisposable
     {
 
         public const Int32 FILETRANSFER_PORT = 3897;
         public const Int32 RECEIVING_PORT = 3898;
+        public const int PACKET_SIZE = 1460;
 
         private Socket _connectionReceiver;
         private IPEndPoint _endPoint;
         private Thread _listenThread;
         private FTFileSender.GetFilePath _getFilePath;
 
+        private List<FTFileRequester> _requesters;
+        private List<FTFileSender> _senders;
+
 
         public FTConnectionManager(FTFileSender.GetFilePath getFilePath)
         {
             _endPoint = new IPEndPoint(BroadcastManager.LocalIPAddress(), FILETRANSFER_PORT);
-            //_listeners = new List<ConnectionListener>();
+            _requesters = new List<FTFileRequester>();
+            _senders = new List<FTFileSender>();
 
             _getFilePath = getFilePath;
-
             _listenThread = new Thread(listenForRequests);
             _listenThread.IsBackground = true;
             _listenThread.Start();
@@ -35,10 +39,53 @@ namespace CoreLibrary
 
 
         /// <summary>
+        /// Stops all download operations.
+        /// </summary>
+        public void CancelDownloads()
+        {
+            lock (_requesters)
+            {
+                foreach (FTFileRequester requester in _requesters)
+                {
+                    requester.Cancel();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Stops all upload operations.
+        /// </summary>
+        public void CanceUploads()
+        {
+            lock (_senders)
+            {
+                foreach (FTFileSender sender in _senders)
+                {
+                    sender.Cancel();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Checks for current upload operations.
+        /// </summary>
+        /// <returns>True if there are current upload operations.</returns>
+        public bool CurrentUploadOperations()
+        {
+            if (_senders.Count > 0)
+            {
+                return true;
+            }
+            else return false;
+        }
+
+
+        /// <summary>
         /// Creates a FTFileRequester for a list of files from the same remote host.
         /// </summary>
         /// <param name="files">List of files that all have the same ip address.</param>
-        public void DownloadFile(List<FTTFileInfo> files, String dest)
+        public void DownloadFile(List<FTTFileInfo> files, String dest, FTDownloadCallbacks callbacks)
         {
             // Switch this to run on a seperate thread!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // Attempt to open connection with remote host.
@@ -54,7 +101,14 @@ namespace CoreLibrary
                     FTTConsole.AddDebug("Sending request for files: " + f.Name);
                 }
 
-                new FTFileRequester(files, socket, dest);
+                // Create requester
+                FTFileRequester requester = new FTFileRequester(files, socket, dest, callbacks, files.ElementAt(0).IP);
+                requester.OperationFinished += requester_OperationFinished;
+
+                lock (_requesters)
+                {
+                    _requesters.Add(requester);
+                }
             }
             catch (Exception e)
             {
@@ -98,11 +152,61 @@ namespace CoreLibrary
             }
         }
 
+        /// <summary>
+        /// Thread safe method for removing senders from the list.
+        /// </summary>
+        /// <param name="sender"></param>
+        private void removeSender(FTFileSender sender)
+        {
+            lock (_senders)
+            {
+                _senders.Remove(sender);
+            }
+        }
+
+        /// <summary>
+        /// Thread safe method for removing requesters from the list.
+        /// </summary>
+        /// <param name="requester"></param>
+        private void removeRequester(FTFileRequester requester)
+        {
+            lock (_requesters)
+            {
+                _requesters.Remove(requester);
+            }
+        }
 
         private void connectionAccepted(Socket socket)
         {
             // Create FTFileSender which then runs on a background thread.
-            new FTFileSender(socket, _getFilePath);
+            FTFileSender sender = new FTFileSender(socket, _getFilePath);
+            sender.OperationFinished += sender_OperationFinished;
+
+            lock (_senders)
+            {
+                _senders.Add(sender);
+            }
+        }
+
+
+        /// <summary>
+        /// Calls remover method with the event invoker.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void requester_OperationFinished(object sender, EventArgs e)
+        {
+            removeRequester((FTFileRequester)sender);
+        }
+
+        /// <summary>
+        /// Calls remover method with the event invoker.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void sender_OperationFinished(object sender, EventArgs e)
+        {
+            removeSender((FTFileSender)sender);
         }
 
         private void listener_fileReceivedCallback()
@@ -110,6 +214,9 @@ namespace CoreLibrary
             
         }
 
-
+        public void Dispose()
+        {
+            
+        }
     }
 }
