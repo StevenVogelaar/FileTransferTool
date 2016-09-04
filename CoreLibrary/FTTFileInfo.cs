@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace CoreLibrary
 {
@@ -11,17 +12,21 @@ namespace CoreLibrary
     [KnownType(typeof(FTTFileInfo))]
     public class FTTFileInfo
     {
-        [DataMember(Name = "FileName")]
+        [DataMember(Name = "FileName"), Browsable(false)]
         public String Name { get; set; }
-        [DataMember(Name = "Size")]
-        public String Size { get; set; }
-        [DataMember(Name = "IsDirectory")]
+        
+
+        [DataMember(Name = "IsDirectory"), Browsable(false)]
         public bool IsDirectory { get; set; }
         [DataMember(Name = "Alias")]
         public String Alias { get; set; }
-
-        public String Path { get; set; }
         public String IP { get; set; }
+        [DataMember(Name = "Size")]
+        public String Size { get; set; }
+
+        [Browsable(false)]
+        public String Path { get; set; }
+       
 
 
         /// <summary>

@@ -31,16 +31,11 @@ namespace FileTransferTool
         /// </summary>
         private void initDataGrid(List<FileHandler> files)
         {
-            foreach (FileHandler f in files)
-            {
-                f.FileInfoChanged += fileHandler_FileInfoChanged;
 
-                DataGridViewRow row = (DataGridViewRow)_dataGrid.Rows[0].Clone();
-                row.Cells[MainWindow.nameIndex].Value = f.Alias;
-                row.Cells[MainWindow.locationIndex].Value = f.Path;
-                row.Cells[MainWindow.sizeIndex].Value = f.Size;
-                _dataGrid.Rows.Add(row);
-            }
+            subscribeToEvents(files);
+            _dataGrid.DataSource = files;
+            _dataGrid.Update();
+            _dataGrid.Refresh();
         }
 
 
@@ -60,77 +55,35 @@ namespace FileTransferTool
         /// </summary>
         private void syncGrid(List<FileHandler> files)
         {
-            Console.WriteLine("syncing gridd");
-            // Check if files exist in the files list and not in grid view (adding files to grid).
+            subscribeToEvents(files);
+            _dataGrid.DataSource = files;
+            _dataGrid.Refresh();
+        }
+
+
+        /// <summary>
+        /// Subscribes to each file in the list.
+        /// </summary>
+        /// <param name=""></param>
+        private void subscribeToEvents(List<FileHandler> files)
+        {
             foreach (FileHandler f in files)
             {
-                bool found = false;
-
-                foreach (DataGridViewRow row in _dataGrid.Rows)
-                {
-                    object value = row.Cells[MainWindow.locationIndex].Value;
-                    if (value != null && ((String)value).Equals(f.Path))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    addRowToGrid(f);
-                }
-            }
-
-            // Check if files exist in the grid view and not in the files list (removing files from grid)
-            DataGridViewRow[] delete_queue = new DataGridViewRow[_dataGrid.RowCount];
-            int count = 0;
-            foreach (DataGridViewRow row in _dataGrid.Rows)
-            {
-                if (row.IsNewRow) break;
-
-                object value = row.Cells[MainWindow.locationIndex].Value;
-                bool found = false;
-
-                foreach (FileHandler f in files)
-                {
-                    
-                    if (value == null || f.Path.Equals((String)value))
-                    {
-                        found = true;
-                        break;  
-                    }                 
-                }  
-                
-                if (!found)
-                {
-                    delete_queue[count] = row;
-                    count++;
-                } 
-            }
-           
-            // Remove files.
-            for (int i = 0; i < delete_queue.Length; i++)
-            {
-                if (delete_queue[i] != null)
-                {
-                    _dataGrid.Rows.Remove(delete_queue[i]);
-                }
+                f.FileInfoChanged += fileHandler_FileInfoChanged;
             }
         }
 
 
         /// <summary>
-        /// Adds new rows to file grid
+        /// Unsubscribes to each file in the list.
         /// </summary>
-        /// <param name="file"></param>
-        private void addRowToGrid(FileHandler file)
+        /// <param name="files"></param>
+        private void unsubscribeToEvents(List<FileHandler> files)
         {
-            file.FileInfoChanged += fileHandler_FileInfoChanged;
-            _dataGrid.Rows.Add(new object[] {false, file.Alias, file.Path, file.Size });
-      
-            
-            //_dataGrid.Refresh();
+            foreach (FileHandler f in files)
+            {
+                f.FileInfoChanged -= fileHandler_FileInfoChanged;
+            }
         }
 
 
@@ -141,15 +94,7 @@ namespace FileTransferTool
         /// <param name="e"></param>
         private void fileHandler_FileInfoChanged(object sender, FileHandler.FileInfoChangedEventArgs e)
         {
-            foreach (DataGridViewRow row in _dataGrid.Rows)
-            {
-                if (((String)row.Cells[MainWindow.locationIndex].Value).Equals(e.Path)){
-                    row.Cells[MainWindow.sizeIndex].Value = e.Size;
-                    break;
-                }
-            }
-
-
+            _dataGrid.Refresh();
         }
 
 

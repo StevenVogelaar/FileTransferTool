@@ -71,6 +71,7 @@ namespace FileTransferTool
         /// <param name="e"></param>
         private void AvailableFilesList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            return;
             if (e.ColumnIndex == 0)
             {
                 if ((bool)availableFilesList.Rows[e.RowIndex].Cells[0].Value == true && FileHandler.ParseSize((String)availableFilesList.Rows[e.RowIndex].Cells[3].Value) == -1)
@@ -127,10 +128,6 @@ namespace FileTransferTool
             // Move labes to match new list locations.
             sharedLable.Location = new Point(sharedLable.Location.X, sharedFilesList.Location.Y - 20);
             availableLable.Location = new Point(availableLable.Location.X, availableFilesList.Location.Y - 20);
-
-            // Auto size the size column to fit new list width.
-            SharedSizeColumn.Width = sharedFilesList.Width - (SharedCheckColumn.Width + SharedNameColumn.Width + SharedLocationColumn.Width) - 3;
-            AvailSizeColumn.Width = availableFilesList.Width - (AvailCheckColumn.Width + AvailNameColumn.Width + AvailLocationColumn.Width) - 3;
 
             // Change devider width to match window.
             this.panel1.Width = width;
@@ -327,7 +324,7 @@ namespace FileTransferTool
             List<DownloadProgressWindow.ProgressData> progressFiles = new List<DownloadProgressWindow.ProgressData>();
             foreach (DataGridViewRow row in availableFilesList.Rows)
             {
-                if ((bool)row.Cells[0].Value == true)
+                if (row.Cells[0].Value != null && (bool)row.Cells[0].Value == true)
                 {
                     files.Add((String)row.Cells[nameIndex].Value, (String)row.Cells[locationIndex].Value);
                     progressFiles.Add(new DownloadProgressWindow.ProgressData()
@@ -345,7 +342,7 @@ namespace FileTransferTool
             DownloadProgressWindow.StartDownload(progressFiles, callbacks);
 
             _windowsUI.MainWindowDownloadfiles(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath, CallBacks = callbacks });
-            DownloadProgressWindow.Show();
+            DownloadProgressWindow.ShowDialog();
         }
 
        

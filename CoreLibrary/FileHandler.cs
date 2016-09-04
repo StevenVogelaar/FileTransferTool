@@ -10,11 +10,13 @@ namespace CoreLibrary
 {
     public class FileHandler
     {
-
-        public String Path { get; }
+        
+        [Browsable(false)]
         public String Name { get; }
         public String Alias { get; private set; }
+        public String Path { get; }
         public String Size { get; private set; }
+        [Browsable(false)]
         public bool IsDirectory { get; private set; }
         //public long SizeInBytes { get; private set; }
 
@@ -34,6 +36,7 @@ namespace CoreLibrary
         public static long ParseSize(String size)
         {
 
+            if (size == null) return -1;
 
             String[] components = size.Split(' ');
 

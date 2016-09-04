@@ -12,8 +12,11 @@ namespace CoreLibrary
     class FTConnectionManager : IDisposable
     {
 
+        public delegate void ConnectionFailedHandler(object sender, ConnectionFailedEventArgs e);
+        public event ConnectionFailedHandler ConnectionFailed;
+
         public const Int32 FILETRANSFER_PORT = 3897;
-        public const Int32 RECEIVING_PORT = 3898;
+        //public const Int32 RECEIVING_PORT = 3898;
         public const int PACKET_SIZE = 1460;
 
         private Socket _connectionReceiver;
@@ -87,34 +90,11 @@ namespace CoreLibrary
         /// <param name="files">List of files that all have the same ip address.</param>
         public void DownloadFile(List<FTTFileInfo> files, String dest, FTDownloadCallbacks callbacks)
         {
-            // Switch this to run on a seperate thread!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // Attempt to open connection with remote host.
-            try
-            {
-                Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                socket.Bind(new IPEndPoint(BroadcastManager.LocalIPAddress(), RECEIVING_PORT));
-                socket.Connect(new IPEndPoint(IPAddress.Parse(files.ElementAt(0).IP), FILETRANSFER_PORT));
+            DownloadStarter downloadStarter = new DownloadStarter(files, dest, callbacks, _requesters, requester_OperationFinished, this);
 
-                // Create new fileRequester. It will run the request automaticaly.
-                foreach (FTTFileInfo f in files)
-                {
-                    FTTConsole.AddDebug("Sending request for files: " + f.Name);
-                }
-
-                // Create requester
-                FTFileRequester requester = new FTFileRequester(files, socket, dest, callbacks, files.ElementAt(0).IP);
-                requester.OperationFinished += requester_OperationFinished;
-
-                lock (_requesters)
-                {
-                    _requesters.Add(requester);
-                }
-            }
-            catch (Exception e)
-            {
-                FTTConsole.AddError("Error trying to connect to remmote host: " + files.ElementAt(0).IP);
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
-            }
+            Thread thread = new Thread(downloadStarter.DownloadFile);
+            thread.IsBackground = true;
+            thread.Start();
         }
 
 
@@ -194,7 +174,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void requester_OperationFinished(object sender, EventArgs e)
+        void requester_OperationFinished(object sender, EventArgs e)
         {
             removeRequester((FTFileRequester)sender);
         }
@@ -209,14 +189,102 @@ namespace CoreLibrary
             removeSender((FTFileSender)sender);
         }
 
-        private void listener_fileReceivedCallback()
-        {
-            
-        }
 
         public void Dispose()
         {
-            
+            lock (_requesters)
+            {
+                foreach (FTFileRequester requester in _requesters)
+                {
+                    requester.Cancel();
+                }
+
+                _requesters.Clear();
+            }
+
+            lock (_senders)
+            {
+                foreach (FTFileSender sender in _senders)
+                {
+                    sender.Cancel();
+                }
+
+                _senders.Clear();
+            }
+
+            _connectionReceiver.Close();
+            _connectionReceiver.Dispose();
+
+            // Give chance for requesters/receivers to shutdown.
+            Thread.Sleep(500);
+        }
+
+        public void invokeConnectionFailed(String ip)
+        {
+            if (ConnectionFailed != null)
+            {
+                ConnectionFailed.Invoke(this, new ConnectionFailedEventArgs() { IP = ip });
+            }
+        }
+
+
+        public class DownloadStarter
+        {
+            public delegate void requester_OperationFinished(object sender, EventArgs e);
+
+            private List<FTTFileInfo> _files;
+            private String _dest;
+            private FTDownloadCallbacks _callbacks;
+            private List<FTFileRequester> _requesters;
+            private requester_OperationFinished _callback;
+            private FTConnectionManager _manager;
+
+            public DownloadStarter(List<FTTFileInfo> files, String dest, FTDownloadCallbacks callbacks, List<FTFileRequester> requesters, requester_OperationFinished callback, FTConnectionManager manager)
+            {
+                _files = files;
+                _dest = dest;
+                _callbacks = callbacks;
+                _requesters = requesters;
+                _callback = callback;
+                _manager = manager;
+            }
+
+            public void DownloadFile()
+            {
+                // Attempt to open connection with remote host.
+                try
+                {
+                    Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+                    socket.Connect(new IPEndPoint(IPAddress.Parse(_files.ElementAt(0).IP), FILETRANSFER_PORT));
+
+                    // Create new fileRequester. It will run the request automaticaly.
+                    foreach (FTTFileInfo f in _files)
+                    {
+                        FTTConsole.AddDebug("Sending request for files: " + f.Name);
+                    }
+
+                    // Create requester
+                    FTFileRequester requester = new FTFileRequester(_files, socket, _dest, _callbacks, _files.ElementAt(0).IP);
+                    requester.OperationFinished += delegate (object sender, EventArgs e){ _callback.Invoke(sender, e); };
+
+                    lock (_requesters)
+                    {
+                        _requesters.Add(requester);
+                    }
+                }
+                catch (Exception e)
+                {
+                    FTTConsole.AddError("Error trying to connect to remmote host: " + _files.ElementAt(0).IP);
+                    Console.WriteLine(e.Message + "\n" + e.StackTrace);
+
+                    _manager.invokeConnectionFailed(_files.ElementAt(0).IP);
+                }
+            }
+        }
+
+        public class ConnectionFailedEventArgs : EventArgs
+        {
+            public String IP { get; set; }
         }
     }
 }

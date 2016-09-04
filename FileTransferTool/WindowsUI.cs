@@ -42,7 +42,7 @@ namespace FileTransferTool
             // Check to see if the closing event was canceled due to pending operations.
             if (args.CancelClosing)
             {
-                if (MessageBox.Show("Files are currently being uploaded to other computers, do you wish to cancel uploads?", "Cancel Uploads", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.OK)
+                if (MessageBox.Show("Files are currently being uploaded to other computers, do you wish to cancel uploads?", "Cancel Uploads", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     // Closing event was not canceled, so let the core know the program is going to be closed so it can dispose properly.
                     InvokeExit(this, EventArgs.Empty);
@@ -120,17 +120,28 @@ namespace FileTransferTool
 
         public override void AvailableFilesChanged(List<FTTFileInfo> files)
         {
-
-            Window.AvailableGridManager.FilesChanged(files);
-            Window.Invoke((availFilesChanged)delegate { Window.AvailFilesChanged(); });
+            if (!Window.IsDisposed)
+            {
+                Window.Invoke((availFilesChanged)delegate () { Window.AvailableGridManager.FilesChanged(files); });
+                Window.Invoke((availFilesChanged)delegate () { Window.AvailFilesChanged(); });
+            }
         }
 
         public override void SharedFilesChanged(List<FileHandler> files)
         {
-            Window.SharedGridManager.FilesChanged(files);
-            Window.Invoke((availFilesChanged)delegate { Window.checkSharedChecks(); });
+            if (!Window.IsDisposed)
+            {
+                Window.SharedGridManager.FilesChanged(files);
+                Window.Invoke((availFilesChanged)delegate { Window.checkSharedChecks(); });
+            }
         }
 
-        
+        public override void FailedToConnect(string ip)
+        {
+            if (!Window.IsDisposed)
+            {
+                Window.DownloadProgressWindow.ConnectionFailed(ip);
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace CoreLibrary
 
         public abstract void DownloadProgress(String alias, int progress, String ip);
         public abstract void FolderDownloadProgress(String alias, long progress, String ip);
-        public abstract void DownloadCompleted();
+        public abstract void DownloadCompleted(String ip, bool error);
         public abstract void DownloadStarted();
     }
 }

@@ -22,6 +22,7 @@ namespace CoreLibrary
         private String _currentFolderAlias;
         private bool _isInDirectory;
         private long _currentFolderDownloaded;
+        private bool _error;
 
         private Socket _socket;
         private List<FTTFileInfo> _files;
@@ -36,11 +37,12 @@ namespace CoreLibrary
             _ip = ip;
             _files = files;
             _socket = socket;
-            _socket.ReceiveTimeout = 5000;
-            _socket.SendTimeout = 5000;
+            _socket.ReceiveTimeout = 30000;
+            _socket.SendTimeout = 30000;
             _dest = destDirectory;
             _callbacks = callbacks;
             _callbacks.DownloadStarted();
+            _error = false;
 
             _directoryDownloads = new List<DirectoryInfo>();
 
@@ -149,7 +151,7 @@ namespace CoreLibrary
                 long fileSize;
 
                 // Try to receive file name and size of file to be received.
-                if ((received = _socket.Receive(buffer)) <= 0)
+                if ((received = _socket.Receive(buffer, FTConnectionManager.PACKET_SIZE, SocketFlags.None)) <= 0)
                 {
                     return;
                 }
@@ -274,10 +276,14 @@ namespace CoreLibrary
                 if (e.SocketErrorCode == SocketError.TimedOut)
                 {
                     FTTConsole.AddError("Error receiving file: Connection timed out.");
+                    _error = true;
                 }
 
                 FTTConsole.AddError("Error receiving file: Socket Exception");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                deleteFile(_dest + "\\" + aliasWithPath);
+                _error = true;
+
                 return;
             }
             catch (OperationCanceledException e)
@@ -287,14 +293,7 @@ namespace CoreLibrary
                 fileOut.Close();
                 fileOut.Dispose();
 
-                try
-                {
-                    File.Delete(_dest + "\\" + aliasWithPath);
-                }
-                catch (Exception ee)
-                {
-                    FTTConsole.AddError("Could not delete canceled file. Please delete manualy.");
-                }
+                deleteFile(_dest + "\\" + aliasWithPath);
 
                 return;
             }
@@ -303,6 +302,9 @@ namespace CoreLibrary
 
                 FTTConsole.AddError("Error receiving file.");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                deleteFile(_dest + "\\" + aliasWithPath);
+                _error = true;
+
                 return;
             }
             finally
@@ -322,6 +324,17 @@ namespace CoreLibrary
             receiveFile();
         }
 
+        private void deleteFile(String path)
+        {
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                FTTConsole.AddError("Could not delete canceled file. Please delete manualy.");
+            }
+        }
 
 
         private void senderWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -344,7 +357,8 @@ namespace CoreLibrary
 
         private void senderWorker_WorkCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            _callbacks.DownloadCompleted();
+
+            _callbacks.DownloadCompleted(_ip, _error);
         }
 
 

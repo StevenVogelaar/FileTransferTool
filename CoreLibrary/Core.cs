@@ -18,7 +18,8 @@ namespace CoreLibrary
         private FTUI _ui;
         private BroadcastManager _broadcastManager;
         private FTConnectionManager _ftConnectionManager;
-
+        private bool _fileInfoRefreshInProgress;
+        private bool _fileInfoRefreshPending;
 
         public Core(FTUI ui)
         {
@@ -31,15 +32,24 @@ namespace CoreLibrary
             _ui.DownloadCancel += _ui_DownloadCancel;
             _ui.Exit += _ui_Exit;
 
+            _fileInfoRefreshInProgress = false;
+            _fileInfoRefreshPending = false;
+
 
             FTTConsole.Init();
             SharedFiles = new SyncList<FileHandler>();
             AvailableFiles = new SyncList<FTTFileInfo>();
             _broadcastManager = new BroadcastManager();
             _ftConnectionManager = new FTConnectionManager(GetFilePath);
+            _ftConnectionManager.ConnectionFailed += _ftConnectionManager_ConnectionFailed;
 
             _broadcastManager.AvailableFilesReceived += connectionManager_AvailableFilesReceived;
             
+        }
+
+        private void _ftConnectionManager_ConnectionFailed(object sender, FTConnectionManager.ConnectionFailedEventArgs e)
+        {
+            _ui.FailedToConnect(e.IP);
         }
 
 
@@ -72,6 +82,8 @@ namespace CoreLibrary
                     }
                 }
 
+                FileHandler fileHandler = null;
+
                 if (duplicateName)
                 {
                     String alias = fileName;
@@ -84,7 +96,8 @@ namespace CoreLibrary
                             {
                                 // Assign alias to file.
                                 alias = fileName + " (" + i + ")";
-                                SharedFiles.Add(new FileHandler(path, alias));
+                                fileHandler = new FileHandler(path, alias);
+                                SharedFiles.Add(fileHandler);
                                 break;
                             }
                         }
@@ -92,35 +105,48 @@ namespace CoreLibrary
                 }
                 else
                 {
-                    SharedFiles.Add(new FileHandler(path));
+                    fileHandler = new FileHandler(path);
+                    SharedFiles.Add(fileHandler);
                 }
 
-                _ui.SharedFilesChanged(SharedFiles.CopyOfList());
+                fileHandler.FileInfoChanged += FileHandler_FileInfoChanged;
             }
 
-            RefreshClientsAsync();
+            _ui.SharedFilesChanged(SharedFiles.CopyOfList());
+
         }
+
+        private void FileHandler_FileInfoChanged(object sender, FileHandler.FileInfoChangedEventArgs e)
+        {
+            if (_fileInfoRefreshInProgress) {
+                _fileInfoRefreshPending = true;
+                return;
+            }
+
+            _fileInfoRefreshInProgress = true;
+
+            Task task = Task.Delay(1000).ContinueWith(_ => 
+            {
+
+                RefreshClientsAsync();
+                Thread.Sleep(2000);
+                _fileInfoRefreshInProgress = false;
+
+                if (_fileInfoRefreshPending)
+                {
+                    RefreshClientsAsync();
+                    _fileInfoRefreshPending = false;
+                }
+            });
+
+            
+        }
+
 
         /// <summary>
-        /// Removes a local shared file from the list available to other clients.
+        /// Removes the shared files with the given paths from the shared files list and notifies other clients.
         /// </summary>
-        /// <param name="path"></param>
-        public void RemoveSharedFile(String path)
-        {
-            // Check to see if file with the given path name exists in the list.
-            foreach (FileHandler f in SharedFiles.CopyOfList())
-            {
-                if (f.Path == path)
-                {
-                    SharedFiles.Remove(f);
-                    _ui.SharedFilesChanged(SharedFiles.CopyOfList());
-                    f.Dispose();
-                    break;
-                }
-            }    
-        }
-
-
+        /// <param name="paths"></param>
         public void RemoveSharedFile(String[] paths)
         {
             foreach (String path in paths){
@@ -221,7 +247,6 @@ namespace CoreLibrary
             {
                 _ftConnectionManager.DownloadFile(f, dest, callbacks);
             }
-            
 
         }
 
@@ -294,6 +319,12 @@ namespace CoreLibrary
         }
 
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="sourceIP"></param>
         private void syncAvailableFiles(FTTFileInfo[] files, String sourceIP)
         {
             // First remove every file from source IP in the list.

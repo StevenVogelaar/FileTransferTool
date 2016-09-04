@@ -113,15 +113,11 @@ namespace CoreLibrary
                     else
                     {
                         FTTConsole.AddError("Could not find file: " + file);
-                        dispose();
-                        return;
                     }
                 }
                 else
                 {
                     FTTConsole.AddError("Null Path for file: " + file);
-                    dispose();
-                    return;
                 }
             }
 
@@ -195,7 +191,7 @@ namespace CoreLibrary
                 int readBytes = 0;
                 buffer = new byte[FTConnectionManager.PACKET_SIZE];
                 SocketError sError;
-                while ((readBytes = fileStream.Read(buffer, 0, buffer.Length)) > 0){
+                while ((readBytes = fileStream.Read(buffer, 0, buffer.Length)) > 0 && _socket.Connected){
                     int value = _socket.Send(buffer, 0, readBytes, SocketFlags.None, out sError);
                     
                     // Check to see if operation was canceled.

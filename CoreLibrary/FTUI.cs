@@ -43,6 +43,12 @@ namespace CoreLibrary
         public abstract void SharedFilesChanged(List<FileHandler> files);
 
         /// <summary>
+        /// Notify the UI that a connection attempt has failed.
+        /// </summary>
+        /// <param name="ip"></param>
+        public abstract void FailedToConnect(String ip);
+
+        /// <summary>
         /// For derrived classes to invoke the WindowClosing event.
         /// </summary>
         /// <param name="sender"></param>

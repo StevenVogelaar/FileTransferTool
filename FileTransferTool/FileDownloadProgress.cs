@@ -12,7 +12,7 @@ namespace FileTransferTool
     /// </summary>
     public class FileDownloadProgress : FTDownloadCallbacks
     {
-        public delegate void DownloadCompletedHandler(object sender, EventArgs e);
+        public delegate void DownloadCompletedHandler(object sender, DownloadCompletedEventArgs e);
         public event DownloadCompletedHandler DownloadComplete;
 
         public delegate void DownloadProgressEventHandler(object sender, DownloadProgressEventArgs e);
@@ -32,11 +32,12 @@ namespace FileTransferTool
         /// <summary>
         /// Called when all downloads are completed for a single remote host.
         /// </summary>
-        public override void DownloadCompleted()
+        /// <param name="ip">IP of remote host that has finished.</param>
+        public override void DownloadCompleted(String ip, bool error)
         {
             if (DownloadComplete != null)
             {
-                DownloadComplete.Invoke(this, EventArgs.Empty);
+                DownloadComplete.Invoke(this, new DownloadCompletedEventArgs() { IP = ip , Error = error});
             }
         }
 
@@ -90,6 +91,12 @@ namespace FileTransferTool
             public String Alias { get; set; }
             public long Progress { get; set; }
             public String IP { get; set; }
+        }
+
+        public class DownloadCompletedEventArgs : EventArgs
+        {
+            public String IP { get; set; }
+            public bool Error { get; set; }
         }
 
     }
