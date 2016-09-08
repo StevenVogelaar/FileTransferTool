@@ -83,7 +83,7 @@ namespace FileTransferTool
 
 
         /// <summary>
-        /// Initializes some stuff that has to be done after the form has loaded.
+        /// Initializes some stuff that has to be done after the form has loaded.	
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
