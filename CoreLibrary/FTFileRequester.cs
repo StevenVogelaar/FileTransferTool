@@ -132,7 +132,7 @@ namespace CoreLibrary
 
         private FileStream createFile(String path)
         {
-            return new FileStream(_dest + "\\" + path, FileMode.Create);
+            return new FileStream(_dest + "/" + path, FileMode.Create);
         }
 
         /// <summary>
@@ -170,24 +170,23 @@ namespace CoreLibrary
                 aliasWithPath = Encoding.UTF8.GetString(buffer, 8, FTConnectionManager.PACKET_SIZE - 9);
                 aliasWithPath = aliasWithPath.Replace("\0", String.Empty);
                 // currentFileAlias is used to send progress on a file to the callback class.
-                _currentFileAlias = aliasWithPath.Substring(aliasWithPath.LastIndexOf('\\') + 1);
+                _currentFileAlias = aliasWithPath.Substring(aliasWithPath.LastIndexOf('/') + 1);
 
                 FTTConsole.AddDebug("File alias received: " + aliasWithPath);
 
                 // Get the file path without the file.
-                String path = _dest  + aliasWithPath.Substring(0,aliasWithPath.LastIndexOf('\\'));
+                String path = _dest  + aliasWithPath.Substring(0,aliasWithPath.LastIndexOf('/'));
                 // Create Directories for the path.
                 Directory.CreateDirectory(path);
 
 
                 // Set isInDirectory flag if the file path has not '\'. i.e. \subfolder\ is not \.
-                String temp = aliasWithPath.Split('\\')[0];
-                if (aliasWithPath.LastIndexOf('\\') != 0)
+                String temp = aliasWithPath.Split('/')[0];
+                if (aliasWithPath.LastIndexOf('/') != 0)
                 {
 
                     _isInDirectory = true;
-                    //String[] temps = aliasWithPath.Split('\\');
-                    _currentFolderAlias = aliasWithPath.Split('\\')[1];
+                    _currentFolderAlias = aliasWithPath.Split('/')[1];
 
 
                     bool found = false;
@@ -213,7 +212,7 @@ namespace CoreLibrary
                 else _isInDirectory = false;
  
                 // Create the output file.
-                fileOut = new FileStream(_dest + "\\" + aliasWithPath, FileMode.Create);
+                fileOut = new FileStream(_dest + "/" + aliasWithPath, FileMode.Create);
 
                 // Write to the output file.
                 long bytesReceived = 0;
@@ -281,7 +280,7 @@ namespace CoreLibrary
 
                 FTTConsole.AddError("Error receiving file: Socket Exception");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
-                deleteFile(_dest + "\\" + aliasWithPath);
+                deleteFile(_dest + "//" + aliasWithPath);
                 _error = true;
 
                 return;
@@ -293,7 +292,7 @@ namespace CoreLibrary
                 fileOut.Close();
                 fileOut.Dispose();
 
-                deleteFile(_dest + "\\" + aliasWithPath);
+                deleteFile(_dest + "/" + aliasWithPath);
 
                 return;
             }
@@ -302,7 +301,7 @@ namespace CoreLibrary
 
                 FTTConsole.AddError("Error receiving file.");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
-                deleteFile(_dest + "\\" + aliasWithPath);
+                deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
                 return;

@@ -132,7 +132,7 @@ namespace CoreLibrary
         {
 
             String[] files = Directory.GetFiles(directoryPath);
-            String directoryName = directoryPath.Substring(directoryPath.LastIndexOf('\\'));
+            String directoryName = directoryPath.Substring(directoryPath.LastIndexOf('/'));
 
             // Send each file in current directory.
             foreach (String f in files)
@@ -157,7 +157,7 @@ namespace CoreLibrary
         {
 
             FileStream fileStream = null;
-            String fileName = path.Substring(path.LastIndexOf('\\'));
+            String fileName = path.Substring(path.LastIndexOf('/'));
             try
             {
 

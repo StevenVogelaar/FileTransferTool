@@ -66,7 +66,7 @@ namespace CoreLibrary
         {
             this.Alias = alias;
             this.Path = path;
-            Name = Path.Split('\\').Last<String>();
+            Name = Path.Split('/').Last<String>();
 
             init();
         }
@@ -74,7 +74,7 @@ namespace CoreLibrary
         public FileHandler(String path)
         {
             this.Path = path;
-            Name = Path.Split('\\').Last<String>();
+            Name = Path.Split('/').Last<String>();
             Alias = Name;
 
             init();
