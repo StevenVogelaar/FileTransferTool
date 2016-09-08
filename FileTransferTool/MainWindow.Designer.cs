@@ -41,19 +41,19 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.connectionStatusLable = new System.Windows.Forms.Label();
             this.sharedFilesList = new System.Windows.Forms.DataGridView();
-            this.availableFilesList = new System.Windows.Forms.DataGridView();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.MessageConsole = new System.Windows.Forms.ListView();
-            this.MessageColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.AvailCheckColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.AvailNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AvailLocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AvailSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SharedCheckColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SharedNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SharedLocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SharedSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.availableFilesList = new System.Windows.Forms.DataGridView();
+            this.AvailCheckColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.AvailNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AvailLocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AvailSizeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.MessageConsole = new System.Windows.Forms.ListView();
+            this.MessageColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.sharedFilesList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.availableFilesList)).BeginInit();
             this.SuspendLayout();
@@ -70,6 +70,7 @@
             // sharedLable
             // 
             this.sharedLable.AutoSize = true;
+            this.sharedLable.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.sharedLable.Location = new System.Drawing.Point(12, 120);
             this.sharedLable.Name = "sharedLable";
             this.sharedLable.Size = new System.Drawing.Size(65, 13);
@@ -163,95 +164,6 @@
             this.sharedFilesList.Size = new System.Drawing.Size(778, 169);
             this.sharedFilesList.TabIndex = 13;
             // 
-            // availableFilesList
-            // 
-            this.availableFilesList.AllowUserToAddRows = false;
-            this.availableFilesList.AllowUserToDeleteRows = false;
-            this.availableFilesList.AllowUserToResizeRows = false;
-            this.availableFilesList.BackgroundColor = System.Drawing.Color.White;
-            this.availableFilesList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.availableFilesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.availableFilesList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.AvailCheckColumn,
-            this.AvailNameColumn,
-            this.AvailLocationColumn,
-            this.AvailSizeColumn});
-            this.availableFilesList.Location = new System.Drawing.Point(16, 336);
-            this.availableFilesList.Name = "availableFilesList";
-            this.availableFilesList.RowHeadersVisible = false;
-            this.availableFilesList.RowHeadersWidth = 40;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            this.availableFilesList.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.availableFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.availableFilesList.Size = new System.Drawing.Size(778, 251);
-            this.availableFilesList.TabIndex = 14;
-            // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.DarkGray;
-            this.panel1.Location = new System.Drawing.Point(0, 118);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(782, 2);
-            this.panel1.TabIndex = 15;
-            // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.White;
-            this.panel2.Location = new System.Drawing.Point(0, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(800, 118);
-            this.panel2.TabIndex = 16;
-            // 
-            // MessageConsole
-            // 
-            this.MessageConsole.AccessibleDescription = "";
-            this.MessageConsole.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.MessageColumn});
-            this.MessageConsole.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.MessageConsole.Location = new System.Drawing.Point(16, 602);
-            this.MessageConsole.Name = "MessageConsole";
-            this.MessageConsole.Size = new System.Drawing.Size(778, 76);
-            this.MessageConsole.TabIndex = 17;
-            this.MessageConsole.UseCompatibleStateImageBehavior = false;
-            this.MessageConsole.View = System.Windows.Forms.View.Details;
-            // 
-            // MessageColumn
-            // 
-            this.MessageColumn.Text = "";
-            // 
-            // AvailCheckColumn
-            // 
-            this.AvailCheckColumn.HeaderText = "Select";
-            this.AvailCheckColumn.MinimumWidth = 45;
-            this.AvailCheckColumn.Name = "AvailCheckColumn";
-            this.AvailCheckColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.AvailCheckColumn.Width = 45;
-            // 
-            // AvailNameColumn
-            // 
-            this.AvailNameColumn.DataPropertyName = "Alias";
-            this.AvailNameColumn.HeaderText = "Name";
-            this.AvailNameColumn.Name = "AvailNameColumn";
-            this.AvailNameColumn.ReadOnly = true;
-            this.AvailNameColumn.Width = 250;
-            // 
-            // AvailLocationColumn
-            // 
-            this.AvailLocationColumn.DataPropertyName = "IP";
-            this.AvailLocationColumn.HeaderText = "Location";
-            this.AvailLocationColumn.Name = "AvailLocationColumn";
-            this.AvailLocationColumn.ReadOnly = true;
-            this.AvailLocationColumn.Width = 390;
-            // 
-            // AvailSizeColumn
-            // 
-            this.AvailSizeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.AvailSizeColumn.DataPropertyName = "Size";
-            this.AvailSizeColumn.HeaderText = "Size";
-            this.AvailSizeColumn.Name = "AvailSizeColumn";
-            this.AvailSizeColumn.ReadOnly = true;
-            // 
             // SharedCheckColumn
             // 
             this.SharedCheckColumn.FalseValue = "false";
@@ -286,10 +198,100 @@
             this.SharedSizeColumn.Name = "SharedSizeColumn";
             this.SharedSizeColumn.ReadOnly = true;
             // 
+            // availableFilesList
+            // 
+            this.availableFilesList.AllowUserToAddRows = false;
+            this.availableFilesList.AllowUserToDeleteRows = false;
+            this.availableFilesList.AllowUserToResizeRows = false;
+            this.availableFilesList.BackgroundColor = System.Drawing.Color.White;
+            this.availableFilesList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.availableFilesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.availableFilesList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.AvailCheckColumn,
+            this.AvailNameColumn,
+            this.AvailLocationColumn,
+            this.AvailSizeColumn});
+            this.availableFilesList.Location = new System.Drawing.Point(16, 336);
+            this.availableFilesList.Name = "availableFilesList";
+            this.availableFilesList.RowHeadersVisible = false;
+            this.availableFilesList.RowHeadersWidth = 40;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            this.availableFilesList.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.availableFilesList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.availableFilesList.Size = new System.Drawing.Size(778, 251);
+            this.availableFilesList.TabIndex = 14;
+            // 
+            // AvailCheckColumn
+            // 
+            this.AvailCheckColumn.HeaderText = "Select";
+            this.AvailCheckColumn.MinimumWidth = 45;
+            this.AvailCheckColumn.Name = "AvailCheckColumn";
+            this.AvailCheckColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.AvailCheckColumn.Width = 45;
+            // 
+            // AvailNameColumn
+            // 
+            this.AvailNameColumn.DataPropertyName = "Alias";
+            this.AvailNameColumn.HeaderText = "Name";
+            this.AvailNameColumn.Name = "AvailNameColumn";
+            this.AvailNameColumn.ReadOnly = true;
+            this.AvailNameColumn.Width = 250;
+            // 
+            // AvailLocationColumn
+            // 
+            this.AvailLocationColumn.DataPropertyName = "IP";
+            this.AvailLocationColumn.HeaderText = "Location";
+            this.AvailLocationColumn.Name = "AvailLocationColumn";
+            this.AvailLocationColumn.ReadOnly = true;
+            this.AvailLocationColumn.Width = 390;
+            // 
+            // AvailSizeColumn
+            // 
+            this.AvailSizeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.AvailSizeColumn.DataPropertyName = "Size";
+            this.AvailSizeColumn.HeaderText = "Size";
+            this.AvailSizeColumn.Name = "AvailSizeColumn";
+            this.AvailSizeColumn.ReadOnly = true;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.DarkGray;
+            this.panel1.Location = new System.Drawing.Point(0, 118);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(782, 2);
+            this.panel1.TabIndex = 15;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.White;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(800, 118);
+            this.panel2.TabIndex = 16;
+            // 
+            // MessageConsole
+            // 
+            this.MessageConsole.AccessibleDescription = "";
+            this.MessageConsole.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.MessageColumn});
+            this.MessageConsole.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.MessageConsole.Location = new System.Drawing.Point(16, 602);
+            this.MessageConsole.Name = "MessageConsole";
+            this.MessageConsole.Size = new System.Drawing.Size(778, 76);
+            this.MessageConsole.TabIndex = 17;
+            this.MessageConsole.UseCompatibleStateImageBehavior = false;
+            this.MessageConsole.View = System.Windows.Forms.View.Details;
+            // 
+            // MessageColumn
+            // 
+            this.MessageColumn.Text = "";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(810, 690);
             this.Controls.Add(this.MessageConsole);
             this.Controls.Add(this.sharedFilesList);
