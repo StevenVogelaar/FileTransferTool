@@ -32,26 +32,10 @@ namespace CoreLibrary
         public void Start()
         {
 
-            IPAddress[] iplist = Dns.GetHostAddresses(Dns.GetHostName());
-            //IPAddress[] iplist = new IPAddress[] { IPAddress.Parse("192.168.0.2") };
+			UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, BroadcastManager.MULTICAST_PORT));
+			udpClient.EnableBroadcast = true;
+            _udpClients.Add(udpClient);
 
-
-            // Initialize UDP Clients on each IPV4 address this PC has.
-            foreach (IPAddress s in iplist)
-            {
-                if (s.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    try
-                    {
-                        UdpClient udpClient = new UdpClient(new IPEndPoint(s, BroadcastManager.MULTICAST_PORT));
-                        _udpClients.Add(udpClient);
-                    }
-                    catch (Exception e)
-                    {
-                        FTTConsole.AddError(e.Message);
-                    }
-                }
-            }
 
             // Start listening for each UDP Client on seperate threads.
             foreach (UdpClient c in _udpClients)
@@ -60,6 +44,7 @@ namespace CoreLibrary
                 thread.IsBackground = true;
                 thread.Start(c);
                 _threads.Add(thread);
+
             }
         }
 
@@ -70,7 +55,6 @@ namespace CoreLibrary
         /// <param name="udpClientObj"></param>
         private void listenForRequests(Object udpClientObj)
         {
-
             UdpClient udpClient = (UdpClient)udpClientObj;
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Message));
             MemoryStream stream = new MemoryStream();
@@ -84,6 +68,7 @@ namespace CoreLibrary
                     
                     udpClient.JoinMulticastGroup(IPAddress.Parse(BroadcastManager.MULTICAST_IP));
                     udpClient.MulticastLoopback = false;
+				
 
                     String msg = "";
                     ASCIIEncoding ascii = new ASCIIEncoding();
@@ -92,10 +77,11 @@ namespace CoreLibrary
                     while (true)
                     {
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
+						Console.WriteLine(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
                         Byte[] data = udpClient.Receive(ref _ipEndPoint);
                         msg = ascii.GetString(data);
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
-                        //Console.WriteLine(msg);
+						Console.WriteLine(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
 
                         try
                         {
@@ -134,7 +120,7 @@ namespace CoreLibrary
                     // If an exception is thrown, close the client and stop listening.
                     udpClient.Close();
                     loop = false;
-                    FTTConsole.AddDebug("Stopped listening on: " + udpClient.Client.LocalEndPoint);
+                    FTTConsole.AddDebug("Stopped listening on");
                 }
             }
         }

@@ -28,7 +28,7 @@ namespace CoreLibrary
             _resetEvent = new ManualResetEvent(false);
             _messageQueue = new Queue<Message>();
             _broadcaster = new UdpClient();
-            _broadcaster.JoinMulticastGroup(IPAddress.Parse(BroadcastManager.MULTICAST_IP));
+			_broadcaster.JoinMulticastGroup (IPAddress.Parse (BroadcastManager.MULTICAST_IP));
             _broadcaster.MulticastLoopback = false;
             _ipEndPoint = new IPEndPoint(IPAddress.Parse(BroadcastManager.MULTICAST_IP), BroadcastManager.MULTICAST_PORT);
             _additionalClients = new List<UdpClient>();
