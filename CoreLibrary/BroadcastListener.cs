@@ -36,22 +36,10 @@ namespace CoreLibrary
             //IPAddress[] iplist = new IPAddress[] { IPAddress.Parse("192.168.0.2") };
 
 
-            // Initialize UDP Clients on each IPV4 address this PC has.
-            foreach (IPAddress s in iplist)
-            {
-                if (s.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    try
-                    {
-                        UdpClient udpClient = new UdpClient(new IPEndPoint(s, BroadcastManager.MULTICAST_PORT));
-                        _udpClients.Add(udpClient);
-                    }
-                    catch (Exception e)
-                    {
-                        FTTConsole.AddError(e.Message);
-                    }
-                }
-            }
+
+            UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, BroadcastManager.MULTICAST_PORT));
+            _udpClients.Add(udpClient);
+
 
             // Start listening for each UDP Client on seperate threads.
             foreach (UdpClient c in _udpClients)
