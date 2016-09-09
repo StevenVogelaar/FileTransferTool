@@ -111,6 +111,7 @@
   <ItemGroup>
     <Content Include="ico48.ico" />
     <Content Include="icon.ico" />
+    <Content Include="Icon1.ico" />
     <Content Include="icon3.ico" />
     <Content Include="iconsmall.ico" />
   </ItemGroup>

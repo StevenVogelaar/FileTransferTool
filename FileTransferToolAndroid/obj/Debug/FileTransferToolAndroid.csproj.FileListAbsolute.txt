@@ -10,5 +10,6 @@ G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\obj\D
 G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\obj\Debug\res\drawable\icon.png
 G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\obj\Debug\R.cs.flag
 G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\obj\Debug\uploadflags.txt
+G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\obj\Debug\FileTransferToolAndroid.csprojResolveAssemblyReference.cache
 G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\obj\Debug\FileTransferToolAndroid.dll.mdb
 G:\Coding Projects\Repositories\File Transfer Tool\FileTransferToolAndroid\bin\Debug\FileTransferToolAndroid.dll.mdb
