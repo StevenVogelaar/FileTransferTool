@@ -149,12 +149,19 @@ namespace CoreLibrary
                 byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
                 int received = 0;
                 long fileSize;
+				int totalReceived = 0;
 
-                // Try to receive file name and size of file to be received.
-                if ((received = _socket.Receive(buffer, FTConnectionManager.PACKET_SIZE, SocketFlags.None)) <= 0)
-                {
-                    return;
-                }
+				while (true){
+                	// Try to receive file name and size of file to be received.
+					if ((received = _socket.Receive(buffer, received, FTConnectionManager.PACKET_SIZE - totalReceived, SocketFlags.None)) <= 0)
+                	{
+                   	 	return;
+                	}
+
+					totalReceived += received;
+					if (totalReceived == FTConnectionManager.PACKET_SIZE) break;
+
+				}
 
                 // Get first 8 bytes which is the file size.
                 byte[] sizeInBytes = new byte[8];
@@ -175,13 +182,13 @@ namespace CoreLibrary
                 FTTConsole.AddDebug("File alias received: " + aliasWithPath);
 
                 // Get the file path without the file.
+				int tempthing = aliasWithPath.LastIndexOf('/');
                 String path = _dest  + aliasWithPath.Substring(0,aliasWithPath.LastIndexOf('/'));
                 // Create Directories for the path.
                 Directory.CreateDirectory(path);
 
 
                 // Set isInDirectory flag if the file path has not '\'. i.e. \subfolder\ is not \.
-                String temp = aliasWithPath.Split('/')[0];
                 if (aliasWithPath.LastIndexOf('/') != 0)
                 {
 
@@ -212,7 +219,8 @@ namespace CoreLibrary
                 else _isInDirectory = false;
  
                 // Create the output file.
-                fileOut = new FileStream(_dest + "/" + aliasWithPath, FileMode.Create);
+				String tempytemp = _dest  + aliasWithPath;
+                fileOut = new FileStream(_dest  + aliasWithPath, FileMode.Create);
 
                 // Write to the output file.
                 long bytesReceived = 0;
@@ -253,7 +261,7 @@ namespace CoreLibrary
                     nextReceive = (int)Math.Min(fileSize - bytesReceived, FTConnectionManager.PACKET_SIZE);
                 }
 
-
+				Console.WriteLine("Received: " + bytesReceived);
                 if (_isInDirectory)
                 {
                     foreach (DirectoryInfo directory in _directoryDownloads)
