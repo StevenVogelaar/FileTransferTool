@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace CoreLibrary
 {
@@ -125,8 +126,12 @@ namespace CoreLibrary
 
         private void Receive()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (receiveFile()) ;
+            sw.Stop();
+            FTTConsole.AddDebug("Time elapsed: " + sw.ElapsedMilliseconds);
 
-            receiveFile();
             dispose();
         }
 
@@ -138,7 +143,7 @@ namespace CoreLibrary
         /// <summary>
         /// Attempts to receive a file.
         /// </summary>
-        private void receiveFile()
+        private bool receiveFile()
         {
             FileStream fileOut = null;
             string aliasWithPath = "";
@@ -155,7 +160,7 @@ namespace CoreLibrary
                 	// Try to receive file name and size of file to be received.
 					if ((received = _socket.Receive(buffer, received, FTConnectionManager.PACKET_SIZE - totalReceived, SocketFlags.None)) <= 0)
                 	{
-                   	 	return;
+                   	 	return false;
                 	}
 
 					totalReceived += received;
@@ -261,7 +266,6 @@ namespace CoreLibrary
                     nextReceive = (int)Math.Min(fileSize - bytesReceived, FTConnectionManager.PACKET_SIZE);
                 }
 
-				Console.WriteLine("Received: " + bytesReceived);
                 if (_isInDirectory)
                 {
                     foreach (DirectoryInfo directory in _directoryDownloads)
@@ -291,7 +295,7 @@ namespace CoreLibrary
                 deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
-                return;
+                return false;
             }
             catch (OperationCanceledException e)
             {
@@ -302,7 +306,7 @@ namespace CoreLibrary
 
                 deleteFile(_dest + "/" + aliasWithPath);
 
-                return;
+                return false;
             }
             catch (Exception e)
             {
@@ -312,7 +316,7 @@ namespace CoreLibrary
                 deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
-                return;
+                return false;
             }
             finally
             {
@@ -328,7 +332,7 @@ namespace CoreLibrary
 
 
             // Try to receive another file if there is one.
-            receiveFile();
+            return true;
         }
 
         private void deleteFile(String path)

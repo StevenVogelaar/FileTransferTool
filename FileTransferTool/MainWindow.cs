@@ -71,7 +71,6 @@ namespace FileTransferTool
         /// <param name="e"></param>
         private void AvailableFilesList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            return;
             if (e.ColumnIndex == 0)
             {
                 if ((bool)availableFilesList.Rows[e.RowIndex].Cells[0].Value == true && FileHandler.ParseSize((String)availableFilesList.Rows[e.RowIndex].Cells[3].Value) == -1)
@@ -337,6 +336,11 @@ namespace FileTransferTool
                 }
             }
 
+            if (files.Count <= 0)
+            {
+                MessageBox.Show("No files selected.", "Download Canceled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             FileDownloadProgress callbacks = new FileDownloadProgress();
             DownloadProgressWindow.StartDownload(progressFiles, callbacks);

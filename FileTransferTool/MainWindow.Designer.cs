@@ -30,6 +30,7 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.availableLable = new System.Windows.Forms.Label();
             this.sharedLable = new System.Windows.Forms.Label();
             this.addFilesButton = new System.Windows.Forms.Button();
@@ -39,7 +40,6 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.addFolderButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.connectionStatusLable = new System.Windows.Forms.Label();
             this.sharedFilesList = new System.Windows.Forms.DataGridView();
             this.SharedCheckColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SharedNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -70,7 +70,7 @@
             // sharedLable
             // 
             this.sharedLable.AutoSize = true;
-            this.sharedLable.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.sharedLable.ForeColor = System.Drawing.SystemColors.ControlText;
             this.sharedLable.Location = new System.Drawing.Point(12, 120);
             this.sharedLable.Name = "sharedLable";
             this.sharedLable.Size = new System.Drawing.Size(65, 13);
@@ -130,16 +130,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // connectionStatusLable
-            // 
-            this.connectionStatusLable.AutoSize = true;
-            this.connectionStatusLable.BackColor = System.Drawing.Color.White;
-            this.connectionStatusLable.Location = new System.Drawing.Point(12, 51);
-            this.connectionStatusLable.Name = "connectionStatusLable";
-            this.connectionStatusLable.Size = new System.Drawing.Size(79, 13);
-            this.connectionStatusLable.TabIndex = 12;
-            this.connectionStatusLable.Text = "Not Connected";
             // 
             // sharedFilesList
             // 
@@ -296,7 +286,6 @@
             this.Controls.Add(this.MessageConsole);
             this.Controls.Add(this.sharedFilesList);
             this.Controls.Add(this.availableFilesList);
-            this.Controls.Add(this.connectionStatusLable);
             this.Controls.Add(this.addFolderButton);
             this.Controls.Add(this.removeButton);
             this.Controls.Add(this.downloadButton);
@@ -306,6 +295,7 @@
             this.Controls.Add(this.availableLable);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainWindow";
             this.Text = "File Transfer Tool";
             ((System.ComponentModel.ISupportInitialize)(this.sharedFilesList)).EndInit();
@@ -325,7 +315,6 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button addFolderButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Label connectionStatusLable;
         private System.Windows.Forms.DataGridView sharedFilesList;
         private System.Windows.Forms.DataGridView availableFilesList;
         private System.Windows.Forms.Panel panel1;

@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DownloadProgressWindow));
             this.DownloadList = new System.Windows.Forms.DataGridView();
-            this.closeButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProgressColumn = new FileTransferTool.DataGridViewProgressColumn();
+            this.closeButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,26 +54,6 @@
             this.DownloadList.RowHeadersVisible = false;
             this.DownloadList.Size = new System.Drawing.Size(924, 285);
             this.DownloadList.TabIndex = 2;
-            // 
-            // closeButton
-            // 
-            this.closeButton.Location = new System.Drawing.Point(862, 315);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
-            this.closeButton.TabIndex = 3;
-            this.closeButton.Text = "Close";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Location = new System.Drawing.Point(781, 315);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 4;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // NameColumn
             // 
@@ -98,6 +79,26 @@
             this.ProgressColumn.Name = "ProgressColumn";
             this.ProgressColumn.ReadOnly = true;
             // 
+            // closeButton
+            // 
+            this.closeButton.Location = new System.Drawing.Point(862, 315);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(75, 23);
+            this.closeButton.TabIndex = 3;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Location = new System.Drawing.Point(781, 315);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 4;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
             // DownloadProgressWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -106,6 +107,7 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.DownloadList);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DownloadProgressWindow";
             this.Text = "DownloadProgressWindow";
             ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).EndInit();

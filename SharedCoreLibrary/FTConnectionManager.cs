@@ -26,6 +26,7 @@ namespace CoreLibrary
 
         private List<FTFileRequester> _requesters;
         private List<FTFileSender> _senders;
+        private List<DownloadStarter> _starters;
 
 
         public FTConnectionManager(FTFileSender.GetFilePath getFilePath)
@@ -33,6 +34,7 @@ namespace CoreLibrary
             _endPoint = new IPEndPoint(BroadcastManager.LocalIPAddress(), FILETRANSFER_PORT);
             _requesters = new List<FTFileRequester>();
             _senders = new List<FTFileSender>();
+            _starters = new List<DownloadStarter>();
 
             _getFilePath = getFilePath;
             _listenThread = new Thread(listenForRequests);
@@ -53,6 +55,14 @@ namespace CoreLibrary
                     requester.Cancel();
                 }
             }
+
+            lock (_starters)
+            {
+                foreach (DownloadStarter starter in _starters)
+                {
+                    starter.Cancel = true;
+                }
+            }
         }
 
         /// <summary>
@@ -67,6 +77,8 @@ namespace CoreLibrary
                     sender.Cancel();
                 }
             }
+
+           
         }
 
 
@@ -90,7 +102,12 @@ namespace CoreLibrary
         /// <param name="files">List of files that all have the same ip address.</param>
         public void DownloadFile(List<FTTFileInfo> files, String dest, FTDownloadCallbacks callbacks)
         {
-            DownloadStarter downloadStarter = new DownloadStarter(files, dest, callbacks, _requesters, requester_OperationFinished, this);
+            DownloadStarter downloadStarter = new DownloadStarter(files, dest, callbacks, _requesters, _starters, requester_OperationFinished, this);
+
+            lock (_starters)
+            {
+                _starters.Add(downloadStarter);
+            }
 
             Thread thread = new Thread(downloadStarter.DownloadFile);
             thread.IsBackground = true;
@@ -233,19 +250,25 @@ namespace CoreLibrary
         {
             public delegate void requester_OperationFinished(object sender, EventArgs e);
 
+            public bool Cancel { get; set; }
+
             private List<FTTFileInfo> _files;
             private String _dest;
             private FTDownloadCallbacks _callbacks;
             private List<FTFileRequester> _requesters;
             private requester_OperationFinished _callback;
             private FTConnectionManager _manager;
+            private List<DownloadStarter> _starters;
 
-            public DownloadStarter(List<FTTFileInfo> files, String dest, FTDownloadCallbacks callbacks, List<FTFileRequester> requesters, requester_OperationFinished callback, FTConnectionManager manager)
+            public DownloadStarter(List<FTTFileInfo> files, String dest, FTDownloadCallbacks callbacks, List<FTFileRequester> requesters, List<DownloadStarter> starters,
+                requester_OperationFinished callback, FTConnectionManager manager)
             {
+                Cancel = false;
                 _files = files;
                 _dest = dest;
                 _callbacks = callbacks;
                 _requesters = requesters;
+                _starters = starters;
                 _callback = callback;
                 _manager = manager;
             }
@@ -253,11 +276,22 @@ namespace CoreLibrary
             public void DownloadFile()
             {
                 // Attempt to open connection with remote host.
+
+                Socket socket = null;
+
                 try
                 {
-					Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+					socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 					Console.WriteLine("AWKAWKFWKAWF " + IPAddress.Parse(_files.ElementAt(0).IP));
                     socket.Connect(IPAddress.Parse(_files.ElementAt(0).IP), FILETRANSFER_PORT);
+
+                    // Check if downloads was canceled.
+                    if (Cancel)
+                    {
+                        socket.Close();
+                        socket.Dispose();
+                        return;
+                    }
 
                     // Create new fileRequester. It will run the request automaticaly.
                     foreach (FTTFileInfo f in _files)
@@ -271,6 +305,15 @@ namespace CoreLibrary
 
                     lock (_requesters)
                     {
+                        // Do a final check to see if downloads were canceled. The lock operation might take too much time and the download was canceled between here and
+                        // the first check.
+                        if (Cancel)
+                        {
+                            socket.Close();
+                            socket.Dispose();
+                            return;
+                        }
+
                         _requesters.Add(requester);
                     }
                 }
@@ -280,6 +323,26 @@ namespace CoreLibrary
                     Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
                     _manager.invokeConnectionFailed(_files.ElementAt(0).IP);
+
+                    try
+                    {
+                        if (socket != null)
+                        {
+                            socket.Close();
+                            socket.Dispose();
+                        }
+                    }
+                    catch (Exception f)
+                    {
+                        FTTConsole.AddDebug("Issue with disposing download sender socket.");
+                    }
+                }
+                finally{
+                    // Download has either been canceled or there was an error. Remove from the _starters list.
+                    lock (_starters)
+                    {
+                        _starters.Remove(this);
+                    }
                 }
             }
         }
