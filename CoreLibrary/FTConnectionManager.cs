@@ -192,6 +192,7 @@ namespace CoreLibrary
 
         public void Dispose()
         {
+
             lock (_requesters)
             {
                 foreach (FTFileRequester requester in _requesters)

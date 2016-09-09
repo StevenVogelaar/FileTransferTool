@@ -28,7 +28,7 @@ namespace CoreLibrary
 
         public FTFileSender(Socket socket, GetFilePath getFilePath)
         {
-            _socket = socket;
+            _socket = socket;;
             _getFilePath = getFilePath;
 
 
@@ -233,16 +233,68 @@ namespace CoreLibrary
         private void dispose()
         {
             // Shutdown causes the other client to stop listening for files.
-            FTTConsole.AddDebug("Connection shutting down.");
+            
             _socket.Shutdown(SocketShutdown.Both);
+
+			byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
+			int received = 0;
+			_socket.ReceiveTimeout = 1;
+
+			while ((received = _socket.Receive (buffer)) > 0) {
+				Console.WriteLine("message: " + Encoding.UTF8.GetString(buffer));
+			}
+				
             _socket.Close();
             _socket.Dispose();
+
+			FTTConsole.AddDebug("Connection shut down.");
             
             if (OperationFinished != null)
             {
                 OperationFinished.Invoke(this, EventArgs.Empty);
             }
         }
+
+		bool SocketConnected(Socket s)
+		{
+			bool part1 = s.Poll(1000, SelectMode.SelectWrite);
+			bool part2 = (s.Available == 0);
+			if ((part1 && part2 ) || !s.Connected)
+				return false;
+			else
+				return true;
+		}
+
+		public static bool IsConnected(Socket client)
+		{
+			// This is how you can determine whether a socket is still connected.
+			bool blockingState = client.Blocking;
+
+			try
+			{
+				byte[] tmp = new byte[1];
+
+				client.Blocking = false;
+				client.Send(tmp, 0, 0);
+				return true;
+			}
+			catch (SocketException e)
+			{
+				// 10035 == WSAEWOULDBLOCK
+				if (e.NativeErrorCode.Equals(10035))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			finally
+			{
+				client.Blocking = blockingState;
+			}
+		}
 
         public class CanceledOperation : Exception
         {

@@ -288,7 +288,7 @@ namespace CoreLibrary
 
                 FTTConsole.AddError("Error receiving file: Socket Exception");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
-                deleteFile(_dest + "//" + aliasWithPath);
+                deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
                 return;
