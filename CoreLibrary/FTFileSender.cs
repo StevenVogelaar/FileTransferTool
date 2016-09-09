@@ -234,14 +234,16 @@ namespace CoreLibrary
         {
             // Shutdown causes the other client to stop listening for files.
             
-            _socket.Shutdown(SocketShutdown.Both);
+			_socket.Shutdown(SocketShutdown.Send);
 
 			byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
 			int received = 0;
 			_socket.ReceiveTimeout = 1;
 
 			while ((received = _socket.Receive (buffer)) > 0) {
-				Console.WriteLine("message: " + Encoding.UTF8.GetString(buffer));
+				String message = Encoding.UTF8.GetString (buffer).Replace ("\0", String.Empty);
+				if (message.Equals("FIN")) break;
+				Thread.Sleep (500);
 			}
 				
             _socket.Close();
