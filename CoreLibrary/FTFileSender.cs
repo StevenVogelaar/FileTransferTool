@@ -28,7 +28,7 @@ namespace CoreLibrary
 
         public FTFileSender(Socket socket, GetFilePath getFilePath)
         {
-            _socket = socket;
+            _socket = socket;;
             _getFilePath = getFilePath;
 
 
@@ -127,24 +127,27 @@ namespace CoreLibrary
         /// <summary>
         /// Begins an operation to send the contents of a folder and all sub-folders over the socket.
         /// </summary>
-        /// <param name="directoryPath"></param>
+        /// <param name="directoryPath">The main path for the folder that is being downloaded.</param>
+        /// <param name="relativePath">Path to the current subfolder.</param>
         private void sendFolder(String directoryPath, String relativePath)
         {
 
             String[] files = Directory.GetFiles(directoryPath);
-            String directoryName = directoryPath.Substring(directoryPath.LastIndexOf('\\'));
+            String directoryName = directoryPath.Substring(directoryPath.LastIndexOf('/'));
 
             // Send each file in current directory.
             foreach (String f in files)
             {
-                sendFile(f, relativePath +  directoryName);
+                string linuxString = f.Replace('\\', '/');
+                sendFile(linuxString, relativePath +  directoryName);
             }
 
             // Recurse for each subdirectory.
             String[] subDirectories = Directory.GetDirectories(directoryPath);
             foreach (string d in subDirectories)
             {
-                sendFolder(d, relativePath + directoryName);
+                string linuxString = d.Replace('\\', '/');
+                sendFolder(linuxString, relativePath + directoryName);
             }
         }
 
@@ -157,7 +160,7 @@ namespace CoreLibrary
         {
 
             FileStream fileStream = null;
-            String fileName = path.Substring(path.LastIndexOf('\\'));
+            String fileName = path.Substring(path.LastIndexOf('/'));
             try
             {
 
@@ -230,16 +233,41 @@ namespace CoreLibrary
         private void dispose()
         {
             // Shutdown causes the other client to stop listening for files.
-            FTTConsole.AddDebug("Connection shutting down.");
-            _socket.Shutdown(SocketShutdown.Both);
+			_socket.Shutdown(SocketShutdown.Send);
+
+			byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
+			int received = 0;
+			_socket.ReceiveTimeout = 300000;
+
+
+            // This is all beacuse linux doesnt work with sockets very well...
+            try
+            {
+                while ((received = _socket.Receive(buffer)) > 0)
+                {
+                    String message = Encoding.UTF8.GetString(buffer).Replace("\0", String.Empty);
+                    if (message.Equals("FIN")) break;
+
+                    // Need this or it won't work. Should find a better solution.
+                    Thread.Sleep(500);
+                }
+            }
+            catch (SocketException e)
+            {
+                FTTConsole.AddDebug("Issue with receiving FIN message from client.");
+            }
+				
             _socket.Close();
             _socket.Dispose();
+
+			FTTConsole.AddDebug("Connection shut down.");
             
             if (OperationFinished != null)
             {
                 OperationFinished.Invoke(this, EventArgs.Empty);
             }
         }
+
 
         public class CanceledOperation : Exception
         {

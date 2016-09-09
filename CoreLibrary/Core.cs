@@ -65,7 +65,7 @@ namespace CoreLibrary
 
                 List<FileHandler> sharedFiles = SharedFiles.CopyOfList();
                 bool duplicateName = false;
-                String fileName = path.Substring(path.LastIndexOf("\\") + 1);
+                String fileName = path.Substring(path.LastIndexOf("/") + 1);
 
                 // Check if a file with the same path already exists in the list.
                 foreach (FileHandler f in sharedFiles)

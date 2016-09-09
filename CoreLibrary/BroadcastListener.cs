@@ -32,12 +32,8 @@ namespace CoreLibrary
         public void Start()
         {
 
-            IPAddress[] iplist = Dns.GetHostAddresses(Dns.GetHostName());
-            //IPAddress[] iplist = new IPAddress[] { IPAddress.Parse("192.168.0.2") };
-
-
-
-            UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, BroadcastManager.MULTICAST_PORT));
+			UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, BroadcastManager.MULTICAST_PORT));
+			udpClient.EnableBroadcast = true;
             _udpClients.Add(udpClient);
 
 
@@ -48,6 +44,7 @@ namespace CoreLibrary
                 thread.IsBackground = true;
                 thread.Start(c);
                 _threads.Add(thread);
+
             }
         }
 
@@ -58,7 +55,6 @@ namespace CoreLibrary
         /// <param name="udpClientObj"></param>
         private void listenForRequests(Object udpClientObj)
         {
-
             UdpClient udpClient = (UdpClient)udpClientObj;
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Message));
             MemoryStream stream = new MemoryStream();
@@ -72,6 +68,7 @@ namespace CoreLibrary
                     
                     udpClient.JoinMulticastGroup(IPAddress.Parse(BroadcastManager.MULTICAST_IP));
                     udpClient.MulticastLoopback = false;
+				
 
                     String msg = "";
                     ASCIIEncoding ascii = new ASCIIEncoding();
@@ -80,10 +77,11 @@ namespace CoreLibrary
                     while (true)
                     {
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
+						Console.WriteLine(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
                         Byte[] data = udpClient.Receive(ref _ipEndPoint);
                         msg = ascii.GetString(data);
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
-                        //Console.WriteLine(msg);
+						Console.WriteLine(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
 
                         try
                         {
@@ -122,7 +120,7 @@ namespace CoreLibrary
                     // If an exception is thrown, close the client and stop listening.
                     udpClient.Close();
                     loop = false;
-                    FTTConsole.AddDebug("Stopped listening on: " + udpClient.Client.LocalEndPoint);
+                    FTTConsole.AddDebug("Stopped listening on");
                 }
             }
         }

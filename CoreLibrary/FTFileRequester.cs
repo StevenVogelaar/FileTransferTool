@@ -132,7 +132,7 @@ namespace CoreLibrary
 
         private FileStream createFile(String path)
         {
-            return new FileStream(_dest + "\\" + path, FileMode.Create);
+            return new FileStream(_dest + "/" + path, FileMode.Create);
         }
 
         /// <summary>
@@ -149,12 +149,19 @@ namespace CoreLibrary
                 byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
                 int received = 0;
                 long fileSize;
+				int totalReceived = 0;
 
-                // Try to receive file name and size of file to be received.
-                if ((received = _socket.Receive(buffer, FTConnectionManager.PACKET_SIZE, SocketFlags.None)) <= 0)
-                {
-                    return;
-                }
+				while (true){
+                	// Try to receive file name and size of file to be received.
+					if ((received = _socket.Receive(buffer, received, FTConnectionManager.PACKET_SIZE - totalReceived, SocketFlags.None)) <= 0)
+                	{
+                   	 	return;
+                	}
+
+					totalReceived += received;
+					if (totalReceived == FTConnectionManager.PACKET_SIZE) break;
+
+				}
 
                 // Get first 8 bytes which is the file size.
                 byte[] sizeInBytes = new byte[8];
@@ -170,24 +177,23 @@ namespace CoreLibrary
                 aliasWithPath = Encoding.UTF8.GetString(buffer, 8, FTConnectionManager.PACKET_SIZE - 9);
                 aliasWithPath = aliasWithPath.Replace("\0", String.Empty);
                 // currentFileAlias is used to send progress on a file to the callback class.
-                _currentFileAlias = aliasWithPath.Substring(aliasWithPath.LastIndexOf('\\') + 1);
+                _currentFileAlias = aliasWithPath.Substring(aliasWithPath.LastIndexOf('/') + 1);
 
                 FTTConsole.AddDebug("File alias received: " + aliasWithPath);
 
                 // Get the file path without the file.
-                String path = _dest  + aliasWithPath.Substring(0,aliasWithPath.LastIndexOf('\\'));
+				int tempthing = aliasWithPath.LastIndexOf('/');
+                String path = _dest  + aliasWithPath.Substring(0,aliasWithPath.LastIndexOf('/'));
                 // Create Directories for the path.
                 Directory.CreateDirectory(path);
 
 
                 // Set isInDirectory flag if the file path has not '\'. i.e. \subfolder\ is not \.
-                String temp = aliasWithPath.Split('\\')[0];
-                if (aliasWithPath.LastIndexOf('\\') != 0)
+                if (aliasWithPath.LastIndexOf('/') != 0)
                 {
 
                     _isInDirectory = true;
-                    //String[] temps = aliasWithPath.Split('\\');
-                    _currentFolderAlias = aliasWithPath.Split('\\')[1];
+                    _currentFolderAlias = aliasWithPath.Split('/')[1];
 
 
                     bool found = false;
@@ -213,7 +219,8 @@ namespace CoreLibrary
                 else _isInDirectory = false;
  
                 // Create the output file.
-                fileOut = new FileStream(_dest + "\\" + aliasWithPath, FileMode.Create);
+				String tempytemp = _dest  + aliasWithPath;
+                fileOut = new FileStream(_dest  + aliasWithPath, FileMode.Create);
 
                 // Write to the output file.
                 long bytesReceived = 0;
@@ -254,7 +261,7 @@ namespace CoreLibrary
                     nextReceive = (int)Math.Min(fileSize - bytesReceived, FTConnectionManager.PACKET_SIZE);
                 }
 
-
+				Console.WriteLine("Received: " + bytesReceived);
                 if (_isInDirectory)
                 {
                     foreach (DirectoryInfo directory in _directoryDownloads)
@@ -281,7 +288,7 @@ namespace CoreLibrary
 
                 FTTConsole.AddError("Error receiving file: Socket Exception");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
-                deleteFile(_dest + "\\" + aliasWithPath);
+                deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
                 return;
@@ -293,7 +300,7 @@ namespace CoreLibrary
                 fileOut.Close();
                 fileOut.Dispose();
 
-                deleteFile(_dest + "\\" + aliasWithPath);
+                deleteFile(_dest + "/" + aliasWithPath);
 
                 return;
             }
@@ -302,7 +309,7 @@ namespace CoreLibrary
 
                 FTTConsole.AddError("Error receiving file.");
                 Console.WriteLine(e.Message + "\n" + e.StackTrace);
-                deleteFile(_dest + "\\" + aliasWithPath);
+                deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
                 return;
@@ -365,9 +372,21 @@ namespace CoreLibrary
         private void dispose()
         {
             FTTConsole.AddDebug("Shutting down connection in requester");
-            _socket.Shutdown(SocketShutdown.Both);
-            _socket.Close();
-            _socket.Dispose();
+            try
+            {
+
+                byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
+                _socket.Send(Encoding.UTF8.GetBytes("FIN"));
+
+                _socket.Shutdown(SocketShutdown.Receive);
+                _socket.Close();
+                _socket.Dispose();
+            }
+            catch (Exception e)
+            {
+                FTTConsole.AddError("Could not shutdown the remote connection.");
+                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+            }
 
             if (OperationFinished != null)
             {

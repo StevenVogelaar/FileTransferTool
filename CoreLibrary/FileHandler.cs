@@ -14,7 +14,7 @@ namespace CoreLibrary
         [Browsable(false)]
         public String Name { get; }
         public String Alias { get; private set; }
-        public String Path { get; }
+        public String Path { get; private set; }
         public String Size { get; private set; }
         [Browsable(false)]
         public bool IsDirectory { get; private set; }
@@ -66,7 +66,8 @@ namespace CoreLibrary
         {
             this.Alias = alias;
             this.Path = path;
-            Name = Path.Split('\\').Last<String>();
+            Path = Path.Replace('\\', '/');
+            Name = Path.Split('/').Last<String>();
 
             init();
         }
@@ -74,7 +75,8 @@ namespace CoreLibrary
         public FileHandler(String path)
         {
             this.Path = path;
-            Name = Path.Split('\\').Last<String>();
+            Path = Path.Replace('\\', '/');
+            Name = Path.Split('/').Last<String>();
             Alias = Name;
 
             init();
@@ -82,6 +84,7 @@ namespace CoreLibrary
 
         private void init()
         {
+            
 
             Size = "Calculating...";
 
