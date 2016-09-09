@@ -240,11 +240,19 @@ namespace CoreLibrary
 			int received = 0;
 			_socket.ReceiveTimeout = 1;
 
-			while ((received = _socket.Receive (buffer)) > 0) {
-				String message = Encoding.UTF8.GetString (buffer).Replace ("\0", String.Empty);
-				if (message.Equals("FIN")) break;
-				Thread.Sleep (500);
-			}
+            try
+            {
+                while ((received = _socket.Receive(buffer)) > 0)
+                {
+                    String message = Encoding.UTF8.GetString(buffer).Replace("\0", String.Empty);
+                    if (message.Equals("FIN")) break;
+                    Thread.Sleep(500);
+                }
+            }
+            catch (SocketException e)
+            {
+                FTTConsole.AddDebug("Issue with receiving FIN message from client.");
+            }
 				
             _socket.Close();
             _socket.Dispose();
