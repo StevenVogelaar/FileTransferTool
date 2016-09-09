@@ -364,9 +364,17 @@ namespace CoreLibrary
         private void dispose()
         {
             FTTConsole.AddDebug("Shutting down connection in requester");
-            _socket.Shutdown(SocketShutdown.Both);
-            _socket.Close();
-            _socket.Dispose();
+            try
+            {
+                _socket.Shutdown(SocketShutdown.Both);
+                _socket.Close();
+                _socket.Dispose();
+            }
+            catch (Exception e)
+            {
+                FTTConsole.AddError("Could not shutdown the remote connection.");
+                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+            }
 
             if (OperationFinished != null)
             {

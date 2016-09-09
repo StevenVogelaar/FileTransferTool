@@ -127,7 +127,8 @@ namespace CoreLibrary
         /// <summary>
         /// Begins an operation to send the contents of a folder and all sub-folders over the socket.
         /// </summary>
-        /// <param name="directoryPath"></param>
+        /// <param name="directoryPath">The main path for the folder that is being downloaded.</param>
+        /// <param name="relativePath">Path to the current subfolder.</param>
         private void sendFolder(String directoryPath, String relativePath)
         {
 
@@ -137,14 +138,16 @@ namespace CoreLibrary
             // Send each file in current directory.
             foreach (String f in files)
             {
-                sendFile(f, relativePath +  directoryName);
+                string linuxString = f.Replace('\\', '/');
+                sendFile(linuxString, relativePath +  directoryName);
             }
 
             // Recurse for each subdirectory.
             String[] subDirectories = Directory.GetDirectories(directoryPath);
             foreach (string d in subDirectories)
             {
-                sendFolder(d, relativePath + directoryName);
+                string linuxString = d.Replace('\\', '/');
+                sendFolder(linuxString, relativePath + directoryName);
             }
         }
 
