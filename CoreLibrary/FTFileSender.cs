@@ -233,19 +233,22 @@ namespace CoreLibrary
         private void dispose()
         {
             // Shutdown causes the other client to stop listening for files.
-            
 			_socket.Shutdown(SocketShutdown.Send);
 
 			byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
 			int received = 0;
-			_socket.ReceiveTimeout = 1;
+			_socket.ReceiveTimeout = 300000;
 
+
+            // This is all beacuse linux doesnt work with sockets very well...
             try
             {
                 while ((received = _socket.Receive(buffer)) > 0)
                 {
                     String message = Encoding.UTF8.GetString(buffer).Replace("\0", String.Empty);
                     if (message.Equals("FIN")) break;
+
+                    // Need this or it won't work. Should find a better solution.
                     Thread.Sleep(500);
                 }
             }
@@ -265,46 +268,6 @@ namespace CoreLibrary
             }
         }
 
-		bool SocketConnected(Socket s)
-		{
-			bool part1 = s.Poll(1000, SelectMode.SelectWrite);
-			bool part2 = (s.Available == 0);
-			if ((part1 && part2 ) || !s.Connected)
-				return false;
-			else
-				return true;
-		}
-
-		public static bool IsConnected(Socket client)
-		{
-			// This is how you can determine whether a socket is still connected.
-			bool blockingState = client.Blocking;
-
-			try
-			{
-				byte[] tmp = new byte[1];
-
-				client.Blocking = false;
-				client.Send(tmp, 0, 0);
-				return true;
-			}
-			catch (SocketException e)
-			{
-				// 10035 == WSAEWOULDBLOCK
-				if (e.NativeErrorCode.Equals(10035))
-				{
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			finally
-			{
-				client.Blocking = blockingState;
-			}
-		}
 
         public class CanceledOperation : Exception
         {
