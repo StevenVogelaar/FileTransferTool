@@ -374,7 +374,11 @@ namespace CoreLibrary
             FTTConsole.AddDebug("Shutting down connection in requester");
             try
             {
-                _socket.Shutdown(SocketShutdown.Both);
+
+                byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
+                _socket.Send(Encoding.UTF8.GetBytes("FIN"));
+
+                _socket.Shutdown(SocketShutdown.Receive);
                 _socket.Close();
                 _socket.Dispose();
             }
