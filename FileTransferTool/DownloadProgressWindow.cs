@@ -248,12 +248,13 @@ namespace FileTransferTool
             _cancelCallback();
             _connectingDialog.Hide();
             DownloadInProggress = false;
-            Hide();
+            Close();
+            
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Close();
         }
 
         public class ProgressData

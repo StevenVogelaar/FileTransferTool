@@ -254,8 +254,9 @@ namespace CoreLibrary
                 // Attempt to open connection with remote host.
                 try
                 {
-                    Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                    socket.Connect(new IPEndPoint(IPAddress.Parse(_files.ElementAt(0).IP), FILETRANSFER_PORT));
+					Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+					Console.WriteLine("AWKAWKFWKAWF " + IPAddress.Parse(_files.ElementAt(0).IP));
+                    socket.Connect(IPAddress.Parse(_files.ElementAt(0).IP), FILETRANSFER_PORT);
 
                     // Create new fileRequester. It will run the request automaticaly.
                     foreach (FTTFileInfo f in _files)
@@ -274,7 +275,7 @@ namespace CoreLibrary
                 }
                 catch (Exception e)
                 {
-                    FTTConsole.AddError("Error trying to connect to remmote host: " + _files.ElementAt(0).IP);
+                    FTTConsole.AddError("Error trying to connect to remote host: " + _files.ElementAt(0).IP);
                     Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
                     _manager.invokeConnectionFailed(_files.ElementAt(0).IP);
