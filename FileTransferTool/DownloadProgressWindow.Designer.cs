@@ -32,9 +32,10 @@
             this.DownloadList = new System.Windows.Forms.DataGridView();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ProgressColumn = new FileTransferTool.DataGridViewProgressColumn();
             this.closeButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.dataGridViewProgressColumn1 = new FileTransferTool.DataGridViewProgressColumn();
+            this.ProgressColumn = new FileTransferTool.DataGridViewProgressColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,14 +72,6 @@
             this.LocationColumn.ReadOnly = true;
             this.LocationColumn.Width = 150;
             // 
-            // ProgressColumn
-            // 
-            this.ProgressColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ProgressColumn.DataPropertyName = "Progress";
-            this.ProgressColumn.HeaderText = "Progress";
-            this.ProgressColumn.Name = "ProgressColumn";
-            this.ProgressColumn.ReadOnly = true;
-            // 
             // closeButton
             // 
             this.closeButton.Location = new System.Drawing.Point(862, 315);
@@ -98,6 +91,21 @@
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // dataGridViewProgressColumn1
+            // 
+            this.dataGridViewProgressColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewProgressColumn1.DataPropertyName = "Progress";
+            this.dataGridViewProgressColumn1.HeaderText = "Progress";
+            this.dataGridViewProgressColumn1.Name = "dataGridViewProgressColumn1";
+            // 
+            // ProgressColumn
+            // 
+            this.ProgressColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ProgressColumn.DataPropertyName = "Progress";
+            this.ProgressColumn.HeaderText = "Progress";
+            this.ProgressColumn.Name = "ProgressColumn";
+            this.ProgressColumn.ReadOnly = true;
             // 
             // DownloadProgressWindow
             // 
@@ -122,5 +130,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn LocationColumn;
         private DataGridViewProgressColumn ProgressColumn;
+        private DataGridViewProgressColumn dataGridViewProgressColumn1;
     }
 }

@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ico48.ico</ApplicationIcon>
+    <ApplicationIcon>icon96.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -110,10 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ico48.ico" />
-    <Content Include="icon.ico" />
-    <Content Include="Icon1.ico" />
-    <Content Include="icon3.ico" />
-    <Content Include="iconsmall.ico" />
+    <Content Include="icon96.ico" />
   </ItemGroup>
   <Import Project="..\SharedCoreLibrary\SharedCoreLibrary.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
