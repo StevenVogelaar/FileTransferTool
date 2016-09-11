@@ -1,4 +1,0 @@
-FileTransferToolAndroid.MainActivity, FileTransferToolAndroid;md5a2fd5c1445e065ca6b61edc71ce051df.MainActivity
-FileTransferToolAndroid.MainActivity, FileTransferToolAndroid, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5a2fd5c1445e065ca6b61edc71ce051df.MainActivity
-FileTransferToolAndroid.MainActivity;md5a2fd5c1445e065ca6b61edc71ce051df.MainActivity
-filetransfertoolandroid.MainActivity;md5a2fd5c1445e065ca6b61edc71ce051df.MainActivity

@@ -103,7 +103,7 @@ namespace CoreLibrary
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.StackTrace);
+                            Console.WriteLine(e.Message + "\n" + e.StackTrace);
                             FTTConsole.AddDebug("Error trying to prarse json message: " + e.Message);
                         }
                     }
