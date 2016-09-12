@@ -8,11 +8,13 @@ using Android.OS;
 using CoreLibrary;
 using Android.Hardware;
 using System.Collections.Generic;
+using Android.Support.V4.App;
+using Android.Support.V4;
 
 namespace FileTransferToolAndroid
 {
-    [Activity(Label = "File Transfer Tool", MainLauncher = true, Icon = "@drawable/icon")]
-    public class MainActivity : Activity
+    [Activity(Label = "File Transfer Tool", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    public class MainActivity : FragmentActivity
     {
         int count = 1;
         
@@ -29,8 +31,19 @@ namespace FileTransferToolAndroid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-
+            
         }
+
+
+        protected override void OnStop()
+        {
+            _core.Dispose();
+            base.OnStop();
+        }
+
+
     }
+
+
 }
 

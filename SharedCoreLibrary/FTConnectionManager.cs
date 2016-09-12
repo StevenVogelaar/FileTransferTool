@@ -37,6 +37,11 @@ namespace CoreLibrary
             _starters = new List<DownloadStarter>();
 
             _getFilePath = getFilePath;
+
+
+            _connectionReceiver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _connectionReceiver.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+
             _listenThread = new Thread(listenForRequests);
             _listenThread.IsBackground = true;
             _listenThread.Start();
@@ -123,7 +128,7 @@ namespace CoreLibrary
             // Initialize listener socket.
             try
             {
-                _connectionReceiver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+               
                 _connectionReceiver.Bind(_endPoint);
                 _connectionReceiver.Listen(10);
             }
@@ -145,6 +150,23 @@ namespace CoreLibrary
                 {
                     FTTConsole.AddError("Error accepting a file transfer connection.");
                     Console.WriteLine(e.Message + "\n" + e.StackTrace);
+
+                    try
+                    {
+                        _connectionReceiver.Shutdown(SocketShutdown.Both);
+                        _connectionReceiver.Disconnect(true);
+                    }
+                    catch (SocketException s)
+                    {
+                        Console.WriteLine("Socket error");
+                    }
+                    catch (ObjectDisposedException f)
+                    {
+                        Console.WriteLine("Disposing error");
+                    }
+
+                    listenForRequests();
+                    break;
                 }
             }
         }
@@ -209,6 +231,7 @@ namespace CoreLibrary
 
         public void Dispose()
         {
+            _listenThread.Abort();
 
             lock (_requesters)
             {
