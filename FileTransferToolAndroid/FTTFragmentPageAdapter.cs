@@ -17,8 +17,8 @@ namespace FileTransferToolAndroid
     class FTTFragmentPageAdapter : FragmentPagerAdapter
     {
 
-        private SharedFilesFragment _sharedFilesFragment;
-        private AvailableFilesFragment _availableFilesFragment;
+        public SharedFilesFragment SharedFilesFragment { get; }
+        public AvailableFilesFragment AvailableFilesFragment { get; }
 
         public override int Count
         {
@@ -31,8 +31,8 @@ namespace FileTransferToolAndroid
 
         public FTTFragmentPageAdapter(Android.Support.V4.App.FragmentManager fm) : base(fm)
         {
-            _sharedFilesFragment = new SharedFilesFragment();
-            _availableFilesFragment = new AvailableFilesFragment();
+            SharedFilesFragment = new SharedFilesFragment();
+            AvailableFilesFragment = new AvailableFilesFragment();
         }
 
         
@@ -40,11 +40,11 @@ namespace FileTransferToolAndroid
         {
             if (position == 0)
             {
-                return _sharedFilesFragment;
+                return SharedFilesFragment;
             }
             else if (position == 1)
             {
-                return _availableFilesFragment;
+                return AvailableFilesFragment;
             }
             else return null;
         }

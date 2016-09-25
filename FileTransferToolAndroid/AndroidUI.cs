@@ -16,13 +16,26 @@ namespace FileTransferToolAndroid
     class AndroidUI : FTUI
     {
 
+        private Activity _activity;
 
+        public delegate void AvailableFilesChangedHandler(object sender, AvailableFilesChangedEventArgs e);
+        public event AvailableFilesChangedHandler AvailableFilesChangedEvent; 
 
+        public AndroidUI(Activity activity) : base(){
 
+            _activity = activity;
+        }
 
         public override void AvailableFilesChanged(List<FTTFileInfo> files)
         {
-            throw new NotImplementedException();
+            if (AvailableFilesChangedEvent != null)
+            {
+                _activity.RunOnUiThread(delegate () 
+                {
+                    AvailableFilesChangedEvent.Invoke(this, new AvailableFilesChangedEventArgs() { Files = files });
+                });
+               
+            }
         }
 
         public override void FailedToConnect(string ip)
@@ -34,5 +47,12 @@ namespace FileTransferToolAndroid
         {
             throw new NotImplementedException();
         }
+
+
+        public class AvailableFilesChangedEventArgs : EventArgs
+        {
+            public List<FTTFileInfo> Files { get; set; }
+        }
+
     }
 }
