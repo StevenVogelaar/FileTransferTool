@@ -38,6 +38,12 @@ namespace FileTransferToolAndroid
             }
         }
 
+
+        public void RefreshClients()
+        {
+            InvokeRefreshClients(this, EventArgs.Empty);
+        }
+
         public override void FailedToConnect(string ip)
         {
             throw new NotImplementedException();

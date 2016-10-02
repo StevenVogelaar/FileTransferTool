@@ -17,8 +17,12 @@ namespace FileTransferToolAndroid
     class FTTFileInfoArrayAdapter : ArrayAdapter<FTTFileInfo>
     {
 
+        public delegate void CheckBoxCheckedHandler(object sender, EventArgs e);
+        public event CheckBoxCheckedHandler CheckBoxChecked;
+
         private Context _context;
         private List<FTTFileInfo> _files;
+        private List<View> _items;
 
         public FTTFileInfoArrayAdapter(Context context, List<FTTFileInfo> files) : base(context, Resource.Layout.SharedFileListItem, files)
         {
@@ -42,6 +46,9 @@ namespace FileTransferToolAndroid
             textView = fileView.FindViewById<TextView>(Resource.Id.Size);
             textView.SetText( _files[position].Size, TextView.BufferType.Normal);
 
+            CheckBox checkBox = fileView.FindViewById<CheckBox>(Resource.Id.AvailCheckbox);
+            checkBox.Click += CheckBox_Click;
+
             /**
             if (position % 2 == 0)
             {
@@ -53,6 +60,16 @@ namespace FileTransferToolAndroid
             return fileView;
         }
 
+
+        private void CheckBox_Click(object sender, EventArgs e)
+        {
+            if (CheckBoxChecked != null)
+            {
+                CheckBoxChecked.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+
         public override int Count
         {
             get
@@ -60,6 +77,9 @@ namespace FileTransferToolAndroid
                 return _files.Count;
             }
         }
+
+
+       
 
     }
 }

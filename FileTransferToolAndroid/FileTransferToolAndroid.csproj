@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="AndroidUI.cs" />
     <Compile Include="AvailableFilesFragment.cs" />
+    <Compile Include="FileBrowserActivity.cs" />
     <Compile Include="FileInfoArrayAdapter.cs" />
     <Compile Include="FTTFragmentPageAdapter.cs" />
     <Compile Include="MainActivity.cs" />
@@ -103,6 +104,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\AvailableFilesListItem.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\FileBrowser.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -164,6 +168,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_sync_white_64dp_1x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_file_download_white_48dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_add_white_48dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_remove_white_48dp.png" />
   </ItemGroup>
   <Import Project="..\SharedCoreLibrary\SharedCoreLibrary.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
