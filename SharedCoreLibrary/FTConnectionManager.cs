@@ -125,6 +125,9 @@ namespace CoreLibrary
         /// </summary>
         private void listenForRequests()
         {
+
+
+
             // Initialize listener socket.
             try
             {
@@ -231,7 +234,10 @@ namespace CoreLibrary
 
         public void Dispose()
         {
+
+            _connectionReceiver.Close();
             _listenThread.Abort();
+
 
             lock (_requesters)
             {
@@ -253,7 +259,6 @@ namespace CoreLibrary
                 _senders.Clear();
             }
 
-            _connectionReceiver.Close();
             _connectionReceiver.Dispose();
 
             // Give chance for requesters/receivers to shutdown.
