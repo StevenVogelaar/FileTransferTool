@@ -19,7 +19,10 @@ namespace FileTransferToolAndroid
     public class MainActivity : Android.Support.V7.App.AppCompatActivity
     {
 
-        private static readonly int SELECT_FOLDER_CODE = 0;
+        private const int DOWNLOAD = 0;
+        private const int ADD_FILES = 1;
+        private const int REMOVE_FILES = 2;
+        private const int REFRESH = 3;
 
         private AndroidUI _AndroidUI;
         private Core _core;
@@ -66,9 +69,7 @@ namespace FileTransferToolAndroid
             // Init toolbar.
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-
             _drawerToggle = new Android.Support.V7.App.ActionBarDrawerToggle(this, FindViewById<DrawerLayout>(Resource.Id.main_drawer_layout), toolbar, Resource.String.open_drawer_acc, Resource.String.close_drawer_acc);
-
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.main_drawer_layout);
             drawer.AddDrawerListener(_drawerToggle);
 
@@ -98,13 +99,15 @@ namespace FileTransferToolAndroid
         {
             switch (item.ItemId)
             {
-                case 0:
-                    showFileChooser();
+                case DOWNLOAD:
+                    chooseFolder();
                     break;
-                case 3:
+                case REFRESH:
                     _AndroidUI.RefreshClients();   
                     break;
-
+                case ADD_FILES:
+                    chooseFiles();
+                    break;
             }
 
             return true;
@@ -118,23 +121,25 @@ namespace FileTransferToolAndroid
             _drawerToggle.SyncState();
         }
 
-        private void showFileChooser()
-        {
-            Intent intent = new Intent(Intent.ActionGetContent);
-            intent.SetType("*/*");
-            intent.AddCategory(Intent.CategoryOpenable);
 
-            try
-            {
-                StartActivityForResult(
-                        Intent.CreateChooser(intent, "Select Destination Folder"),
-                        SELECT_FOLDER_CODE);
-            }
-            catch (Android.Content.ActivityNotFoundException ex)
-            {
-                // Potentially direct the user to the Market with a Dialog
-                Toast.MakeText(this, "Please install a File Manager.", ToastLength.Short).Show();
-            }
+        /// <summary>
+        /// Starts a choose files operation, creates a new activity.
+        /// </summary>
+        private void chooseFiles()
+        {
+            Intent location_intent = new Intent(this, typeof(FileBrowserActivity));
+            location_intent.PutExtra(FileBrowserActivity.OPERATION_TYPE, FileBrowserActivity.SELECT_FILES);
+            StartActivityForResult(location_intent, FileBrowserActivity.SELECT_FILES);
+        }
+
+        /// <summary>
+        /// Starts a choose folder operation, creates new activity.
+        /// </summary>
+        private void chooseFolder()
+        {
+            Intent location_intent = new Intent(this, typeof(FileBrowserActivity));
+            location_intent.PutExtra(FileBrowserActivity.OPERATION_TYPE, FileBrowserActivity.SELECT_FOLDER);
+            StartActivityForResult(location_intent, FileBrowserActivity.SELECT_FOLDER);
         }
 
         private void setToolbarActions(IMenu menu)
@@ -144,19 +149,19 @@ namespace FileTransferToolAndroid
 
             if (_visibleToolbarActions.add)
             {
-                menu.Add(Menu.None, 1, Menu.None, "Add File(s)").SetIcon(Resource.Drawable.ic_add_white_48dp).SetShowAsAction(ShowAsAction.Always);
+                menu.Add(Menu.None, ADD_FILES, Menu.None, "Add File(s)").SetIcon(Resource.Drawable.ic_add_white_48dp).SetShowAsAction(ShowAsAction.Always);
             }
             if (_visibleToolbarActions.refresh)
             {
-                menu.Add(Menu.None, 3, Menu.None, "Refresh").SetIcon(Resource.Drawable.ic_sync_white_64dp_1x).SetShowAsAction(ShowAsAction.Always);
+                menu.Add(Menu.None, REFRESH, Menu.None, "Refresh").SetIcon(Resource.Drawable.ic_sync_white_64dp_1x).SetShowAsAction(ShowAsAction.Always);
             }
             if (_visibleToolbarActions.remove)
             {
-                menu.Add(Menu.None, 2, Menu.None, "Remove File(s)").SetIcon(Resource.Drawable.ic_remove_white_48dp).SetShowAsAction(ShowAsAction.Always);
+                menu.Add(Menu.None, REMOVE_FILES, Menu.None, "Remove File(s)").SetIcon(Resource.Drawable.ic_remove_white_48dp).SetShowAsAction(ShowAsAction.Always);
             }
             if (_visibleToolbarActions.download)
             {
-                menu.Add(Menu.None, 0, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
+                menu.Add(Menu.None, DOWNLOAD, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
             }
         }
 
@@ -172,7 +177,7 @@ namespace FileTransferToolAndroid
                 if (!_visibleToolbarActions.download)
                 {
                     _visibleToolbarActions.download = true;
-                    _toolbar.Menu.Add(Menu.None, 0, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
+                    _toolbar.Menu.Add(Menu.None, DOWNLOAD, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
                 }
             }
             else
@@ -231,6 +236,32 @@ namespace FileTransferToolAndroid
         {
             _core.Dispose();
             base.OnStop();
+        }
+
+
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+
+            switch (requestCode)
+            {
+                case FileBrowserActivity.SELECT_FOLDER:
+                    if (resultCode == Result.Ok)
+                    {
+                        Toast.MakeText(this, data.GetStringExtra(FileBrowserActivity.FOLDER_SELECT_RESULT), ToastLength.Long).Show();
+                    }
+                    break;
+
+                case FileBrowserActivity.SELECT_FILES:
+                    if (resultCode == Result.Ok)
+                    {
+                        Toast.MakeText(this, "Files Selected", ToastLength.Long).Show();
+                        string[] selected = data.GetStringArrayExtra(FileBrowserActivity.FILE_SELECT_RESULT);
+                        string temp = "123";
+                    }
+                    break;
+            }
         }
 
 

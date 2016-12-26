@@ -29,6 +29,36 @@ namespace CoreLibrary
 
 
         /// <summary>
+        /// Converts bytes to readable form (x, Bytes, x KiB, x MiB, x GiB)
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string ParseBytes(long bytes)
+        {
+            String result;
+
+            if (bytes < 1024)
+            {
+                result = bytes.ToString("0.00") + " Bytes";
+            }
+            else if (bytes < 1048576)
+            {
+                result = (bytes / 1024f).ToString("0.00") + " KiB";
+            }
+            else if (bytes < 1073741824)
+            {
+                result = (bytes / 1048576f).ToString("0.00") + " MiB";
+            }
+            else
+            {
+                result = (bytes / 1073741824f).ToString("0.00") + " GiB";
+            }
+
+            return result;
+        }
+
+
+        /// <summary>
         /// Converts the Bytes/KiB/MiB/KiB/GiB format to the number of bytes.
         /// </summary>
         /// <param name="size"></param>
@@ -122,7 +152,7 @@ namespace CoreLibrary
             if (!IsDirectory)
             {
                 FileInfo info = new FileInfo(argPath);
-                e.Result = parseBytes(info.Length);
+                e.Result = ParseBytes(info.Length);
             }
             else
             {
@@ -134,42 +164,14 @@ namespace CoreLibrary
                     return;
                 }
 
-                e.Result = parseBytes(_sizeInBytes);
+                e.Result = ParseBytes(_sizeInBytes);
             }
 
 
         }
 
 
-        /// <summary>
-        /// Converts bytes to readable form (x, Bytes, x KiB, x MiB, x GiB)
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        private string parseBytes(long bytes)
-        {
-            String result;
-
-            if (bytes < 1024)
-            {
-                result = bytes.ToString("0.00") + " Bytes";
-            }
-            else if (bytes < 1048576)
-            {
-                result = (bytes / 1024f).ToString("0.00") + " KiB";
-            }
-            else if (bytes < 1073741824)
-            {
-                result = (bytes / 1048576f).ToString("0.00") + " MiB";
-            }
-            else
-            {
-                result = (bytes / 1073741824f).ToString("0.00") + " GiB";
-            }
-
-            return result;
-        }
-
+        
 
 
         /// <summary>

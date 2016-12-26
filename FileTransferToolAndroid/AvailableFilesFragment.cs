@@ -35,7 +35,7 @@ namespace FileTransferToolAndroid
         {
             _rootView = inflater.Inflate(Resource.Layout.AvailableFiles, container, false);
             ListView listView = _rootView.FindViewById<ListView>(Resource.Id.availableFilesList);
-            _adapter = (new FTTFileInfoArrayAdapter(Context, _files));
+            _adapter = new FTTFileInfoArrayAdapter(Context, _files);
             listView.Adapter = _adapter;
             _adapter.CheckBoxChecked += _adapter_CheckBoxChecked;
             return _rootView;

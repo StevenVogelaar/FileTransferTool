@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+
+  <CheckBox
+       android:id="@+id/file_browser_checkbox"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentLeft="true"
+       android:focusable="false"
+       android:focusableInTouchMode="false"
+       android:buttonTint="@color/primary"
+       android:visibility="gone"/>
+
+  <ImageView
+      android:id="@+id/file_image"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:visibility="invisible"/>
+  <TextView
+      android:id="@+id/Name"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textSize="20dp"
+      android:paddingLeft="10dp"
+      android:paddingTop="0dp"
+      android:gravity="center_vertical"
+      android:layout_toRightOf="@id/file_browser_checkbox" />
+  <TextView
+      android:id="@+id/Size"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="10dp"
+      android:layout_below="@id/Name"
+      android:layout_toRightOf="@id/file_browser_checkbox" />
+</RelativeLayout>

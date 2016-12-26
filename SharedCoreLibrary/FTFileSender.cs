@@ -28,7 +28,7 @@ namespace CoreLibrary
 
         public FTFileSender(Socket socket, GetFilePath getFilePath)
         {
-            _socket = socket;;
+            _socket = socket;
             _getFilePath = getFilePath;
 
 
