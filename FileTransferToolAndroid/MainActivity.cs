@@ -55,15 +55,16 @@ namespace FileTransferToolAndroid
             initDrawer();
 
             // Init view pager.
-            _pageAdapter = new FTTFragmentPageAdapter(SupportFragmentManager);
+            _pageAdapter = new FTTFragmentPageAdapter(SupportFragmentManager, this);
             _viewPager = FindViewById<ViewPager>(Resource.Id.pager);
             _viewPager.Adapter = _pageAdapter;
             _viewPager.PageSelected += _viewPager_PageSelected;
-            _pageAdapter.AvailableFilesFragment.AvailableFilesChecked += AvailableFilesFragment_AvailableFilesChecked;
+            _pageAdapter.AvailableFilesFragment.FilesChecked += AvailableFilesFragment_FilesChecked;
 
 
             _AndroidUI = new AndroidUI(this);
             _AndroidUI.AvailableFilesChangedEvent += _AndroidUI_AvailableFilesChangedEvent;
+            _AndroidUI.SharedFilesChangedEvent += _AndroidUI_SharedFilesChangedEvent;
             _core = new Core(_AndroidUI);
 
             // Init toolbar.
@@ -76,7 +77,9 @@ namespace FileTransferToolAndroid
             _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
         }
 
-      
+        
+
+
 
         /// <summary>
         /// Creates the toolbar action buttons.
@@ -103,7 +106,7 @@ namespace FileTransferToolAndroid
                     chooseFolder();
                     break;
                 case REFRESH:
-                    _AndroidUI.RefreshClients();   
+                    _AndroidUI.InvokeRefreshClients(this, EventArgs.Empty);   
                     break;
                 case ADD_FILES:
                     chooseFiles();
@@ -170,7 +173,7 @@ namespace FileTransferToolAndroid
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AvailableFilesFragment_AvailableFilesChecked(object sender, AvailableFilesFragment.AvailabledFilesChckedEventArgs e)
+        private void AvailableFilesFragment_FilesChecked(object sender, FilesFragment<FTTFileInfo>.FilesCheckedEventArgs e)
         {
             if (e.SomeChecked)
             {
@@ -191,6 +194,23 @@ namespace FileTransferToolAndroid
         private void _AndroidUI_AvailableFilesChangedEvent(object sender, AndroidUI.AvailableFilesChangedEventArgs e)
         {
             _pageAdapter.AvailableFilesFragment.FilesChanged(e.Files);
+        }
+
+
+        private void _AndroidUI_SharedFilesChangedEvent(object sender, AndroidUI.SharedFilesChangedEventArgs e)
+        {
+
+            foreach (FileHandler f in e.Files)
+            {
+                f.FileInfoChanged += F_FileInfoChanged;
+            }
+
+            _pageAdapter.SharedFilesFragment.FilesChanged(e.Files);
+        }
+
+        private void F_FileInfoChanged(object sender, FileHandler.FileInfoChangedEventArgs e)
+        {
+            _pageAdapter.SharedFilesFragment.refreshList();
         }
 
         private void _viewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
@@ -234,10 +254,15 @@ namespace FileTransferToolAndroid
 
         protected override void OnStop()
         {
-            _core.Dispose();
+           // _core.Dispose();
             base.OnStop();
         }
 
+        protected override void OnDestroy()
+        {
+            _core.Dispose();
+            base.OnDestroy();
+        }
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
@@ -257,8 +282,7 @@ namespace FileTransferToolAndroid
                     if (resultCode == Result.Ok)
                     {
                         Toast.MakeText(this, "Files Selected", ToastLength.Long).Show();
-                        string[] selected = data.GetStringArrayExtra(FileBrowserActivity.FILE_SELECT_RESULT);
-                        string temp = "123";
+                        _AndroidUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(data.GetStringArrayExtra(FileBrowserActivity.FILE_SELECT_RESULT)));
                     }
                     break;
             }

@@ -14,20 +14,11 @@ using Java.Lang;
 
 namespace FileTransferToolAndroid
 {
-    class FTTFileInfoArrayAdapter : ArrayAdapter<FTTFileInfo>
+    class FTTFileInfoArrayAdapter : FileArrayAdapter<FTTFileInfo>
     {
 
-        public delegate void CheckBoxCheckedHandler(object sender, EventArgs e);
-        public event CheckBoxCheckedHandler CheckBoxChecked;
-
-        private Context _context;
-        private List<FTTFileInfo> _files;
-        private List<View> _items;
-
-        public FTTFileInfoArrayAdapter(Context context, List<FTTFileInfo> files) : base(context, Resource.Layout.SharedFileListItem, files)
+        public FTTFileInfoArrayAdapter(Context context, List<FTTFileInfo> files) : base(context, Resource.Layout.AvailableFilesListItem, files)
         {
-            _context = context;
-            _files = files;
         }
 
 
@@ -38,15 +29,15 @@ namespace FileTransferToolAndroid
             View fileView = inflater.Inflate(Resource.Layout.AvailableFilesListItem, parent, false);
 
             TextView textView = fileView.FindViewById<TextView>(Resource.Id.Name);
-            textView.SetText(_files[position].Alias, TextView.BufferType.Normal);
+            textView.SetText(Files[position].Alias, TextView.BufferType.Normal);
 
             textView = fileView.FindViewById<TextView>(Resource.Id.Location);
-            textView.SetText( _files[position].IP, TextView.BufferType.Normal);
+            textView.SetText( Files[position].IP, TextView.BufferType.Normal);
 
             textView = fileView.FindViewById<TextView>(Resource.Id.Size);
-            textView.SetText( _files[position].Size, TextView.BufferType.Normal);
+            textView.SetText( Files[position].Size, TextView.BufferType.Normal);
 
-            CheckBox checkBox = fileView.FindViewById<CheckBox>(Resource.Id.AvailCheckbox);
+            CheckBox checkBox = fileView.FindViewById<CheckBox>(Resource.Id.FileCheckbox);
             checkBox.Click += CheckBox_Click;
 
             /**
@@ -61,22 +52,6 @@ namespace FileTransferToolAndroid
         }
 
 
-        private void CheckBox_Click(object sender, EventArgs e)
-        {
-            if (CheckBoxChecked != null)
-            {
-                CheckBoxChecked.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-
-        public override int Count
-        {
-            get
-            {
-                return _files.Count;
-            }
-        }
 
 
 

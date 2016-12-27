@@ -54,7 +54,7 @@ namespace FileTransferTool
 
 
             _listViewConsoleAdapter = new ListViewConsoleAdapter(MessageConsole);
-            DownloadProgressWindow = new DownloadProgressWindow(delegate () { _windowsUI.MainWindowDownloadCancel(this, EventArgs.Empty);});
+            DownloadProgressWindow = new DownloadProgressWindow(delegate () { _windowsUI.InvokeDownloadCancel(this, EventArgs.Empty);});
             
 
             
@@ -159,7 +159,7 @@ namespace FileTransferTool
 
             if (result == DialogResult.OK)
             {
-               _windowsUI.MainWindowFilesSelected(this, new FTUI.FilesSelectedEventArgs(openFileDialog1.FileNames));      
+               _windowsUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(openFileDialog1.FileNames));      
             }
         }
 
@@ -174,7 +174,7 @@ namespace FileTransferTool
 
             if (result == DialogResult.OK )
             {
-                _windowsUI.MainWindowFilesSelected(this, new FTUI.FilesSelectedEventArgs(new String[] { folderBrowserDialog1.SelectedPath }));
+                _windowsUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(new String[] { folderBrowserDialog1.SelectedPath }));
             }
         }
 
@@ -289,7 +289,7 @@ namespace FileTransferTool
 
             if (count > 0)
             {
-                _windowsUI.MainWindowFilesRemoved(this, new FTUI.FilesRemovedEventArgs(files));
+                _windowsUI.InvokeFilesRemoved(this, new FTUI.FilesRemovedEventArgs(files));
             }
 
             //sharedFilesList.EndEdit();
@@ -299,7 +299,7 @@ namespace FileTransferTool
         private void refreshButton_Click(object sender, EventArgs e)
         {
 
-             _windowsUI.MainWindowRefresh(this, EventArgs.Empty);
+             _windowsUI.InvokeRefreshClients(this, EventArgs.Empty);
 
         }
 
@@ -345,7 +345,7 @@ namespace FileTransferTool
             FileDownloadProgress callbacks = new FileDownloadProgress();
             DownloadProgressWindow.StartDownload(progressFiles, callbacks);
 
-            _windowsUI.MainWindowDownloadfiles(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath, CallBacks = callbacks });
+            _windowsUI.InvokeDownloadRequest(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath, CallBacks = callbacks });
             DownloadProgressWindow.ShowDialog();
         }
 

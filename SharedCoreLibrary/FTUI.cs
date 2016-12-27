@@ -53,7 +53,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeWindowClosing(object sender, WindowClosingEventArgs e)
+        public void InvokeWindowClosing(object sender, WindowClosingEventArgs e)
         {
             if (WindowClosing != null) WindowClosing.Invoke(sender, e);
         }
@@ -63,7 +63,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeExit(object sender, EventArgs e)
+        public void InvokeExit(object sender, EventArgs e)
         {
             if (Exit != null)
             {
@@ -76,7 +76,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeRefreshClients(object sender, EventArgs e)
+        public void InvokeRefreshClients(object sender, EventArgs e)
         {
             if (RefreshClients != null) RefreshClients.Invoke(sender, e);
         }
@@ -86,7 +86,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeFilesSelected(object sender, FilesSelectedEventArgs e)
+        public void InvokeFilesSelected(object sender, FilesSelectedEventArgs e)
         {
             if (FilesSelected != null)
             {
@@ -99,7 +99,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeFilesRemoved(object sender, FilesRemovedEventArgs e)
+        public void InvokeFilesRemoved(object sender, FilesRemovedEventArgs e)
         {
             if (FilesRemoved != null) FilesRemoved.Invoke(sender, e);
         }
@@ -109,7 +109,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeDownloadRequest(object sender, DownloadRequestEventArgs e)
+        public void InvokeDownloadRequest(object sender, DownloadRequestEventArgs e)
         {
             if (DownloadRequest != null) DownloadRequest.Invoke(sender, e);
         }
@@ -119,7 +119,7 @@ namespace CoreLibrary
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void InvokeDownloadCancel(object sender, EventArgs e)
+        public void InvokeDownloadCancel(object sender, EventArgs e)
         {
             if (DownloadCancel != null) DownloadCancel.Invoke(sender, e);
         }

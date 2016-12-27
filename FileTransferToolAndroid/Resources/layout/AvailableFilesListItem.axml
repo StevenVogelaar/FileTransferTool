@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <CheckBox
-        android:id="@+id/AvailCheckbox"
+        android:id="@+id/FileCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -18,19 +18,19 @@
         android:textSize="20dp"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
-        android:layout_toRightOf="@id/AvailCheckbox" />
+        android:layout_toRightOf="@id/FileCheckbox" />
     <TextView
         android:id="@+id/Location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:layout_below="@id/Name"
-        android:layout_toRightOf="@id/AvailCheckbox" />
+        android:layout_toRightOf="@id/FileCheckbox" />
     <TextView
         android:id="@+id/Size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:layout_below="@id/Location"
-        android:layout_toRightOf="@id/AvailCheckbox" />
+        android:layout_toRightOf="@id/FileCheckbox" />
 </RelativeLayout>

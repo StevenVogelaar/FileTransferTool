@@ -77,26 +77,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidUI.cs" />
-    <Compile Include="AvailableFilesFragment.cs" />
+    <Compile Include="CoreService.cs" />
+    <Compile Include="FileArrayAdapter.cs" />
     <Compile Include="FileBrowserActivity.cs" />
     <Compile Include="FileBrowserArrayAdapter.cs" />
     <Compile Include="FileBrowserFileInfo.cs" />
-    <Compile Include="FileInfoArrayAdapter.cs" />
+    <Compile Include="FTTFileHandlerArrayAdapter.cs" />
+    <Compile Include="FTTFileInfoArrayAdapter.cs" />
+    <Compile Include="FilesFragment.cs" />
     <Compile Include="FTTFragmentPageAdapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SharedFilesFragment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
-    <AndroidResource Include="Resources\layout\SharedFiles.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\AvailableFiles.axml">
+    <AndroidResource Include="Resources\layout\FilesListPage.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\DrawerItem.axml">
