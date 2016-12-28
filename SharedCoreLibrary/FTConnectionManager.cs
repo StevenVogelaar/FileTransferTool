@@ -310,7 +310,6 @@ namespace CoreLibrary
                 try
                 {
 					socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-					Console.WriteLine("AWKAWKFWKAWF " + IPAddress.Parse(_files.ElementAt(0).IP));
                     socket.Connect(IPAddress.Parse(_files.ElementAt(0).IP), FILETRANSFER_PORT);
 
                     // Check if downloads was canceled.

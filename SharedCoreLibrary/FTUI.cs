@@ -10,9 +10,15 @@ namespace CoreLibrary
     {
 
         public delegate void WindowClosingHandler(object sender, WindowClosingEventArgs e);
+        /// <summary>
+        /// Invoked when a closing operation is requested, so that it can be canceled if there are pending operations.
+        /// </summary>
         public event WindowClosingHandler WindowClosing;
 
         public delegate void ExitHandler(object sender, EventArgs e);
+        /// <summary>
+        /// Exit is requested with no cancelations.
+        /// </summary>
         public event ExitHandler Exit;
 
         public delegate void RefreshClientsHandler(object sender, EventArgs e);
@@ -135,10 +141,10 @@ namespace CoreLibrary
 
         public class FilesRemovedEventArgs : EventArgs
         {
-            public String[] Files { get; }
-            public FilesRemovedEventArgs(String[] files)
+            public String[] FilePaths { get; }
+            public FilesRemovedEventArgs(String[] filesPaths)
             {
-                this.Files = files;
+                this.FilePaths = filesPaths;
             }
         }
 

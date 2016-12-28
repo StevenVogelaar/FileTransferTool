@@ -119,7 +119,6 @@ namespace CoreLibrary
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("\n" + e.Message + "\n" + e.StackTrace + "\n");
                         FTTConsole.AddError("\n" + e.Message + "\n" + e.StackTrace + "\n");
                     }
                 }

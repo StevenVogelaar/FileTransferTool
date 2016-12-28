@@ -19,12 +19,17 @@ namespace FileTransferToolAndroid
     public class MainActivity : Android.Support.V7.App.AppCompatActivity
     {
 
+
+        public static List<FTTFileInfo> DownloadFiles = new List<FTTFileInfo>();
+        public static AndroidUI _AndroidUI;
+
         private const int DOWNLOAD = 0;
         private const int ADD_FILES = 1;
         private const int REMOVE_FILES = 2;
         private const int REFRESH = 3;
+        
 
-        private AndroidUI _AndroidUI;
+        
         private Core _core;
         private FTTFragmentPageAdapter _pageAdapter;
         private ViewPager _viewPager;
@@ -36,6 +41,7 @@ namespace FileTransferToolAndroid
         private Android.Support.V7.App.ActionBarDrawerToggle _drawerToggle;
         private Android.Support.V7.Widget.Toolbar _toolbar;
         private VisibleToolbarActions _visibleToolbarActions;
+
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -60,6 +66,7 @@ namespace FileTransferToolAndroid
             _viewPager.Adapter = _pageAdapter;
             _viewPager.PageSelected += _viewPager_PageSelected;
             _pageAdapter.AvailableFilesFragment.FilesChecked += AvailableFilesFragment_FilesChecked;
+            _pageAdapter.SharedFilesFragment.FilesChecked += SharedFilesFragment_FilesChecked;
 
 
             _AndroidUI = new AndroidUI(this);
@@ -68,16 +75,17 @@ namespace FileTransferToolAndroid
             _core = new Core(_AndroidUI);
 
             // Init toolbar.
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-            _drawerToggle = new Android.Support.V7.App.ActionBarDrawerToggle(this, FindViewById<DrawerLayout>(Resource.Id.main_drawer_layout), toolbar, Resource.String.open_drawer_acc, Resource.String.close_drawer_acc);
+            _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            SetSupportActionBar(_toolbar);
+            _drawerToggle = new Android.Support.V7.App.ActionBarDrawerToggle(this, FindViewById<DrawerLayout>(Resource.Id.main_drawer_layout), _toolbar, Resource.String.open_drawer_acc, Resource.String.close_drawer_acc);
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.main_drawer_layout);
             drawer.AddDrawerListener(_drawerToggle);
 
-            _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+
         }
 
-        
+
+
 
 
 
@@ -94,6 +102,7 @@ namespace FileTransferToolAndroid
             */
 
             setToolbarActions(menu);
+            refreshToolbar();
 
             return true;
         }
@@ -111,6 +120,9 @@ namespace FileTransferToolAndroid
                 case ADD_FILES:
                     chooseFiles();
                     break;
+                case REMOVE_FILES:
+                    removeSharedFiles();
+                    break;
             }
 
             return true;
@@ -124,6 +136,25 @@ namespace FileTransferToolAndroid
             _drawerToggle.SyncState();
         }
 
+
+        /// <summary>
+        /// Removes files that have been checked in the shared files list.
+        /// </summary>
+        private void removeSharedFiles()
+        {
+
+            FileHandler[] files = _pageAdapter.SharedFilesFragment.getChecked();
+            String[] paths = new String[files.Length];
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                paths[i] = files[i].Path;
+            }
+
+            _AndroidUI.InvokeFilesRemoved(this, new FTUI.FilesRemovedEventArgs(paths));
+
+            _visibleToolbarActions.refresh = false;
+        }
 
         /// <summary>
         /// Starts a choose files operation, creates a new activity.
@@ -145,27 +176,32 @@ namespace FileTransferToolAndroid
             StartActivityForResult(location_intent, FileBrowserActivity.SELECT_FOLDER);
         }
 
-        private void setToolbarActions(IMenu menu)
+
+
+        private void startDownload(String destPath)
         {
 
-            menu.Clear();
+            DownloadFiles = new List<FTTFileInfo>(_pageAdapter.AvailableFilesFragment.getChecked());
 
-            if (_visibleToolbarActions.add)
-            {
-                menu.Add(Menu.None, ADD_FILES, Menu.None, "Add File(s)").SetIcon(Resource.Drawable.ic_add_white_48dp).SetShowAsAction(ShowAsAction.Always);
-            }
-            if (_visibleToolbarActions.refresh)
-            {
-                menu.Add(Menu.None, REFRESH, Menu.None, "Refresh").SetIcon(Resource.Drawable.ic_sync_white_64dp_1x).SetShowAsAction(ShowAsAction.Always);
-            }
-            if (_visibleToolbarActions.remove)
-            {
-                menu.Add(Menu.None, REMOVE_FILES, Menu.None, "Remove File(s)").SetIcon(Resource.Drawable.ic_remove_white_48dp).SetShowAsAction(ShowAsAction.Always);
-            }
-            if (_visibleToolbarActions.download)
-            {
-                menu.Add(Menu.None, DOWNLOAD, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
-            }
+            Intent intent = new Intent(this, typeof(DownloadActivity));
+            intent.PutExtra(DownloadActivity.DOWNLOAD_DESTINATION, destPath);
+            StartActivity(intent);
+
+            //delegate FTDownloadCallbacks() { };
+
+            //_AndroidUI.InvokeDownloadRequest(this, new FTUI.DownloadRequestEventArgs() { Dest = destPath, CallBacks = })
+        }
+
+        private void setToolbarActions(IMenu menu)
+        {
+            menu.Clear();
+            
+
+            menu.Add(Menu.None, DOWNLOAD, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
+            menu.Add(Menu.None, ADD_FILES, Menu.None, "Add File(s)").SetIcon(Resource.Drawable.ic_add_white_48dp).SetShowAsAction(ShowAsAction.Always);
+            menu.Add(Menu.None, REMOVE_FILES, Menu.None, "Remove File(s)").SetIcon(Resource.Drawable.ic_remove_white_48dp).SetShowAsAction(ShowAsAction.Always);
+            menu.Add(Menu.None, REFRESH, Menu.None, "Refresh").SetIcon(Resource.Drawable.ic_sync_white_64dp_1x).SetShowAsAction(ShowAsAction.Always);
+           
         }
 
         /// <summary>
@@ -180,21 +216,51 @@ namespace FileTransferToolAndroid
                 if (!_visibleToolbarActions.download)
                 {
                     _visibleToolbarActions.download = true;
-                    _toolbar.Menu.Add(Menu.None, DOWNLOAD, Menu.None, "Download File").SetIcon(Resource.Drawable.ic_file_download_white_48dp).SetShowAsAction(ShowAsAction.Always);
                 }
             }
             else
             {
                 if (_visibleToolbarActions.download)
-                _visibleToolbarActions.download = false;
-                _toolbar.Menu.RemoveItem(0);
+                {
+                    _visibleToolbarActions.download = false;
+                }
             }
+
+            refreshToolbar();
+        }
+
+
+        /// <summary>
+        /// Sets the remove toolbar action visible.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SharedFilesFragment_FilesChecked(object sender, FilesFragment<FileHandler>.FilesCheckedEventArgs e)
+        {
+            if (e.SomeChecked)
+            {
+                if (!_visibleToolbarActions.remove)
+                {
+                    _visibleToolbarActions.remove = true;
+                }
+            }
+            else
+            {
+                if (_visibleToolbarActions.remove)
+                {
+                    _visibleToolbarActions.remove = false;
+                }
+            }
+
+            refreshToolbar();
         }
 
         private void _AndroidUI_AvailableFilesChangedEvent(object sender, AndroidUI.AvailableFilesChangedEventArgs e)
         {
             _pageAdapter.AvailableFilesFragment.FilesChanged(e.Files);
         }
+
+
 
 
         private void _AndroidUI_SharedFilesChangedEvent(object sender, AndroidUI.SharedFilesChangedEventArgs e)
@@ -210,12 +276,12 @@ namespace FileTransferToolAndroid
 
         private void F_FileInfoChanged(object sender, FileHandler.FileInfoChangedEventArgs e)
         {
-            _pageAdapter.SharedFilesFragment.refreshList();
+            _pageAdapter.SharedFilesFragment.RefreshList();
         }
 
         private void _viewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
-            // Make it check if there is a selection allready.
+            // Make it check if there is a selection already.
 
             if (e.Position == 0)
             {
@@ -223,17 +289,31 @@ namespace FileTransferToolAndroid
                 _visibleToolbarActions.remove = false;
                 _visibleToolbarActions.refresh = false;
                 _visibleToolbarActions.download = false;
+
+                _pageAdapter.SharedFilesFragment.CheckCheckBoxes();
             }
             else
             {
                 _visibleToolbarActions.add = false;
                 _visibleToolbarActions.remove = false;
                 _visibleToolbarActions.refresh = true;
+                _visibleToolbarActions.download = false;
 
                 _pageAdapter.AvailableFilesFragment.CheckCheckBoxes();
             }
 
-            setToolbarActions(_toolbar.Menu);
+
+            refreshToolbar();
+
+            //setToolbarActions(_toolbar.Menu);
+        }
+
+        private void refreshToolbar()
+        {
+            _toolbar.Menu.GetItem(ADD_FILES).SetVisible(_visibleToolbarActions.add);
+            _toolbar.Menu.GetItem(REMOVE_FILES).SetVisible(_visibleToolbarActions.remove);
+            _toolbar.Menu.GetItem(REFRESH).SetVisible(_visibleToolbarActions.refresh);
+            _toolbar.Menu.GetItem(DOWNLOAD).SetVisible(_visibleToolbarActions.download);
         }
 
 
@@ -274,16 +354,19 @@ namespace FileTransferToolAndroid
                 case FileBrowserActivity.SELECT_FOLDER:
                     if (resultCode == Result.Ok)
                     {
-                        Toast.MakeText(this, data.GetStringExtra(FileBrowserActivity.FOLDER_SELECT_RESULT), ToastLength.Long).Show();
+                        startDownload(data.GetStringExtra(FileBrowserActivity.FOLDER_SELECT_RESULT));
                     }
                     break;
 
                 case FileBrowserActivity.SELECT_FILES:
                     if (resultCode == Result.Ok)
                     {
-                        Toast.MakeText(this, "Files Selected", ToastLength.Long).Show();
+                        Toast.MakeText(this, "File(s) Selected", ToastLength.Long).Show();
                         _AndroidUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(data.GetStringArrayExtra(FileBrowserActivity.FILE_SELECT_RESULT)));
                     }
+                    break;
+                case FileBrowserActivity.SELECT_FOLDER_FOR_SHARE:
+                    // For future
                     break;
             }
         }

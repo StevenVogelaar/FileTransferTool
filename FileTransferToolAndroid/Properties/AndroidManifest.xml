@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.FileTransferToolAndroid" android:versionCode="1" android:versionName="1.0" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="16" />
-	<application android:label="" android:icon="@drawable/icon512" android:theme="@style/AppTheme">
-    <service android:name="FTTCoreService" android:exported="false" android:description="@string/core_service_desc" />
-  </application>
-  
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<application android:icon="@drawable/icon512" android:theme="@style/AppTheme" android:label="File Transfer Tool">
+		<service android:name="FTTCoreService" android:exported="false" android:description="@string/core_service_desc" />
+	</application>
 </manifest>

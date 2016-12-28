@@ -78,6 +78,9 @@
   <ItemGroup>
     <Compile Include="AndroidUI.cs" />
     <Compile Include="CoreService.cs" />
+    <Compile Include="DownloadActivity.cs" />
+    <Compile Include="DownloadFileArrayAdapter.cs" />
+    <Compile Include="DownloadManager.cs" />
     <Compile Include="FileArrayAdapter.cs" />
     <Compile Include="FileBrowserActivity.cs" />
     <Compile Include="FileBrowserArrayAdapter.cs" />
@@ -111,6 +114,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\FileBrowserItem.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Downloader.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\DownloadItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -184,6 +193,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_folder_black_48dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_clear_white_48dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_done_white_48dp.png" />
   </ItemGroup>
   <Import Project="..\SharedCoreLibrary\SharedCoreLibrary.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

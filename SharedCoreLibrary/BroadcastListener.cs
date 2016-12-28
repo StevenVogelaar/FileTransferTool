@@ -76,11 +76,9 @@ namespace CoreLibrary
                     while (true)
                     {
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
-						Console.WriteLine(udpClient.Client.LocalEndPoint + ": Waiting for messages...");
                         Byte[] data = udpClient.Receive(ref _ipEndPoint);
                         msg = ascii.GetString(data);
                         FTTConsole.AddDebug(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
-						Console.WriteLine(udpClient.Client.LocalEndPoint + ": Received Message: " + msg);
 
                         try
                         {
@@ -103,7 +101,6 @@ namespace CoreLibrary
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.Message + "\n" + e.StackTrace);
                             FTTConsole.AddDebug("Error trying to prarse json message: " + e.Message);
                         }
                     }
@@ -111,7 +108,6 @@ namespace CoreLibrary
                 catch (Exception e)
                 {
                     FTTConsole.AddError("Error occured when trying to listen for broadcasts: " + e.Message);
-                    Console.WriteLine(e.Message + "\n" + e.StackTrace);
                      
                 }
                 finally{

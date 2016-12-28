@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace FileTransferToolAndroid
 {
-    class AndroidUI : FTUI
+    public class AndroidUI : FTUI
     {
 
         private Activity _activity;
@@ -24,13 +24,22 @@ namespace FileTransferToolAndroid
         public delegate void SharedFilesChangedHandler(object sender, SharedFilesChangedEventArgs e);
         public event SharedFilesChangedHandler SharedFilesChangedEvent;
 
+        public delegate void FailedToConnectHandler(object sender, ConnectionFailedEventArgs e);
+        public event FailedToConnectHandler ConnectionFailed;
+
         public AndroidUI(Activity activity) : base(){
 
             _activity = activity;
         }
 
 
+
+
  
+        /// <summary>
+        /// Called by the core when a change in available files has been finalized.
+        /// </summary>
+        /// <param name="files"></param>
         public override void AvailableFilesChanged(List<FTTFileInfo> files)
         {
             if (AvailableFilesChangedEvent != null)
@@ -44,13 +53,19 @@ namespace FileTransferToolAndroid
         }
 
 
-      
-
         public override void FailedToConnect(string ip)
         {
-            throw new NotImplementedException();
+            if (ConnectionFailed != null)
+            {
+                ConnectionFailed.Invoke(this, new ConnectionFailedEventArgs() { IP = ip });
+            }
         }
 
+
+        /// <summary>
+        /// Called by the core when a change in the shared files is finalized.
+        /// </summary>
+        /// <param name="files"></param>
         public override void SharedFilesChanged(List<FileHandler> files)
         {
             if (SharedFilesChangedEvent != null)
@@ -81,6 +96,11 @@ namespace FileTransferToolAndroid
             {
                 Files = files;
             }
+        }
+
+        public class ConnectionFailedEventArgs : EventArgs
+        {
+            public String IP { get; set; }
         }
 
     }

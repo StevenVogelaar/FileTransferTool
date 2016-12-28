@@ -18,7 +18,20 @@ namespace CoreLibrary
             if (CancelRequested != null) CancelRequested.Invoke(sender, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="progress">Percentage downloaded.</param>
+        /// <param name="ip"></param>
         public abstract void DownloadProgress(String alias, int progress, String ip);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="progress">Total number of bytes downloaded.</param>
+        /// <param name="ip"></param>
         public abstract void FolderDownloadProgress(String alias, long progress, String ip);
         public abstract void DownloadCompleted(String ip, bool error);
         public abstract void DownloadStarted();

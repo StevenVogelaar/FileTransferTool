@@ -45,7 +45,6 @@ namespace CoreLibrary
                 // Read the first batch of the TcpServer response bytes.
                 Int32 bytes = _stream.Read(data, 0, data.Length);
                 responseData = Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Received: {0}", responseData);
 
                 // Close everything.
                 _stream.Close();
@@ -54,11 +53,11 @@ namespace CoreLibrary
             }
             catch (ArgumentNullException e)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
+                //Console.WriteLine("ArgumentNullException: {0}", e);
             }
             catch (SocketException e)
             {
-                Console.WriteLine("SocketException: {0}", e);
+               // Console.WriteLine("SocketException: {0}", e);
             }
         }
 

@@ -405,9 +405,9 @@ namespace CoreLibrary
         /// <param name="e"></param>
         private void _ui_FilesRemoved(object sender, FTUI.FilesRemovedEventArgs e)
         {
-            if (e.Files != null)
+            if (e.FilePaths != null)
             {
-                RemoveSharedFile(e.Files);
+                RemoveSharedFile(e.FilePaths);
             }
         }
 

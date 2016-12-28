@@ -42,10 +42,11 @@ namespace FileTransferToolAndroid
             CheckCheckBoxes();
         }
 
-        public void refreshList()
+        public void RefreshList()
         {
             _adapter.NotifyDataSetChanged();
         }
+
 
         public void CheckCheckBoxes()
         {
@@ -71,6 +72,34 @@ namespace FileTransferToolAndroid
             {
                 FilesChecked.Invoke(this, new FilesCheckedEventArgs() { SomeChecked = false });
             }
+        }
+
+        public T[] getChecked()
+        {
+            ListView listView = _rootView.FindViewById<ListView>(Resource.Id.FilesList);
+            List<T> files = new List<T>();
+
+            for (int i = 0; i < listView.LastVisiblePosition - listView.FirstVisiblePosition + 1; i++)
+            {
+
+                try
+                {
+                    View view = listView.GetChildAt(i);
+                    CheckBox checkBox = view.FindViewById<CheckBox>(Resource.Id.FileCheckbox);
+
+                    if (checkBox.Checked)
+                    {
+                        files.Add(_adapter.Files.ElementAt(i));
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            return files.ToArray();
+
         }
 
         public override void OnCreate(Bundle savedInstanceState)

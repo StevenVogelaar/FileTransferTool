@@ -14,12 +14,13 @@ using System.IO;
 namespace FileTransferToolAndroid
 {
 
-    [Activity(Label = "FileBrowserActivity")]
+    [Activity(Label = "FileBrowserActivity", MainLauncher = false, Icon = "@drawable/icon72", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class FileBrowserActivity : Activity
     {
 
         public const int SELECT_FOLDER = 0;
         public const int SELECT_FILES = 1;
+        public const int SELECT_FOLDER_FOR_SHARE = 2;
         public const string FOLDER_SELECT_RESULT = "FOLDER_RESULT";
         public const string FILE_SELECT_RESULT = "FILE_RESULT";
         public const string OPERATION_TYPE = "OPERATION_TYPE";

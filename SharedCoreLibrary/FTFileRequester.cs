@@ -43,6 +43,7 @@ namespace CoreLibrary
             _dest = destDirectory;
             _callbacks = callbacks;
             _callbacks.DownloadStarted();
+            _callbacks.CancelRequested += _callbacks_CancelRequested;
             _error = false;
 
             _directoryDownloads = new List<DirectoryInfo>();
@@ -56,6 +57,11 @@ namespace CoreLibrary
             
             _senderWorker.RunWorkerAsync();
 
+        }
+
+        private void _callbacks_CancelRequested(object sender, EventArgs e)
+        {
+            Cancel();
         }
 
 
