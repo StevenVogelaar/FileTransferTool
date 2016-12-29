@@ -152,7 +152,7 @@ namespace CoreLibrary
                 catch (Exception e)
                 {
                     FTTConsole.AddError("Error accepting a file transfer connection.");
-                    Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                    //Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
                     try
                     {
@@ -161,11 +161,11 @@ namespace CoreLibrary
                     }
                     catch (SocketException s)
                     {
-                        Console.WriteLine("Socket error");
+                        //Console.WriteLine("Socket error");
                     }
                     catch (ObjectDisposedException f)
                     {
-                        Console.WriteLine("Disposing error");
+                        //Console.WriteLine("Disposing error");
                     }
 
                     listenForRequests();
