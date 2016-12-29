@@ -190,6 +190,7 @@
             // 
             // availableFilesList
             // 
+            this.availableFilesList.AutoGenerateColumns = false;
             this.availableFilesList.AllowUserToAddRows = false;
             this.availableFilesList.AllowUserToDeleteRows = false;
             this.availableFilesList.AllowUserToResizeRows = false;
@@ -214,6 +215,7 @@
             // 
             // AvailCheckColumn
             // 
+            this.AvailCheckColumn.DataPropertyName = "Checked";
             this.AvailCheckColumn.HeaderText = "Select";
             this.AvailCheckColumn.MinimumWidth = 45;
             this.AvailCheckColumn.Name = "AvailCheckColumn";

@@ -13,10 +13,10 @@ using CoreLibrary;
 
 namespace FileTransferToolAndroid
 {
-    class FTTFileHandlerArrayAdapter : FileArrayAdapter<FileHandler>
+    class FTTFileHandlerArrayAdapter : FileArrayAdapter<CheckableFileHandler>
     {
 
-        public FTTFileHandlerArrayAdapter(Context context, List<FileHandler> files) : base(context, Resource.Layout.SharedFileListItem, files)
+        public FTTFileHandlerArrayAdapter(Context context, List<CheckableFileHandler> files) : base(context, Resource.Layout.SharedFileListItem, files)
         {
         }
 
@@ -31,10 +31,14 @@ namespace FileTransferToolAndroid
             textView.SetText(Files[position].Alias, TextView.BufferType.Normal);
 
             textView = fileView.FindViewById<TextView>(Resource.Id.Size);
-            textView.SetText(Files[position].Size, TextView.BufferType.Normal);
+            textView.SetText(Files[position].OrgFileHandler.Size, TextView.BufferType.Normal);
+
+            textView = fileView.FindViewById<TextView>(Resource.Id.ID);
+            textView.SetText(Files[position].ID.ToString(), TextView.BufferType.Normal);
 
             CheckBox checkBox = fileView.FindViewById<CheckBox>(Resource.Id.FileCheckbox);
             checkBox.Click += CheckBox_Click;
+            checkBox.Checked = Files.ElementAt(position).Checked;
 
             /**
             if (position % 2 == 0)

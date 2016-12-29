@@ -18,8 +18,12 @@ namespace CoreLibrary
         private FTUI _ui;
         private BroadcastManager _broadcastManager;
         private FTConnectionManager _ftConnectionManager;
+
+        // These two booleans are used for sharedFile changes (when their size is finished being calculated).
         private bool _fileInfoRefreshInProgress;
         private bool _fileInfoRefreshPending;
+
+        private List<String> _receivedIPs;
 
         public Core(FTUI ui)
         {
@@ -34,6 +38,8 @@ namespace CoreLibrary
 
             _fileInfoRefreshInProgress = false;
             _fileInfoRefreshPending = false;
+
+            _receivedIPs = new List<string>();
 
 
             FTTConsole.Init();
@@ -183,9 +189,33 @@ namespace CoreLibrary
         /// </summary>
         private void refreshClients()
         {
+
+            _receivedIPs.Clear();
             _broadcastManager.RefreshConnections();
-            AvailableFiles.Clear();
-            syncAvailableFiles(new FTTFileInfo[0], BroadcastManager.LocalIPAddress().ToString());
+
+            // This task will remove files from sources that have not responded.
+            Task task = Task.Delay(1500).ContinueWith(_ =>
+            {
+                bool removed = false;
+
+                foreach (FTTFileInfo f in AvailableFiles.CopyOfList())
+                {
+                    if (!_receivedIPs.Contains(f.IP))
+                    {
+                        AvailableFiles.Remove(f);
+                        removed = true;
+                    }
+                }
+
+                if (removed)
+                {
+                    _ui.AvailableFilesChanged(AvailableFiles.CopyOfList());
+                }
+
+            });
+
+            //AvailableFiles.Clear();
+            //syncAvailableFiles(new FTTFileInfo[0], BroadcastManager.LocalIPAddress().ToString());
         }
 
 
@@ -327,6 +357,9 @@ namespace CoreLibrary
         /// <param name="sourceIP"></param>
         private void syncAvailableFiles(FTTFileInfo[] files, String sourceIP)
         {
+
+            _receivedIPs.Add(sourceIP);
+
             // First remove every file from source IP in the list.
             List<FTTFileInfo> coreFiles = AvailableFiles.CopyOfList();
             List<FTTFileInfo> deleteQueue = new List<FTTFileInfo>();

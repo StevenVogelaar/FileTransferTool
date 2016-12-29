@@ -49,7 +49,14 @@ namespace FileTransferToolAndroid
             _download_dest = Intent.GetStringExtra(DOWNLOAD_DESTINATION);
 
             // Get names of files
-            _adapter = new DownloadFileArrayAdapter(this, new List<FTTFileInfo>(MainActivity.DownloadFiles));
+
+            List<CheckableFileInfo> downloadFiles = new List<CheckableFileInfo>();
+            foreach (FTTFileInfo f in MainActivity.DownloadFiles)
+            {
+                downloadFiles.Add(new CheckableFileInfo(f));
+            }
+
+            _adapter = new DownloadFileArrayAdapter(this, new List<CheckableFileInfo>(downloadFiles));
 
             _listView = FindViewById<ListView>(Resource.Id.download_list);
             _listView.Adapter = _adapter;
@@ -61,16 +68,23 @@ namespace FileTransferToolAndroid
 
         private void _AndroidUI_ConnectionFailed(object sender, AndroidUI.ConnectionFailedEventArgs e)
         {
-            RunOnUiThread(
-                delegate ()
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.SetTitle("Error");
-                    builder.SetMessage("Failed to connect to: " + e.IP);
-                    Dialog dialog = builder.Create();
-                    setDownloadInProgress(false);
-                    dialog.Show();
-                });
+            try
+            {
+                RunOnUiThread(
+                    delegate ()
+                    {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.SetTitle("Error");
+                        builder.SetMessage("Failed to connect to: " + e.IP);
+                        Dialog dialog = builder.Create();
+                        setDownloadInProgress(false);
+                        dialog.Show();
+                    });
+            }
+            catch (Exception f)
+            {
+
+            }
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -183,6 +197,11 @@ namespace FileTransferToolAndroid
         {
             // Need to check how many times this has been fired.
             completed ++;
+
+            if (error)
+            {
+                Toast.MakeText(this, "Error: Connection closed by remote.", ToastLength.Long).Show();
+            }
 
             if (completed == _unique_ips)
             {

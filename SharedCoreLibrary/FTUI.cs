@@ -55,7 +55,7 @@ namespace CoreLibrary
         public abstract void FailedToConnect(String ip);
 
         /// <summary>
-        /// For derrived classes to invoke the WindowClosing event.
+        /// For derrived classes to invoke the WindowClosing event. This has the posibility of canceling to get user input.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -78,7 +78,7 @@ namespace CoreLibrary
         }
 
         /// <summary>
-        /// For derrived classes to invoke the RefreshClients event.
+        /// For derrived classes to invoke the RefreshClients event. This forces an exit without a chance to cancel.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

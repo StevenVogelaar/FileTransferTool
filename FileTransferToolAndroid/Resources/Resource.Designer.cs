@@ -1834,34 +1834,37 @@ namespace FileTransferToolAndroid
 			public const int ic_clear_white_48dp = 2130837582;
 			
 			// aapt resource value: 0x7f02004f
-			public const int ic_done_white_48dp = 2130837583;
+			public const int ic_create_new_folder_white_48dp = 2130837583;
 			
 			// aapt resource value: 0x7f020050
-			public const int ic_file_download_white_48dp = 2130837584;
+			public const int ic_done_white_48dp = 2130837584;
 			
 			// aapt resource value: 0x7f020051
-			public const int ic_folder_black_48dp = 2130837585;
+			public const int ic_file_download_white_48dp = 2130837585;
 			
 			// aapt resource value: 0x7f020052
-			public const int ic_remove_white_48dp = 2130837586;
+			public const int ic_folder_black_48dp = 2130837586;
 			
 			// aapt resource value: 0x7f020053
-			public const int ic_sync_white_64dp_1x = 2130837587;
+			public const int ic_remove_white_48dp = 2130837587;
 			
 			// aapt resource value: 0x7f020054
-			public const int Icon = 2130837588;
+			public const int ic_sync_white_64dp_1x = 2130837588;
 			
 			// aapt resource value: 0x7f020055
-			public const int icon512 = 2130837589;
+			public const int Icon = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int icon72 = 2130837590;
-			
-			// aapt resource value: 0x7f020058
-			public const int notification_template_icon_bg = 2130837592;
+			public const int icon512 = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int primary_color_statelist = 2130837591;
+			public const int icon72 = 2130837591;
+			
+			// aapt resource value: 0x7f020059
+			public const int notification_template_icon_bg = 2130837593;
+			
+			// aapt resource value: 0x7f020058
+			public const int primary_color_statelist = 2130837592;
 			
 			static Drawable()
 			{
@@ -1876,14 +1879,17 @@ namespace FileTransferToolAndroid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f06007b
-			public const int FileBrowserListView = 2131099771;
+			// aapt resource value: 0x7f06007c
+			public const int FileBrowserListView = 2131099772;
 			
 			// aapt resource value: 0x7f060069
 			public const int FileCheckbox = 2131099753;
 			
 			// aapt resource value: 0x7f06007f
 			public const int FilesList = 2131099775;
+			
+			// aapt resource value: 0x7f06006d
+			public const int ID = 2131099757;
 			
 			// aapt resource value: 0x7f06006b
 			public const int Location = 2131099755;
@@ -1960,8 +1966,8 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f06002a
 			public const int bottom = 2131099690;
 			
-			// aapt resource value: 0x7f060076
-			public const int browser_main_layout = 2131099766;
+			// aapt resource value: 0x7f060077
+			public const int browser_main_layout = 2131099767;
 			
 			// aapt resource value: 0x7f060044
 			public const int buttonPanel = 2131099716;
@@ -2011,29 +2017,29 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060040
 			public const int default_activity_button = 2131099712;
 			
-			// aapt resource value: 0x7f06006e
-			public const int design_bottom_sheet = 2131099758;
+			// aapt resource value: 0x7f06006f
+			public const int design_bottom_sheet = 2131099759;
+			
+			// aapt resource value: 0x7f060076
+			public const int design_menu_item_action_area = 2131099766;
 			
 			// aapt resource value: 0x7f060075
-			public const int design_menu_item_action_area = 2131099765;
+			public const int design_menu_item_action_area_stub = 2131099765;
 			
 			// aapt resource value: 0x7f060074
-			public const int design_menu_item_action_area_stub = 2131099764;
+			public const int design_menu_item_text = 2131099764;
 			
 			// aapt resource value: 0x7f060073
-			public const int design_menu_item_text = 2131099763;
+			public const int design_navigation_view = 2131099763;
 			
-			// aapt resource value: 0x7f060072
-			public const int design_navigation_view = 2131099762;
-			
-			// aapt resource value: 0x7f06007a
-			public const int directory_path = 2131099770;
+			// aapt resource value: 0x7f06007b
+			public const int directory_path = 2131099771;
 			
 			// aapt resource value: 0x7f06000e
 			public const int disableHome = 2131099662;
 			
-			// aapt resource value: 0x7f060078
-			public const int download_list = 2131099768;
+			// aapt resource value: 0x7f060079
+			public const int download_list = 2131099769;
 			
 			// aapt resource value: 0x7f06005c
 			public const int edit_query = 2131099740;
@@ -2058,9 +2064,6 @@ namespace FileTransferToolAndroid
 			
 			// aapt resource value: 0x7f060051
 			public const int expanded_menu = 2131099729;
-			
-			// aapt resource value: 0x7f06007d
-			public const int file_browser_checkbox = 2131099773;
 			
 			// aapt resource value: 0x7f06007e
 			public const int file_image = 2131099774;
@@ -2131,8 +2134,8 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060016
 			public const int multiply = 2131099670;
 			
-			// aapt resource value: 0x7f060071
-			public const int navigation_header_container = 2131099761;
+			// aapt resource value: 0x7f060072
+			public const int navigation_header_container = 2131099762;
 			
 			// aapt resource value: 0x7f060021
 			public const int never = 2131099681;
@@ -2155,8 +2158,8 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060029
 			public const int pin = 2131099689;
 			
-			// aapt resource value: 0x7f060079
-			public const int progress_bar = 2131099769;
+			// aapt resource value: 0x7f06007a
+			public const int progress_bar = 2131099770;
 			
 			// aapt resource value: 0x7f060006
 			public const int progress_circular = 2131099654;
@@ -2221,8 +2224,8 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060068
 			public const int select_dialog_listview = 2131099752;
 			
-			// aapt resource value: 0x7f06007c
-			public const int select_folder_button = 2131099772;
+			// aapt resource value: 0x7f06007d
+			public const int select_folder_button = 2131099773;
 			
 			// aapt resource value: 0x7f060053
 			public const int shortcut = 2131099731;
@@ -2236,11 +2239,11 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060013
 			public const int showTitle = 2131099667;
 			
-			// aapt resource value: 0x7f060070
-			public const int snackbar_action = 2131099760;
+			// aapt resource value: 0x7f060071
+			public const int snackbar_action = 2131099761;
 			
-			// aapt resource value: 0x7f06006f
-			public const int snackbar_text = 2131099759;
+			// aapt resource value: 0x7f060070
+			public const int snackbar_text = 2131099760;
 			
 			// aapt resource value: 0x7f060027
 			public const int snap = 2131099687;
@@ -2290,8 +2293,8 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060048
 			public const int title_template = 2131099720;
 			
-			// aapt resource value: 0x7f060077
-			public const int toolbar = 2131099767;
+			// aapt resource value: 0x7f060078
+			public const int toolbar = 2131099768;
 			
 			// aapt resource value: 0x7f060032
 			public const int top = 2131099698;
@@ -2299,8 +2302,8 @@ namespace FileTransferToolAndroid
 			// aapt resource value: 0x7f060047
 			public const int topPanel = 2131099719;
 			
-			// aapt resource value: 0x7f06006d
-			public const int touch_outside = 2131099757;
+			// aapt resource value: 0x7f06006e
+			public const int touch_outside = 2131099758;
 			
 			// aapt resource value: 0x7f060009
 			public const int up = 2131099657;

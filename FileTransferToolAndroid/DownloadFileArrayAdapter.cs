@@ -13,9 +13,9 @@ using CoreLibrary;
 
 namespace FileTransferToolAndroid
 {
-    class DownloadFileArrayAdapter : FileArrayAdapter<FTTFileInfo>
+    class DownloadFileArrayAdapter : FileArrayAdapter<CheckableFileInfo>
     {
-        public DownloadFileArrayAdapter(Context context, List<FTTFileInfo> files) : base(context, Resource.Layout.DownloadItem, files)
+        public DownloadFileArrayAdapter(Context context, List<CheckableFileInfo> files) : base(context, Resource.Layout.DownloadItem, files)
         {
         }
 

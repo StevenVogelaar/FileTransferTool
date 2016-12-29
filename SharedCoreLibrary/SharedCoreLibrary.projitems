@@ -12,6 +12,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)BroadcastListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BroadcastManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BroadcastSender.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Checkable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CheckableFileHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CheckableFileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataGridViewManager.cs" />

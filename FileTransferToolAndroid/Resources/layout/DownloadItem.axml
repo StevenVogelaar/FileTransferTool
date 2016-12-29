@@ -10,21 +10,21 @@
       android:textSize="20dp"
       android:paddingLeft="10dp"
       android:paddingTop="5dp"
-      android:layout_toRightOf="@id/FileCheckbox" />
+/>
   <TextView
       android:id="@+id/Location"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingLeft="10dp"
       android:layout_below="@id/Name"
-      android:layout_toRightOf="@id/FileCheckbox" />
+ />
   <TextView
       android:id="@+id/Size"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingLeft="10dp"
       android:layout_below="@id/Location"
-      android:layout_toRightOf="@id/FileCheckbox" />
+ />
   <ProgressBar
       android:id="@+id/progress_bar"
       android:layout_width="match_parent"

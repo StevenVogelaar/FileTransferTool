@@ -52,12 +52,12 @@ namespace FileTransferToolAndroid
             Button button = FindViewById<Button>(Resource.Id.select_folder_button);
             button.Click += _button_click;
 
-            if (Intent.GetIntExtra(OPERATION_TYPE, 0) == SELECT_FOLDER)
+            if (Intent.GetIntExtra(OPERATION_TYPE, 0) == SELECT_FOLDER || (Intent.GetIntExtra(OPERATION_TYPE, 0) == SELECT_FOLDER_FOR_SHARE))
             {
                 select_folder = true;
                 button.SetText("Select Folder", TextView.BufferType.Normal);
             }
-            else
+            else if (Intent.GetIntExtra(OPERATION_TYPE, 0) == SELECT_FILES)
             {
                 select_folder = false;
                 button.SetText("Select File(s)", TextView.BufferType.Normal);
@@ -87,20 +87,16 @@ namespace FileTransferToolAndroid
             else
             {
 
-                ListView listView = FindViewById<ListView>(Resource.Id.FileBrowserListView);
-                List<String> selectedFiles = new List<string>();
 
-                for (int i = 0; i < listView.LastVisiblePosition - listView.FirstVisiblePosition + 1; i++)
+                List<string> selectedFiles = new List<string>();
+
+                List<FileBrowserFileInfo> temp = _arrayAdapter.GetChecked();
+
+                foreach (FileBrowserFileInfo f in _arrayAdapter.GetChecked())
                 {
-
-                    View view = listView.GetChildAt(i);
-                    CheckBox checkBox = view.FindViewById<CheckBox>(Resource.Id.file_browser_checkbox);
-
-                    if (checkBox.Checked)
-                    {
-                        selectedFiles.Add(_files.ElementAt(i).Path + "/" + _files.ElementAt(i).Name);
-                    }
+                    selectedFiles.Add(f.Path + "/" + f.Name);
                 }
+                
 
                 result.PutExtra(FILE_SELECT_RESULT, selectedFiles.ToArray());
             }
@@ -152,6 +148,7 @@ namespace FileTransferToolAndroid
             {
                 _arrayAdapter = new FileBrowserArrayAdapter(this, _files);
                 _listView.Adapter = _arrayAdapter;
+                _arrayAdapter.SetListView(_listView);
             }
 
 

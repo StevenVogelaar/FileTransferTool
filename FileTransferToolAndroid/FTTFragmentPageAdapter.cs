@@ -18,8 +18,8 @@ namespace FileTransferToolAndroid
     class FTTFragmentPageAdapter : FragmentPagerAdapter
     {
 
-        public FilesFragment<FileHandler> SharedFilesFragment { get; }
-        public FilesFragment<FTTFileInfo> AvailableFilesFragment { get; }
+        public FilesFragment<CheckableFileHandler> SharedFilesFragment { get; }
+        public FilesFragment<CheckableFileInfo> AvailableFilesFragment { get; }
 
         public override int Count
         {
@@ -32,8 +32,10 @@ namespace FileTransferToolAndroid
 
         public FTTFragmentPageAdapter(Android.Support.V4.App.FragmentManager fm, Context context) : base(fm)
         {
-            SharedFilesFragment = new FilesFragment<FileHandler>(new FTTFileHandlerArrayAdapter(context, new List<FileHandler>()));
-            AvailableFilesFragment = new FilesFragment<FTTFileInfo>(new FTTFileInfoArrayAdapter(context, new List<FTTFileInfo>()));
+            SharedFilesFragment = new FilesFragment<CheckableFileHandler>(new FTTFileHandlerArrayAdapter(context, new List<CheckableFileHandler>()));
+
+            FTTFileInfoArrayAdapter adapter = new FTTFileInfoArrayAdapter(context, new List<CheckableFileInfo>());
+            AvailableFilesFragment = new FilesFragment<CheckableFileInfo>(adapter);
         }
 
         

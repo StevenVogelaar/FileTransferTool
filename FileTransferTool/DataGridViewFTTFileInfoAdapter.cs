@@ -15,22 +15,22 @@ namespace FileTransferTool
         private delegate void addRowCallback(FTTFileInfo file);
         private delegate void removeRowCallback(DataGridViewRow row);
 
+
+        private List<CheckableFileInfo> _files;
+        private BindingSource bs;
+
         public DataGridViewFTTFileInfoAdapter(DataGridView dataGrid)
         {
             _dataGrid = dataGrid;
             dataGrid.SortCompare += new DataGridViewSortCompareEventHandler(dataViewGrid_SortCompare);
+
+            _files = new List<CheckableFileInfo>();
+            bs = new BindingSource();
+            bs.DataSource = _files;
+            _dataGrid.DataSource = bs;
+            bs.ResetBindings(false);
         }
 
-
-        /// <summary>
-        /// Initializes the data grid if there are already files
-        /// </summary>
-        private void initDataGrid(List<FTTFileInfo> files)
-        {
-            _dataGrid.DataSource = files;
-            
-            _dataGrid.Refresh();
-        }
 
 
         /// <summary>
@@ -49,8 +49,57 @@ namespace FileTransferTool
         /// </summary>
         private void syncGrid(List<FTTFileInfo> files)
         {
-            _dataGrid.DataSource = files;
-            _dataGrid.Refresh();
+
+            List<CheckableFileInfo> removeFiles = new List<CheckableFileInfo>();
+
+            // Add new files
+            foreach (FTTFileInfo f in files)
+            {
+                bool found = false;
+
+                foreach (CheckableFileInfo cf in _files)
+                {
+                    if (cf.Alias == f.Alias && cf.IP == f.IP)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    _files.Add(new CheckableFileInfo(f));
+                }
+            }
+
+
+            // Check if files are in datagrid but not in the arg.
+            foreach (CheckableFileInfo cf in _files)
+            {
+                bool found = false;
+
+                foreach (FTTFileInfo f in files)
+                {
+                    if (cf.Alias == f.Alias && cf.IP == f.IP)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    removeFiles.Add(cf);
+                }
+            }
+
+            foreach (CheckableFileInfo f in removeFiles)
+            {
+                _files.Remove(f);
+            }
+
+
+            bs.ResetBindings(false);
         }
 
     }

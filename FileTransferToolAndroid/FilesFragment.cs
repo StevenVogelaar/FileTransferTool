@@ -9,14 +9,17 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using CoreLibrary;
 
 namespace FileTransferToolAndroid
 {
-    class FilesFragment<T> : Android.Support.V4.App.Fragment
+    class FilesFragment<T> : Android.Support.V4.App.Fragment where T:Checkable 
     {
 
         public delegate void FilesCheckedHandler(object sender, FilesCheckedEventArgs e);
         public event FilesCheckedHandler FilesChecked;
+
+        private ListView _listView;
 
 
         protected View _rootView;
@@ -32,8 +35,9 @@ namespace FileTransferToolAndroid
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _rootView = inflater.Inflate(Resource.Layout.FilesListPage, container, false);
-            ListView listView = _rootView.FindViewById<ListView>(Resource.Id.FilesList);
-            listView.Adapter = _adapter;
+            _listView = _rootView.FindViewById<ListView>(Resource.Id.FilesList);
+            _listView.Adapter = _adapter;
+            _adapter.SetListView(_listView);
             return _rootView;
         }
 
@@ -48,17 +52,15 @@ namespace FileTransferToolAndroid
         }
 
 
+
+
         public void CheckCheckBoxes()
         {
             ListView listView = _rootView.FindViewById<ListView>(Resource.Id.FilesList);
 
-            for (int i = 0; i < listView.LastVisiblePosition - listView.FirstVisiblePosition + 1; i++)
+            foreach (T f in _adapter.Files)
             {
-
-                View view = listView.GetChildAt(i);
-                CheckBox checkBox = view.FindViewById<CheckBox>(Resource.Id.FileCheckbox);
-
-                if (checkBox.Checked)
+                if (f.Checked)
                 {
                     if (FilesChecked != null)
                     {
@@ -76,30 +78,8 @@ namespace FileTransferToolAndroid
 
         public T[] getChecked()
         {
-            ListView listView = _rootView.FindViewById<ListView>(Resource.Id.FilesList);
-            List<T> files = new List<T>();
 
-            for (int i = 0; i < listView.LastVisiblePosition - listView.FirstVisiblePosition + 1; i++)
-            {
-
-                try
-                {
-                    View view = listView.GetChildAt(i);
-                    CheckBox checkBox = view.FindViewById<CheckBox>(Resource.Id.FileCheckbox);
-
-                    if (checkBox.Checked)
-                    {
-                        files.Add(_adapter.Files.ElementAt(i));
-                    }
-                }
-                catch (Exception e)
-                {
-
-                }
-            }
-
-            return files.ToArray();
-
+            return _adapter.GetChecked().ToArray();
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -119,11 +99,31 @@ namespace FileTransferToolAndroid
         /// <param name="files"></param>
         public void FilesChanged(List<T> files)
         {
-            _adapter.Files.Clear();
+            //_adapter.Files.Clear();
 
             foreach (T f in files)
             {
-                _adapter.Files.Add(f);
+
+                if (!_adapter.Files.Contains(f))
+                {
+                    _adapter.Files.Add(f);
+                }
+            }
+
+            List<T> removeList = new List<T>();
+
+            foreach (T f in _adapter.Files)
+            {
+                if (!files.Contains(f))
+                {
+                    // A file that was in the list didnt come back from the refresh, so remove it.
+                    removeList.Add(f);
+                }
+            }
+
+            foreach (T f in removeList)
+            {
+                _adapter.Files.Remove(f);
             }
 
             _adapter.NotifyDataSetChanged();

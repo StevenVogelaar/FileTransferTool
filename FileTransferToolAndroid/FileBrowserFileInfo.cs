@@ -9,12 +9,25 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using CoreLibrary;
 
 namespace FileTransferToolAndroid
 {
 
-    class FileBrowserFileInfo
+    class FileBrowserFileInfo : Checkable
     {
+
+        public static int IDCount { get; set; }
+
+        public bool Checked { get; set; }
+        public int ID { get; set; }
+
+
+        public FileBrowserFileInfo()
+        {
+            ID = IDCount;
+            IDCount++;
+        }
 
         public string Name { get; set; }
         public string Path { get; set; }

@@ -112,6 +112,15 @@ namespace CoreLibrary
             init();
         }
 
+        public FileHandler(FileHandler file)
+        {
+            Path = file.Path;
+            Size = file.Size;
+            Alias = file.Alias;
+            Name = file.Name;
+            IsDirectory = file.IsDirectory;
+        }
+
         private void init()
         {
             

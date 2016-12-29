@@ -245,6 +245,7 @@ namespace FileTransferTool
             {
                 if (Convert.ToBoolean(row.Cells[selectIndex].Value) == true)
                 {
+
                     downloadButton.Show();
                     return;
                 }

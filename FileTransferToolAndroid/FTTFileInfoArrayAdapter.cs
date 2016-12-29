@@ -14,10 +14,11 @@ using Java.Lang;
 
 namespace FileTransferToolAndroid
 {
-    class FTTFileInfoArrayAdapter : FileArrayAdapter<FTTFileInfo>
+    class FTTFileInfoArrayAdapter : FileArrayAdapter<CheckableFileInfo>
     {
 
-        public FTTFileInfoArrayAdapter(Context context, List<FTTFileInfo> files) : base(context, Resource.Layout.AvailableFilesListItem, files)
+
+        public FTTFileInfoArrayAdapter(Context context, List<CheckableFileInfo> files) : base(context, Resource.Layout.AvailableFilesListItem, files)
         {
         }
 
@@ -25,8 +26,8 @@ namespace FileTransferToolAndroid
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             LayoutInflater inflater = (LayoutInflater)_context.GetSystemService(Context.LayoutInflaterService);
-
             View fileView = inflater.Inflate(Resource.Layout.AvailableFilesListItem, parent, false);
+
 
             TextView textView = fileView.FindViewById<TextView>(Resource.Id.Name);
             textView.SetText(Files[position].Alias, TextView.BufferType.Normal);
@@ -37,8 +38,12 @@ namespace FileTransferToolAndroid
             textView = fileView.FindViewById<TextView>(Resource.Id.Size);
             textView.SetText( Files[position].Size, TextView.BufferType.Normal);
 
+            textView = fileView.FindViewById<TextView>(Resource.Id.ID);
+            textView.SetText(Files[position].ID.ToString(), TextView.BufferType.Normal);
+
             CheckBox checkBox = fileView.FindViewById<CheckBox>(Resource.Id.FileCheckbox);
             checkBox.Click += CheckBox_Click;
+            checkBox.Checked = Files.ElementAt(position).Checked;
 
             /**
             if (position % 2 == 0)

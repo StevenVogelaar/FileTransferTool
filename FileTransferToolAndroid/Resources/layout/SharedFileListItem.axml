@@ -26,4 +26,12 @@
       android:paddingLeft="10dp"
       android:layout_below="@id/Name"
       android:layout_toRightOf="@id/FileCheckbox" />
+  <TextView
+    android:id="@+id/ID"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:layout_below="@id/Location"
+    android:layout_toRightOf="@id/FileCheckbox"
+    android:visibility="gone"/>
 </RelativeLayout>

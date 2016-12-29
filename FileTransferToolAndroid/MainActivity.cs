@@ -27,6 +27,7 @@ namespace FileTransferToolAndroid
         private const int ADD_FILES = 1;
         private const int REMOVE_FILES = 2;
         private const int REFRESH = 3;
+        private const int ADD_FOLDER = 4;
         
 
         
@@ -56,7 +57,7 @@ namespace FileTransferToolAndroid
             }
 
             Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            _visibleToolbarActions = new VisibleToolbarActions() { add = true, refresh = false, download = false, remove = false };
+            _visibleToolbarActions = new VisibleToolbarActions() { add = true, refresh = false, download = false, remove = false, add_folder = true };
 
             initDrawer();
 
@@ -112,7 +113,7 @@ namespace FileTransferToolAndroid
             switch (item.ItemId)
             {
                 case DOWNLOAD:
-                    chooseFolder();
+                    chooseFolder(false);
                     break;
                 case REFRESH:
                     _AndroidUI.InvokeRefreshClients(this, EventArgs.Empty);   
@@ -122,6 +123,9 @@ namespace FileTransferToolAndroid
                     break;
                 case REMOVE_FILES:
                     removeSharedFiles();
+                    break;
+                case ADD_FOLDER:
+                    chooseFolder(true);
                     break;
             }
 
@@ -169,11 +173,21 @@ namespace FileTransferToolAndroid
         /// <summary>
         /// Starts a choose folder operation, creates new activity.
         /// </summary>
-        private void chooseFolder()
+        private void chooseFolder(bool share)
         {
             Intent location_intent = new Intent(this, typeof(FileBrowserActivity));
-            location_intent.PutExtra(FileBrowserActivity.OPERATION_TYPE, FileBrowserActivity.SELECT_FOLDER);
-            StartActivityForResult(location_intent, FileBrowserActivity.SELECT_FOLDER);
+
+            if (!share)
+            {
+                location_intent.PutExtra(FileBrowserActivity.OPERATION_TYPE, FileBrowserActivity.SELECT_FOLDER);
+                StartActivityForResult(location_intent, FileBrowserActivity.SELECT_FOLDER);
+            }
+            else
+            {
+                location_intent.PutExtra(FileBrowserActivity.OPERATION_TYPE, FileBrowserActivity.SELECT_FOLDER_FOR_SHARE);
+                StartActivityForResult(location_intent, FileBrowserActivity.SELECT_FOLDER_FOR_SHARE);
+            }
+            
         }
 
 
@@ -201,7 +215,7 @@ namespace FileTransferToolAndroid
             menu.Add(Menu.None, ADD_FILES, Menu.None, "Add File(s)").SetIcon(Resource.Drawable.ic_add_white_48dp).SetShowAsAction(ShowAsAction.Always);
             menu.Add(Menu.None, REMOVE_FILES, Menu.None, "Remove File(s)").SetIcon(Resource.Drawable.ic_remove_white_48dp).SetShowAsAction(ShowAsAction.Always);
             menu.Add(Menu.None, REFRESH, Menu.None, "Refresh").SetIcon(Resource.Drawable.ic_sync_white_64dp_1x).SetShowAsAction(ShowAsAction.Always);
-           
+            menu.Add(Menu.None, ADD_FOLDER, Menu.None, "Refresh").SetIcon(Resource.Drawable.ic_create_new_folder_white_48dp).SetShowAsAction(ShowAsAction.Always);
         }
 
         /// <summary>
@@ -209,7 +223,7 @@ namespace FileTransferToolAndroid
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AvailableFilesFragment_FilesChecked(object sender, FilesFragment<FTTFileInfo>.FilesCheckedEventArgs e)
+        private void AvailableFilesFragment_FilesChecked(object sender, FilesFragment<CheckableFileInfo>.FilesCheckedEventArgs e)
         {
             if (e.SomeChecked)
             {
@@ -235,7 +249,7 @@ namespace FileTransferToolAndroid
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SharedFilesFragment_FilesChecked(object sender, FilesFragment<FileHandler>.FilesCheckedEventArgs e)
+        private void SharedFilesFragment_FilesChecked(object sender, FilesFragment<CheckableFileHandler>.FilesCheckedEventArgs e)
         {
             if (e.SomeChecked)
             {
@@ -257,7 +271,15 @@ namespace FileTransferToolAndroid
 
         private void _AndroidUI_AvailableFilesChangedEvent(object sender, AndroidUI.AvailableFilesChangedEventArgs e)
         {
-            _pageAdapter.AvailableFilesFragment.FilesChanged(e.Files);
+
+            List<CheckableFileInfo> fileInfos = new List<CheckableFileInfo>();
+
+            foreach (FTTFileInfo f in e.Files)
+            {
+                fileInfos.Add(new CheckableFileInfo(f));
+            }
+
+            _pageAdapter.AvailableFilesFragment.FilesChanged(fileInfos);
         }
 
 
@@ -271,11 +293,19 @@ namespace FileTransferToolAndroid
                 f.FileInfoChanged += F_FileInfoChanged;
             }
 
-            _pageAdapter.SharedFilesFragment.FilesChanged(e.Files);
+            List<CheckableFileHandler> fileHandlers = new List<CheckableFileHandler>();
+
+            foreach (FileHandler f in e.Files)
+            {
+                fileHandlers.Add(new CheckableFileHandler(f));
+            }
+
+            _pageAdapter.SharedFilesFragment.FilesChanged(fileHandlers);
         }
 
         private void F_FileInfoChanged(object sender, FileHandler.FileInfoChangedEventArgs e)
         {
+
             _pageAdapter.SharedFilesFragment.RefreshList();
         }
 
@@ -289,6 +319,7 @@ namespace FileTransferToolAndroid
                 _visibleToolbarActions.remove = false;
                 _visibleToolbarActions.refresh = false;
                 _visibleToolbarActions.download = false;
+                _visibleToolbarActions.add_folder = true;
 
                 _pageAdapter.SharedFilesFragment.CheckCheckBoxes();
             }
@@ -298,6 +329,7 @@ namespace FileTransferToolAndroid
                 _visibleToolbarActions.remove = false;
                 _visibleToolbarActions.refresh = true;
                 _visibleToolbarActions.download = false;
+                _visibleToolbarActions.add_folder = false;
 
                 _pageAdapter.AvailableFilesFragment.CheckCheckBoxes();
             }
@@ -314,6 +346,7 @@ namespace FileTransferToolAndroid
             _toolbar.Menu.GetItem(REMOVE_FILES).SetVisible(_visibleToolbarActions.remove);
             _toolbar.Menu.GetItem(REFRESH).SetVisible(_visibleToolbarActions.refresh);
             _toolbar.Menu.GetItem(DOWNLOAD).SetVisible(_visibleToolbarActions.download);
+            _toolbar.Menu.GetItem(ADD_FOLDER).SetVisible(_visibleToolbarActions.add_folder);
         }
 
 
@@ -361,14 +394,72 @@ namespace FileTransferToolAndroid
                 case FileBrowserActivity.SELECT_FILES:
                     if (resultCode == Result.Ok)
                     {
+                        if(data == null) return;
+
                         Toast.MakeText(this, "File(s) Selected", ToastLength.Long).Show();
-                        _AndroidUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(data.GetStringArrayExtra(FileBrowserActivity.FILE_SELECT_RESULT)));
+                        String[] temp = data.GetStringArrayExtra(FileBrowserActivity.FILE_SELECT_RESULT);
+                        _AndroidUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(temp));
                     }
                     break;
                 case FileBrowserActivity.SELECT_FOLDER_FOR_SHARE:
-                    // For future
+
+                    if (data == null) return;
+
+                    String[] folder = new string[1];
+                    folder[0] = data.GetStringExtra(FileBrowserActivity.FOLDER_SELECT_RESULT);
+                    _AndroidUI.InvokeFilesSelected(this, new FTUI.FilesSelectedEventArgs(folder));
                     break;
             }
+        }
+
+
+        private void backPressed()
+        {
+
+            FTUI.WindowClosingEventArgs args = new FTUI.WindowClosingEventArgs();
+
+            _AndroidUI.InvokeWindowClosing(this, args);
+
+            if (args.CancelClosing)
+            {
+                EventHandler<DialogClickEventArgs> yesHandler = new EventHandler<DialogClickEventArgs>(delegate (object sender, DialogClickEventArgs e)
+                {
+                    _AndroidUI.InvokeExit(this, EventArgs.Empty);
+                    Finish();
+                });
+
+                EventHandler<DialogClickEventArgs> noHandler = new EventHandler<DialogClickEventArgs>(delegate (object sender, DialogClickEventArgs e)
+                {
+
+                });
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetTitle("Pending Upload Operations");
+                builder.SetMessage("This application is currently uploading files to another client, do you wish to exit anyways?");
+                builder.SetPositiveButton("Yes", yesHandler);
+                builder.SetNegativeButton("No", noHandler);
+
+                Dialog dialog = builder.Create();
+                dialog.Show();
+            }
+            else
+            {
+                _AndroidUI.InvokeExit(this, EventArgs.Empty);
+                Finish();
+            }
+           
+        }
+
+        public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        {
+
+            if (keyCode == Keycode.Back)
+            {
+                backPressed();
+                return true;
+            }
+
+            return base.OnKeyDown(keyCode, e);
         }
 
 
@@ -378,6 +469,7 @@ namespace FileTransferToolAndroid
             public Boolean download;
             public Boolean add;
             public Boolean remove;
+            public Boolean add_folder;
         }
 
     }
