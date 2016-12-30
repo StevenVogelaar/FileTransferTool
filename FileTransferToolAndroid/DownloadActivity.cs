@@ -246,7 +246,7 @@ namespace FileTransferTool.AndroidApp
 
                 if (f.Alias == alias && f.IP == ip)
                 {
-                    _listView.GetChildAt(i).FindViewById<ProgressBar>(Resource.Id.progress_bar).Progress = (int)((FileHandler.ParseSize(f.Size) / progress) * 100);
+                    _listView.GetChildAt(i).FindViewById<ProgressBar>(Resource.Id.progress_bar).Progress = (int)( progress / (FileHandler.ParseSize(f.Size)) * 100);
                 }
             }
         }

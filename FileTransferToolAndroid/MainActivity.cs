@@ -15,6 +15,7 @@ using FileTransferTool.CoreLibrary.Net;
 using FileTransferTool.CoreLibrary.Files;
 using FileTransferTool.CoreLibrary.UI;
 using FileTransferTool.CoreLibrary;
+using System.Threading.Tasks;
 
 
 namespace FileTransferTool.AndroidApp
@@ -46,6 +47,7 @@ namespace FileTransferTool.AndroidApp
         private Android.Support.V7.App.ActionBarDrawerToggle _drawerToggle;
         private Android.Support.V7.Widget.Toolbar _toolbar;
         private VisibleToolbarActions _visibleToolbarActions;
+        private ProgressDialog _progressDialog;
 
 
         protected override void OnCreate(Bundle bundle)
@@ -62,6 +64,10 @@ namespace FileTransferTool.AndroidApp
 
             Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
             _visibleToolbarActions = new VisibleToolbarActions() { add = true, refresh = false, download = false, remove = false, add_folder = true };
+
+            _progressDialog = new ProgressDialog(this);
+            _progressDialog.SetMessage("Refreshing...");
+
 
             initDrawer();
 
@@ -120,7 +126,7 @@ namespace FileTransferTool.AndroidApp
                     chooseFolder(false);
                     break;
                 case REFRESH:
-                    _AndroidUI.InvokeRefreshClients(this, EventArgs.Empty);   
+                    refreshWithLoading(); 
                     break;
                 case ADD_FILES:
                     chooseFiles();
@@ -276,6 +282,7 @@ namespace FileTransferTool.AndroidApp
         private void _AndroidUI_AvailableFilesChangedEvent(object sender, AndroidUI.AvailableFilesChangedEventArgs e)
         {
 
+
             List<CheckableFileInfo> fileInfos = new List<CheckableFileInfo>();
 
             foreach (FTTFileInfo f in e.Files)
@@ -284,6 +291,8 @@ namespace FileTransferTool.AndroidApp
             }
 
             _pageAdapter.AvailableFilesFragment.FilesChanged(fileInfos);
+
+            _progressDialog.Hide();
         }
 
 
@@ -335,6 +344,8 @@ namespace FileTransferTool.AndroidApp
                 _visibleToolbarActions.download = false;
                 _visibleToolbarActions.add_folder = false;
 
+                refreshWithLoading();
+
                 _pageAdapter.AvailableFilesFragment.CheckCheckBoxes();
             }
 
@@ -342,6 +353,24 @@ namespace FileTransferTool.AndroidApp
             refreshToolbar();
 
             //setToolbarActions(_toolbar.Menu);
+        }
+
+
+        /// <summary>
+        /// Shows a loading dialog and refreshes clients.
+        /// </summary>
+        private void refreshWithLoading()
+        {
+
+            _progressDialog.Show();
+
+            Task task = Task.Delay(3000).ContinueWith(_ =>
+            {
+                _progressDialog.Hide();
+              
+            });
+
+            _AndroidUI.InvokeRefreshClients(this, EventArgs.Empty);
         }
 
         private void refreshToolbar()
@@ -384,6 +413,7 @@ namespace FileTransferTool.AndroidApp
 
         protected override void OnDestroy()
         {
+            _progressDialog.Dismiss();
             _core.Dispose();
             base.OnDestroy();
         }

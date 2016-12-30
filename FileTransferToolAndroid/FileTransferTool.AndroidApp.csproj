@@ -97,7 +97,6 @@
     <Compile Include="CoreService.cs" />
     <Compile Include="DownloadActivity.cs" />
     <Compile Include="DownloadFileArrayAdapter.cs" />
-    <Compile Include="DownloadManager.cs" />
     <Compile Include="FileArrayAdapter.cs" />
     <Compile Include="FileBrowserActivity.cs" />
     <Compile Include="FileBrowserArrayAdapter.cs" />
