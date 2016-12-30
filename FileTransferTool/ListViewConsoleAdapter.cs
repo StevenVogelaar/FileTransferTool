@@ -5,9 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.ComponentModel;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
 
-namespace FileTransferTool
+
+namespace FileTransferTool.Windows
 {
     class ListViewConsoleAdapter
     {

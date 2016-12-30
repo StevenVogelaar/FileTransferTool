@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferTool
+
+namespace FileTransferTool.Windows
 {
-    public class WindowsUI : FTUI
+    public class WindowsUI : FTUI, IDisposable
     {
 
 
@@ -21,7 +25,9 @@ namespace FileTransferTool
             Window = new MainWindow(this);
             Window.Load += mainWindow_OnLoad;
             Window.FormClosing += Window_FormClosing;
+
         }
+
 
         private void Window_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -89,6 +95,11 @@ namespace FileTransferTool
             {
                 Window.DownloadProgressWindow.ConnectionFailed(ip);
             }
+        }
+
+        public void Dispose()
+        {
+            Window.Dispose();
         }
     }
 }

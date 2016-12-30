@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary
 {
     public static class FTTConsole
     {

@@ -9,8 +9,8 @@
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FileTransferToolAndroid</RootNamespace>
-    <AssemblyName>FileTransferToolAndroid</AssemblyName>
+    <RootNamespace>FileTransferTool.AndroidApp</RootNamespace>
+    <AssemblyName>FileTransferTool.AndroidApp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>true</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
@@ -102,10 +102,10 @@
     <Compile Include="FileBrowserActivity.cs" />
     <Compile Include="FileBrowserArrayAdapter.cs" />
     <Compile Include="FileBrowserFileInfo.cs" />
-    <Compile Include="FTTFileHandlerArrayAdapter.cs" />
-    <Compile Include="FTTFileInfoArrayAdapter.cs" />
+    <Compile Include="FileHandlerArrayAdapter.cs" />
+    <Compile Include="FileInfoArrayAdapter.cs" />
     <Compile Include="FilesFragment.cs" />
-    <Compile Include="FTTFragmentPageAdapter.cs" />
+    <Compile Include="FragmentPageAdapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

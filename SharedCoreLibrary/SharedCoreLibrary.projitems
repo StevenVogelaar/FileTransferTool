@@ -9,26 +9,25 @@
     <Import_RootNamespace>CoreLibrary</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)BroadcastListener.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BroadcastManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BroadcastSender.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Checkable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CheckableFileHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CheckableFileInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataGridViewManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FileHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FTConnectionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FTDownloadCallbacks.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FTFileRequester.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FTFileSender.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\Checkable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\CheckableFileHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\CheckableFileInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\FileHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Files\FTTFileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FTTConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FTTConsoleMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FTTFileInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FTUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Message.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Pinger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\BroadcastListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\BroadcastManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\BroadcastSender.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Connection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\ConnectionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadCallbacks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\FileRequester.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\FileSender.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Pinger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\FTUI.cs" />
   </ItemGroup>
 </Project>

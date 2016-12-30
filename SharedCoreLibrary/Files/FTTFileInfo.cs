@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.ComponentModel;
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary.Files
 {
     [DataContract]
     [KnownType(typeof(FTTFileInfo))]

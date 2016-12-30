@@ -6,8 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary
 {
     public class Core : IDisposable
     {
@@ -457,7 +461,7 @@ namespace CoreLibrary
             }
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _broadcastManager.Dispose();
             _ftConnectionManager.Dispose();

@@ -9,9 +9,13 @@ using System.Threading;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Net.NetworkInformation;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary.Net
 {
     class BroadcastSender : IDisposable
     {

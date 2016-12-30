@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
 
-namespace FileTransferTool
+namespace FileTransferTool.Windows
 {
     public partial class DownloadProgressWindow : Form
     {

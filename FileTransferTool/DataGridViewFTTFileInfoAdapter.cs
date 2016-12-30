@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
 using System.Windows.Forms;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferTool
+
+namespace FileTransferTool.Windows
 {
-    public class DataGridViewFTTFileInfoAdapter : DataGridViewManager
+    public class DataGridViewFTTFileInfoAdapter : DataGridViewManager, IDisposable
     {
         private DataGridView _dataGrid;
 
@@ -102,5 +106,10 @@ namespace FileTransferTool
             bs.ResetBindings(false);
         }
 
+        public void Dispose()
+        {
+            bs.Dispose();
+            _dataGrid.Dispose();
+        }
     }
 }

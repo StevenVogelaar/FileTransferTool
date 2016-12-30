@@ -7,9 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
+using FileTransferTool.CoreLibrary;
 
-namespace FileTransferTool
+
+
+namespace FileTransferTool.Windows
 {
     public partial class MainWindow : Form
     {

@@ -11,9 +11,13 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V4.App;
 using Java.Lang;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferToolAndroid
+
+namespace FileTransferTool.AndroidApp
 {
     class FTTFragmentPageAdapter : FragmentPagerAdapter
     {
@@ -32,9 +36,9 @@ namespace FileTransferToolAndroid
 
         public FTTFragmentPageAdapter(Android.Support.V4.App.FragmentManager fm, Context context) : base(fm)
         {
-            SharedFilesFragment = new FilesFragment<CheckableFileHandler>(new FTTFileHandlerArrayAdapter(context, new List<CheckableFileHandler>()));
+            SharedFilesFragment = new FilesFragment<CheckableFileHandler>(new FileHandlerArrayAdapter(context, new List<CheckableFileHandler>()));
 
-            FTTFileInfoArrayAdapter adapter = new FTTFileInfoArrayAdapter(context, new List<CheckableFileInfo>());
+            FileInfoArrayAdapter adapter = new FileInfoArrayAdapter(context, new List<CheckableFileInfo>());
             AvailableFilesFragment = new FilesFragment<CheckableFileInfo>(adapter);
         }
 

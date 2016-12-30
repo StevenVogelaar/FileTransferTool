@@ -9,10 +9,14 @@ using System.Threading;
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary.Net
 {
-    class FTFileRequester
+    class FTFileRequester : IDisposable
     {
 
         public delegate void OperationFinishedHandler(object sender, EventArgs e);
@@ -122,7 +126,7 @@ namespace CoreLibrary
 
                 //Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
-                dispose();
+                Dispose();
                 return;
             }
 
@@ -138,7 +142,7 @@ namespace CoreLibrary
             sw.Stop();
             FTTConsole.AddDebug("Time elapsed: " + sw.ElapsedMilliseconds);
 
-            dispose();
+            Dispose();
         }
 
         private FileStream createFile(String path)
@@ -307,7 +311,7 @@ namespace CoreLibrary
             {
                 FTTConsole.AddInfo("Download opertations have been canceled.");
 
-                fileOut.Close();
+
                 fileOut.Dispose();
 
                 deleteFile(_dest + "/" + aliasWithPath);
@@ -329,7 +333,6 @@ namespace CoreLibrary
                 // Cleanup this instance.
                 if (fileOut != null)
                 {
-                    fileOut.Close();
                     fileOut.Dispose();
                 }
             }
@@ -379,7 +382,7 @@ namespace CoreLibrary
         }
 
 
-        private void dispose()
+        public void Dispose()
         {
             FTTConsole.AddDebug("Shutting down connection in requester");
             try
@@ -389,8 +392,8 @@ namespace CoreLibrary
                 _socket.Send(Encoding.UTF8.GetBytes("FIN"));
 
                 _socket.Shutdown(SocketShutdown.Receive);
-                _socket.Close();
                 _socket.Dispose();
+                _senderWorker.Dispose();
             }
             catch (Exception e)
             {

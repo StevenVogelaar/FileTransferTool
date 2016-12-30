@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary.Net
 {
     class FTConnectionManager : IDisposable
     {
@@ -315,7 +319,7 @@ namespace CoreLibrary
                     // Check if downloads was canceled.
                     if (Cancel)
                     {
-                        socket.Close();
+  
                         socket.Dispose();
                         return;
                     }

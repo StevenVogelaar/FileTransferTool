@@ -1,4 +1,4 @@
-﻿namespace FileTransferTool
+﻿namespace FileTransferTool.Windows
 {
     partial class DownloadProgressWindow
     {
@@ -34,8 +34,8 @@
             this.LocationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.closeButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.dataGridViewProgressColumn1 = new FileTransferTool.DataGridViewProgressColumn();
-            this.ProgressColumn = new FileTransferTool.DataGridViewProgressColumn();
+            this.dataGridViewProgressColumn1 = new FileTransferTool.Windows.DataGridViewProgressColumn();
+            this.ProgressColumn = new FileTransferTool.Windows.DataGridViewProgressColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DownloadList)).BeginInit();
             this.SuspendLayout();
             // 

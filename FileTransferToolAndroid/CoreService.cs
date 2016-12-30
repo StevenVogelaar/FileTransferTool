@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Java.IO;
 
-namespace FileTransferToolAndroid
+namespace FileTransferTool.AndroidApp
 {
     class CoreService : Service
     {

@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("FileTransferToolAndroid.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("FileTransferTool.AndroidApp.Resource", IsApplication=true)]
 
-namespace FileTransferToolAndroid
+namespace FileTransferTool.AndroidApp
 {
 	
 	

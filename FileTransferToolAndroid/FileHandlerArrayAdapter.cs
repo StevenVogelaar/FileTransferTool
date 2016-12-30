@@ -9,14 +9,18 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferToolAndroid
+
+namespace FileTransferTool.AndroidApp
 {
-    class FTTFileHandlerArrayAdapter : FileArrayAdapter<CheckableFileHandler>
+    class FileHandlerArrayAdapter : FileArrayAdapter<CheckableFileHandler>
     {
 
-        public FTTFileHandlerArrayAdapter(Context context, List<CheckableFileHandler> files) : base(context, Resource.Layout.SharedFileListItem, files)
+        public FileHandlerArrayAdapter(Context context, List<CheckableFileHandler> files) : base(context, Resource.Layout.SharedFileListItem, files)
         {
         }
 

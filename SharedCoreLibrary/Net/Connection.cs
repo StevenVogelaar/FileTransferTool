@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary.Net
 {
-    class Connection
+    class Connection : IDisposable
     {
         private TcpClient _client;
         private Thread _thread;
@@ -67,5 +67,18 @@ namespace CoreLibrary
             _thread.Start();
         }
 
+        public void Dispose()
+        {
+            try
+            {
+                _thread.Abort();
+                
+                _stream.Dispose();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
     }
 }

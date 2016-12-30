@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using FileTransferTool.CoreLibrary.Files;
 
-namespace CoreLibrary
+
+
+namespace FileTransferTool.CoreLibrary
 {
     [DataContract]
     class Message

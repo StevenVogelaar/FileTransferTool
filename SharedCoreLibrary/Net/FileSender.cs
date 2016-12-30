@@ -8,13 +8,17 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using System.ComponentModel;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary.Net
 {
     /// <summary>
     /// Listens for connections from other clients for requesting files.
     /// </summary>
-    class FTFileSender
+    class FTFileSender : IDisposable
     {
 
         public delegate void OperationFinishedHandler(object sender, EventArgs e);
@@ -79,7 +83,7 @@ namespace CoreLibrary
                 FTTConsole.AddError("Error retreiving message sent from client.");
                 //Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
-                dispose();
+                Dispose();
                 return;
             }
 
@@ -121,7 +125,7 @@ namespace CoreLibrary
                 }
             }
 
-            dispose();
+            Dispose();
         }
 
         /// <summary>
@@ -224,13 +228,13 @@ namespace CoreLibrary
             {
                 if (fileStream != null)
                 {
-                    fileStream.Close();
+                    
                     fileStream.Dispose();
                 }
             }
         }
 
-        private void dispose()
+        public void Dispose()
         {
             // Shutdown causes the other client to stop listening for files.
 			_socket.Shutdown(SocketShutdown.Send);
@@ -238,6 +242,8 @@ namespace CoreLibrary
 			byte[] buffer = new byte[FTConnectionManager.PACKET_SIZE];
 			int received = 0;
 			_socket.ReceiveTimeout = 300000;
+
+            
 
 
             // This is all beacuse linux doesnt work with sockets very well...
@@ -257,10 +263,11 @@ namespace CoreLibrary
                 FTTConsole.AddDebug("Issue with receiving FIN message from client.");
             }
 				
-            _socket.Close();
-            _socket.Dispose();
 
-			FTTConsole.AddDebug("Connection shut down.");
+            _socket.Dispose();
+            _senderWorker.Dispose();
+
+            FTTConsole.AddDebug("Connection shut down.");
             
             if (OperationFinished != null)
             {

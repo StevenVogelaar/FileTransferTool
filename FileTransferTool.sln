@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransferToolWindows", "FileTransferTool\FileTransferToolWindows.csproj", "{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransferTool.Windows", "FileTransferTool\FileTransferTool.Windows.csproj", "{730210A3-6FB2-4EEB-B6B9-3B7BDE987950}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CoreLibrary", "SharedCoreLibrary\CoreLibrary.shproj", "{BEF27E60-732B-44C3-9CF0-A0633797631E}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FileTransferTool.CoreLibrary", "SharedCoreLibrary\FileTransferTool.CoreLibrary.shproj", "{BEF27E60-732B-44C3-9CF0-A0633797631E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransferToolAndroid", "FileTransferToolAndroid\FileTransferToolAndroid.csproj", "{A1B12AEA-58D6-4DCB-8C4E-D2E1E3440F67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransferTool.AndroidApp", "FileTransferToolAndroid\FileTransferTool.AndroidApp.csproj", "{A1B12AEA-58D6-4DCB-8C4E-D2E1E3440F67}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

@@ -9,10 +9,14 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
 using Java.IO;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferToolAndroid
+
+namespace FileTransferTool.AndroidApp
 {
 
     [Activity(Label = "Download", MainLauncher = false, Icon = "@drawable/icon72", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]

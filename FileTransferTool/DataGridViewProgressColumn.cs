@@ -11,7 +11,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
-namespace FileTransferTool
+
+
+namespace FileTransferTool.Windows
 {
     public class DataGridViewProgressColumn : DataGridViewImageColumn
     {
@@ -21,7 +23,7 @@ namespace FileTransferTool
         }
     }
 }
-namespace FileTransferTool
+namespace FileTransferTool.Windows
 {
     class DataGridViewProgressCell : DataGridViewImageCell
     {

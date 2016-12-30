@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary.Files
 {
     class CheckableFileHandler : FileHandler, Checkable
     {

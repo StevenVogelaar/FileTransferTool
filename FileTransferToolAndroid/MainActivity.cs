@@ -5,15 +5,19 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using CoreLibrary;
 using Android.Hardware;
 using System.Collections.Generic;
 using Android.Support.V4.App;
 using Android.Support.V4;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
+using FileTransferTool.CoreLibrary;
 
-namespace FileTransferToolAndroid
+
+namespace FileTransferTool.AndroidApp
 {
     [Activity(Label = "File Transfer Tool", MainLauncher = true, Icon = "@drawable/icon72", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : Android.Support.V7.App.AppCompatActivity

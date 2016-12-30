@@ -8,8 +8,12 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.Serialization.Json;
 using System.IO;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
+using FileTransferTool.CoreLibrary;
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary.Net
 {
     class BroadcastListener : IDisposable
     {

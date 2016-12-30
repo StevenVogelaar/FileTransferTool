@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.IO;
 using System.ComponentModel;
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary.Files
 {
-    public class FileHandler
+    public class FileHandler : IDisposable
     {
         
         [Browsable(false)]
@@ -251,6 +251,7 @@ namespace CoreLibrary
         public void Dispose()
         {
             sizeCheckWorker.CancelAsync();
+            sizeCheckWorker.Dispose();
         }
 
 

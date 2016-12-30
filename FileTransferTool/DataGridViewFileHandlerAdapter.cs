@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
 using System.Windows.Forms;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferTool
+
+namespace FileTransferTool.Windows
 {
 
     /// <summary>

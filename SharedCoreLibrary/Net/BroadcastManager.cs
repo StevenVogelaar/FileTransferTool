@@ -7,8 +7,12 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.Net.NetworkInformation;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary.Net
 {
     class BroadcastManager : IDisposable
     {
@@ -24,7 +28,6 @@ namespace CoreLibrary
         private BroadcastListener _broadcastListener;
         private BroadcastSender _broadcastSender;
         private HashSet<IPAddress> _connectedClientSet;
-        private List<Connection> _connectionList;
 
 
         public BroadcastManager()
@@ -34,7 +37,6 @@ namespace CoreLibrary
             _broadcastSender = new BroadcastSender();
             _connectedClientSet = new HashSet<IPAddress>();
             _broadcastListener.Start();
-            _connectionList = new List<Connection>();
 
             _broadcastListener.MessageReceived += broadcastListener_MessageReceived;
         }
@@ -87,14 +89,6 @@ namespace CoreLibrary
         private void start()
         {
             
-        }
-
-
-        public void Connect()
-        {
-            Connection connection = new Connection("192.168.0.12");
-            _connectionList.Add(connection);
-            connection.Connect();
         }
 
 

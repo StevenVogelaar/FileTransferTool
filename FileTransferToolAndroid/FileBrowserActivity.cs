@@ -10,8 +10,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using System.IO;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferToolAndroid
+
+namespace FileTransferTool.AndroidApp
 {
 
     [Activity(Label = "FileBrowserActivity", MainLauncher = false, Icon = "@drawable/icon72", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
@@ -65,7 +69,7 @@ namespace FileTransferToolAndroid
             }
 
 
-            if (_currently_selected_path == "/" || _currently_selected_path == "") ;
+            if (_currently_selected_path == "/" || _currently_selected_path == "")
             {
                 _currently_selected_path = root;
             }
@@ -165,7 +169,7 @@ namespace FileTransferToolAndroid
                 {
                     FileInfo fileInfo = files[i];
                     FileBrowserFileInfo fileBrowserInfo = new FileBrowserFileInfo() {Name = fileInfo.Name, IsDirectory = false,
-                        Path = fileInfo.Directory.FullName, Size = CoreLibrary.FileHandler.ParseBytes(fileInfo.Length) };
+                        Path = fileInfo.Directory.FullName, Size = FileHandler.ParseBytes(fileInfo.Length) };
                     _files.Add(fileBrowserInfo);
                 }
             }

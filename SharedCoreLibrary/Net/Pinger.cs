@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace CoreLibrary
+
+namespace FileTransferTool.CoreLibrary.Net
 {
-    class Pinger
+    class Pinger : IDisposable
     {
 
         private IPAddress[] _ipAddresses;
@@ -61,5 +65,17 @@ namespace CoreLibrary
             if (_completed == _ipAddresses.Length) _resetEvent.Set();
         }
 
+        public void Dispose()
+        {
+            try
+            {
+                _resetEvent.Dispose();
+                _pinger.Dispose();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
     }
 }

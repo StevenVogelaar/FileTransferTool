@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CoreLibrary;
+using FileTransferTool.CoreLibrary;
+using FileTransferTool.CoreLibrary.Net;
+using FileTransferTool.CoreLibrary.Files;
+using FileTransferTool.CoreLibrary.UI;
 
-namespace FileTransferTool
+
+namespace FileTransferTool.Windows
 {
     /// <summary>
     /// A class that can be used to receive call backs for file downloads. Sent as part of the DownloadFilesEventArgs

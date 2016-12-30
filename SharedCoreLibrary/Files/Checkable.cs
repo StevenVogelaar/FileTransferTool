@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace CoreLibrary
+namespace FileTransferTool.CoreLibrary.Files
 {
     interface Checkable
     {
