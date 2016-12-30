@@ -77,7 +77,7 @@ namespace CoreLibrary
             {
 
                 FTTConsole.AddError("Error retreiving message sent from client.");
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
                 dispose();
                 return;
@@ -218,7 +218,7 @@ namespace CoreLibrary
             catch (Exception e)
             {
                 FTTConsole.AddError("Error sending file: " + e.Message);
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace);
             }
             finally
             {

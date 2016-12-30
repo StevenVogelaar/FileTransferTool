@@ -42,15 +42,15 @@ namespace CoreLibrary
                 _pinger.SendAsync(ip, null);
             }
 
-            Console.WriteLine("Waiting for ping responses...");
+            //Console.WriteLine("Waiting for ping responses...");
             _resetEvent.WaitOne();
-            Console.WriteLine("Responses all received");
+            //Console.WriteLine("Responses all received");
             return _responseAddresses.ToArray();
         }
 
         public void pinger_PingCompleted(object sender, PingCompletedEventArgs e)
         {
-            Console.WriteLine("recevied ping response");
+            //Console.WriteLine("recevied ping response");
 
             if (e.Reply.Status == IPStatus.Success)
             {

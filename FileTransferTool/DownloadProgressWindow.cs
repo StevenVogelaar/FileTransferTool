@@ -213,7 +213,7 @@ namespace FileTransferTool
                 // Dont set everything to 100 if an error occured.
                 if (e.Error)
                 {
-                    MessageBox.Show("There was an issue with the remote end.", "Connection closed by remote.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Error", "Connection closed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 

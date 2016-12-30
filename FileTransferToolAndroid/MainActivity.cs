@@ -53,7 +53,7 @@ namespace FileTransferToolAndroid
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + "\n" + e.StackTrace); 
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace); 
             }
 
             Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
@@ -354,16 +354,23 @@ namespace FileTransferToolAndroid
 
         private void initDrawer()
         {
-            mPlanetTitles = new string[] { "  title1", "  title2", "  title3" };
+            mPlanetTitles = new string[] { "  Exit" };
             mDrawerLayout = (DrawerLayout)FindViewById(Resource.Id.main_drawer_layout);
             mDrawerList = (ListView)FindViewById(Resource.Id.left_drawer);
 
             // Set the adapter for the list view
             mDrawerList.Adapter = new ArrayAdapter<String>(this, Resource.Layout.DrawerItem, mPlanetTitles);
             // Set the list's click listener
-            mDrawerList.ItemClick += (delegate (object sender, AdapterView.ItemClickEventArgs e) { });
+            mDrawerList.ItemClick += MDrawerList_ItemClick;
         }
 
+        private void MDrawerList_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            if (e.Id == 0)
+            {
+                backPressed();
+            }
+        }
 
         protected override void OnStop()
         {

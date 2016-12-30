@@ -120,7 +120,7 @@ namespace CoreLibrary
                 else FTTConsole.AddError("Error sending request for file.");
 
 
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
                 dispose();
                 return;
@@ -297,7 +297,7 @@ namespace CoreLibrary
                 }
 
                 FTTConsole.AddError("Error receiving file: Socket Exception");
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace);
                 deleteFile(_dest + "/" + aliasWithPath);
                 _error = true;
 
@@ -395,7 +395,7 @@ namespace CoreLibrary
             catch (Exception e)
             {
                 FTTConsole.AddError("Could not shutdown the remote connection.");
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace);
             }
 
             if (OperationFinished != null)

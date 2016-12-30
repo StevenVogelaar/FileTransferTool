@@ -35,6 +35,7 @@ namespace FileTransferToolAndroid
         private TextView _directoryPath;
         private List<FileBrowserFileInfo> _files;
         private Boolean select_folder = false;
+        private string root = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -64,9 +65,9 @@ namespace FileTransferToolAndroid
             }
 
 
-            if (_currently_selected_path == "")
+            if (_currently_selected_path == "/" || _currently_selected_path == "") ;
             {
-                _currently_selected_path = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+                _currently_selected_path = root;
             }
 
             changeDirectory(_currently_selected_path);
@@ -134,6 +135,7 @@ namespace FileTransferToolAndroid
             catch (Exception e)
             {
                 Toast.MakeText(this, "Error reading files.", ToastLength.Long).Show();
+                return;
             }
 
             _files.Clear();
@@ -196,9 +198,12 @@ namespace FileTransferToolAndroid
             catch (Exception e)
             {
 
-                if (_currently_selected_path != Android.OS.Environment.ExternalStorageDirectory.AbsolutePath)
+                if (_currently_selected_path != "/")
                 {
-                    changeDirectory(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath);
+                    String temp = _currently_selected_path.Substring(0, _currently_selected_path.LastIndexOf('/'));
+
+                    if (!temp.Contains('/')) temp = "/";
+                    changeDirectory(temp);
                 }
                 else
                 {

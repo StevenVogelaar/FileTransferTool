@@ -138,7 +138,7 @@ namespace CoreLibrary
             catch (Exception e)
             {
                 FTTConsole.AddError("Error listening for file transfer connections.");
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                //Console.WriteLine(e.Message + "\n" + e.StackTrace);
             }
 
             // Accept incomming connection requests.
@@ -347,7 +347,7 @@ namespace CoreLibrary
                 catch (Exception e)
                 {
                     FTTConsole.AddError("Error trying to connect to remote host: " + _files.ElementAt(0).IP);
-                    Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                    //Console.WriteLine(e.Message + "\n" + e.StackTrace);
 
                     _manager.invokeConnectionFailed(_files.ElementAt(0).IP);
 

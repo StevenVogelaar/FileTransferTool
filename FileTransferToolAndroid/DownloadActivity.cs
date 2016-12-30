@@ -73,12 +73,19 @@ namespace FileTransferToolAndroid
                 RunOnUiThread(
                     delegate ()
                     {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.SetTitle("Error");
-                        builder.SetMessage("Failed to connect to: " + e.IP);
-                        Dialog dialog = builder.Create();
-                        setDownloadInProgress(false);
-                        dialog.Show();
+                        try
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.SetTitle("Error");
+                            builder.SetMessage("Failed to connect to: " + e.IP);
+                            Dialog dialog = builder.Create();
+                            setDownloadInProgress(false);
+                            dialog.Show();
+                        }
+                        catch (Exception f)
+                        {
+
+                        }
                     });
             }
             catch (Exception f)
@@ -106,19 +113,23 @@ namespace FileTransferToolAndroid
 
         private void setDownloadInProgress(bool state)
         {
-            if (state)
+            if (_toolbar.Menu.Size() > 1)
             {
-                _download_in_progress = true;
 
-                _toolbar.Menu.GetItem(CANCEL).SetVisible(true);
-                _toolbar.Menu.GetItem(DONE).SetVisible(false);
-            }
-            else
-            {
-                _download_in_progress = false;
+                if (state)
+                {
+                    _download_in_progress = true;
 
-                _toolbar.Menu.GetItem(CANCEL).SetVisible(false);
-                _toolbar.Menu.GetItem(DONE).SetVisible(true);
+                    _toolbar.Menu.GetItem(CANCEL).SetVisible(true);
+                    _toolbar.Menu.GetItem(DONE).SetVisible(false);
+                }
+                else
+                {
+                    _download_in_progress = false;
+
+                    _toolbar.Menu.GetItem(CANCEL).SetVisible(false);
+                    _toolbar.Menu.GetItem(DONE).SetVisible(true);
+                }
             }
         }
 
