@@ -14,6 +14,7 @@ namespace FileTransferTool.CoreLibrary.Files
 
         public int ID { get; set; }
         public bool Checked { get; set; }
+        public int progress { get; set; }
 
 
         public CheckableFileInfo(FTTFileInfo fileInfo)

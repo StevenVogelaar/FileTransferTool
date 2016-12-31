@@ -227,26 +227,22 @@ namespace FileTransferTool.CoreLibrary
         /// Will start a file download operation.
         /// </summary>
         /// <param name="files">Key: FileName, Value: Location(ip address)</param>
-        public void DownloadFiles(Dictionary<String, String> files, String dest, FTDownloadCallbacks callbacks) {
+        public void DownloadFiles(FTTFileInfo[] files, String dest, FTDownloadCallbacks callbacks) {
 
             FTTFileInfo[] availablefiles = AvailableFiles.CopyOfList().ToArray();
             List<FTTFileInfo> foundFiles = new List<FTTFileInfo>();
 
             // Collect the requested files if they exist.
-            foreach (String f in files.Keys)
+            foreach (FTTFileInfo f in files)
             {
-                for (int i = 0; i < availablefiles.Length; i++)
+                foreach (FTTFileInfo core_file in availablefiles)
                 {
-                    String value;
-                    bool foundValue = files.TryGetValue(f, out value);
-
-                    if (foundValue && availablefiles[i].Alias.Equals(f) && availablefiles[i].IP.Equals(value))
+                    if (f.Alias == core_file.Alias && f.IP == core_file.IP)
                     {
-                        foundFiles.Add(availablefiles[i]);
+                        foundFiles.Add(core_file);
                     }
                 }
             }
-
 
             // Sort by IP into individual file lists.
             HashSet<String> uniqueIPs = new HashSet<string>();

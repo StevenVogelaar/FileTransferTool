@@ -133,6 +133,7 @@ namespace FileTransferTool.AndroidApp
 
                     _toolbar.Menu.GetItem(CANCEL).SetVisible(false);
                     _toolbar.Menu.GetItem(DONE).SetVisible(true);
+                    setAllProgressMax();
                 }
             }
         }
@@ -141,28 +142,35 @@ namespace FileTransferTool.AndroidApp
         private void init()
         {
 
+       
+
             List<string> unique_addresses = new List<string>();
-            Dictionary<string, string> filesDict = new Dictionary<string, string>();
 
             // Count the number of unique ip addresses that are being downloaded from.
-            foreach (FTTFileInfo f in _adapter.Files)
-            {
-                filesDict.Add(f.Alias, f.IP);
 
+            CheckableFileInfo[] filesCopy = new CheckableFileInfo[_adapter.Files.Count];
+            _adapter.Files.CopyTo(filesCopy);
+
+           
+            // Gather unique ip addresses
+            foreach (CheckableFileInfo f in filesCopy)
+            {
                 if (!unique_addresses.Contains(f.IP))
                 {
                     unique_addresses.Add(f.IP);
-                }
+                } 
             }
+   
 
             _unique_ips = unique_addresses.Count;
 
 
             // Start the download operation.
-
             _download_callbacks = new DownloadCallbacks(this, downloadCompleted, downloadProgress, folderDownloadProgress, downloadStarted);
 
-            MainActivity._AndroidUI.InvokeDownloadRequest(this, new FTUI.DownloadRequestEventArgs() {Dest = _download_dest, Files = filesDict,
+      
+
+            MainActivity._AndroidUI.InvokeDownloadRequest(this, new FTUI.DownloadRequestEventArgs() { Dest = _download_dest, Files = filesCopy,
             CallBacks = _download_callbacks});
            
         }
@@ -203,9 +211,10 @@ namespace FileTransferTool.AndroidApp
         {
             for (int i = 0; i < _adapter.Files.Count; i++)
             {
-
-                _listView.GetChildAt(i).FindViewById<ProgressBar>(Resource.Id.progress_bar).Progress = 100;
+                _adapter.Files[i].progress = 100;
             }
+
+            _adapter.NotifyDataSetChanged();
         }
 
         private void downloadCompleted(String ip, bool error)
@@ -229,26 +238,30 @@ namespace FileTransferTool.AndroidApp
         {
             for (int i = 0; i < _adapter.Files.Count; i ++)
             {
-                FTTFileInfo f = _adapter.Files.ElementAt(i);
+                CheckableFileInfo f = _adapter.Files.ElementAt(i);
 
                 if (f.Alias == alias && f.IP == ip)
                 {
-                    _listView.GetChildAt(i).FindViewById<ProgressBar>(Resource.Id.progress_bar).Progress = progress;
+                    f.progress = progress;
                 }
             }
+
+            _adapter.NotifyDataSetChanged();
         }
 
         private void folderDownloadProgress(string alias, long progress, string ip)
         {
             for (int i = 0; i < _adapter.Files.Count; i++)
             {
-                FTTFileInfo f = _adapter.Files.ElementAt(i);
+                CheckableFileInfo f = _adapter.Files.ElementAt(i);
 
                 if (f.Alias == alias && f.IP == ip)
                 {
-                    _listView.GetChildAt(i).FindViewById<ProgressBar>(Resource.Id.progress_bar).Progress = (int)( progress / (FileHandler.ParseSize(f.Size)) * 100);
+                    f.progress = (int)(((float)progress / (FileHandler.ParseSize(f.Size))) * 100);
                 }
             }
+
+            _adapter.NotifyDataSetChanged();
         }
 
         private void downloadStarted()

@@ -325,13 +325,16 @@ namespace FileTransferTool.Windows
             if (result != DialogResult.OK) return;
 
             // Get names of selected available files.
-            Dictionary<String, String> files = new Dictionary<string, string>();
+
+            List<FTTFileInfo> files = new List<FTTFileInfo>();
             List<DownloadProgressWindow.ProgressData> progressFiles = new List<DownloadProgressWindow.ProgressData>();
             foreach (DataGridViewRow row in availableFilesList.Rows)
             {
                 if (row.Cells[0].Value != null && (bool)row.Cells[0].Value == true)
                 {
-                    files.Add((String)row.Cells[nameIndex].Value, (String)row.Cells[locationIndex].Value);
+
+                    files.Add(new FTTFileInfo() { Alias = (String)row.Cells[nameIndex].Value, IP = (String)row.Cells[locationIndex].Value });
+
                     progressFiles.Add(new DownloadProgressWindow.ProgressData()
                     {
                         Alias = (String)row.Cells[nameIndex].Value,
@@ -351,7 +354,7 @@ namespace FileTransferTool.Windows
             FileDownloadProgress callbacks = new FileDownloadProgress();
             DownloadProgressWindow.StartDownload(progressFiles, callbacks);
 
-            _windowsUI.InvokeDownloadRequest(this, new FTUI.DownloadRequestEventArgs() { Files = files, Dest = folderBrowserDialog1.SelectedPath, CallBacks = callbacks });
+            _windowsUI.InvokeDownloadRequest(this, new FTUI.DownloadRequestEventArgs() { Files = files.ToArray(), Dest = folderBrowserDialog1.SelectedPath, CallBacks = callbacks });
             DownloadProgressWindow.ShowDialog();
         }
 

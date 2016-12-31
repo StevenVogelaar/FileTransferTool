@@ -39,6 +39,8 @@ namespace FileTransferTool.AndroidApp
             textView = fileView.FindViewById<TextView>(Resource.Id.Size);
             textView.SetText(Files[position].Size, TextView.BufferType.Normal);
 
+            fileView.FindViewById<ProgressBar>(Resource.Id.progress_bar).Progress = Files[position].progress;
+
 
             /**
             if (position % 2 == 0)

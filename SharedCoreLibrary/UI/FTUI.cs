@@ -156,7 +156,7 @@ namespace FileTransferTool.CoreLibrary.UI
         {
             public FTDownloadCallbacks CallBacks { get; set; }
             public FTTFileInfo[] FileResult { get; set; }
-            public Dictionary<String, String> Files { get; set; }
+            public FTTFileInfo[] Files { get; set; }
             public String Dest { get; set; }
         }
 
